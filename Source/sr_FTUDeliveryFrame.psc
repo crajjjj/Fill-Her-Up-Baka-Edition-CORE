@@ -151,7 +151,7 @@ Event PurityMonitor(int threadID, bool hasPlayer)
 	Actor[] actors = SexLab.HookActors(threadId)
 	actor pl = Game.GetPlayer()
 	int pli = actors.Find(pl)
-	int cumSpot = anim.AccessPosition(pli, 1)
+	int cumSpot = anim.GetCumID(pli, 1)
 	If ( ( anim.HasTag("vaginal") && ( blocked == 1 || blocked == 3 ) ) || (anim.HasTag("anal") && ( blocked == 2 || blocked == 3 ) ) ) && cumSpot != -1 && cumSpot != 2
 
 		int i = actors.length
@@ -314,7 +314,7 @@ Function AnimateAndFillPlayer()
 		Debug.SendAnimationEvent(inflater.player, "ZaZMOMBoundFurn_06")
 	EndIf
 	StartMoanLoop(inflater.Player)
-	inflater.inflateTo(inflater.player, 1, 20.0)
+	inflater.inflateTo(inflater.player, 1, 20.0, 2.0)
 EndFunction
 
 Function InflationDone()
