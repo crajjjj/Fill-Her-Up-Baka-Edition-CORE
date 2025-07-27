@@ -1,6 +1,7 @@
 Scriptname sr_inflateQuest extends Quest
 
 import StorageUtil
+import sr_HentairimUtils
 
 sr_inflateConfig Property config auto
 sr_infDeflateAbility Property defAlias Auto
@@ -358,11 +359,38 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 	endif
 endevent
 
+;Hentairim enabled
+
 Event OrgasmSeparate(Form ActorRef, Int Thread)
 	actor akActor = ActorRef as actor
 
 	Actor[] actors = sexlab.HookActors(thread)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
+	SslThreadController threadContr = SexLab.GetController(thread)
+	int Stage = threadContr.Stage
+	
+ 	int pos = GetActorPositionFromList(actors, akActor)
+  	Bool isAnimationHentairimTagged = false
+    ;String stageTagsAll = GetStageTagsAsString(animation, Stage)
+    String penetrationLabel = sr_HentairimUtils.PenetrationLabel(anim, Stage, pos)
+    String oralLabel = sr_HentairimUtils.OralLabel(anim, Stage, pos)
+    String stimulationLabel = sr_HentairimUtils.StimulationLabel(anim, Stage, pos)
+    String penisActionLabel = sr_HentairimUtils.PenisActionLabel(anim, Stage, pos)
+    String endingLabel = sr_HentairimUtils.EndingLabel(anim, Stage, pos)
+    log(">>Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel  )
+   
+    if isAnimationHentairimTaggedStrings(penetrationLabel, oralLabel, stimulationLabel, endingLabel, penisActionLabel)
+        isAnimationHentairimTagged = true
+    Else
+       log(">> No stage tags detected")
+    endif
+
+	Bool isCummedInside = sr_HentairimUtils.IsCummedInside(endingLabel)
+	Bool isDP = IsGettingDoublePenetrated(penetrationLabel)
+
+    Bool isVaginalInside = !isAnimationHentairimTagged || IsGettingVaginallyPenetrated(penetrationLabel) ||  isCummedInside || isDP
+    Bool isAnalInside = !isAnimationHentairimTagged || IsGettingVaginallyPenetrated(penetrationLabel) ||  isCummedInside || isDP
+    Bool isOralInside =  !isAnimationHentairimTagged || IsSuckingoffOther(oralLabel)  || isCummedInside
 
 	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal")
 		If (!sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
@@ -370,13 +398,13 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 		EndIf
 
 		int currentPool = 0
-		If anim.hasTag("Vaginal")
+		If anim.hasTag("Vaginal") && isVaginalInside
 			currentPool = Math.LogicalOr(currentPool, VAGINAL)
 		EndIf
-		If anim.hasTag("Anal")
+		If anim.hasTag("Anal") && isAnalInside
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
-		If anim.hasTag("Oral")
+		If anim.hasTag("Oral") && isOralInside
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
