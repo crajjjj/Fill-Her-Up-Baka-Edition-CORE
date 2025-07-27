@@ -115,7 +115,10 @@ int maleEnabledOID
 String Property FHUMorphString = "PregnancyBelly" Auto
 String Property FHUMorphString2 = "" Auto
 String Property FHUMorphString3 = "" Auto
-String Property FHUMorphString4 = "" Auto
+; ( changed by 15, for a fuller belly
+; String Property FHUMorphString4 = "" Auto
+String Property FHUMorphString4 = "BigBelly" Auto
+; by 15 )
 String RACE_LIST = "sr.inflater.race.list"
 String CREATURERACE_LIST = "sr.inflater.creaturerace.list"
 string dupemsg = "$FHU_MORPHSTRING_DUPLICATION"
@@ -416,7 +419,10 @@ Event OnVersionUpdate(int newVersion)
 		EndIf
 		Debug.Notification("Fill Her Up " + inflater.GetVersionString() + " initialized.")
 	EndIf
-	debug.messagebox("Fill Her Up Update")
+	; ( changed by 15
+	; debug.messagebox("Fill Her Up Update")
+	debug.Notification("Fill Her Up Update")
+	; by 15 )
 EndEvent
 
 
@@ -591,10 +597,17 @@ Event OnPageReset(String page)
 		AddHeaderOption(inflater.player.GetLeveledActorBase().GetName())
 		If inflater.sexlab.GetGender(inflater.player)==1
 			AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(inflater.player), 0, 5))
+		; ( add by 15, femboy can have VaginalCum if he had OralBursting or random from anal and oral sex
+		ElseIf inflater.player.GetLeveledActorBase().Getsex() == 1 && inflater.GetVaginalCum(inflater.player) > 0
+			AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(inflater.player), 0, 5))
+		; by 15 )
 		EndIf
 		AddTextOption("$FHU_AN_AMOUNT", StringUtil.SubString(inflater.GetAnalCum(inflater.player), 0, 5))
 		AddTextOption("$FHU_OR_AMOUNT", StringUtil.SubString(inflater.GetOralCum(inflater.player), 0, 5))
-		AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(inflater.player), 0, 5))
+		; ( add by 15, show total amount, vag + anal + oral
+		; AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(inflater.player), 0, 5))
+		AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(inflater.player) + inflater.GetOralCum(inflater.player), 0, 5))
+		; by 15 )
 		Actor a
 		int i = StorageUtil.FormListCount(inflater, inflater.INFLATED_ACTORS)
 		While i > 0
@@ -604,9 +617,19 @@ Event OnPageReset(String page)
 				AddHeaderOption(a.GetLeveledActorBase().GetName())
 				If inflater.sexlab.GetGender(a)== 1
 					AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(a), 0, 5))
+				; ( add by 15, femboy can have VaginalCum if he had OralBursting
+				ElseIf a.GetLeveledActorBase().Getsex() == 1 && inflater.GetVaginalCum(a) > 0
+					AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(a), 0, 5))
+				; by 15 )
 				EndIf
 				AddTextOption("$FHU_AN_AMOUNT", StringUtil.SubString(inflater.GetAnalCum(a), 0, 5))
-				AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(a),0,5))
+				; ( add by 15, other npc have oral inflation
+				AddTextOption("$FHU_OR_AMOUNT", StringUtil.SubString(inflater.GetOralCum(a), 0, 5))
+				; by 15 )
+				; ( add by 15, show total amount. vag + anal + oral
+				; AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(a), 0, 5))
+				AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(a) + inflater.GetOralCum(a), 0, 5))
+				; by 15 )
 			EndIf
 		EndWhile
 		SetCursorPosition(1)
@@ -665,7 +688,10 @@ State settings
 		ElseIf opt == OralmaxInflationOID
 			SetSliderDialogStartValue(OralmaxInflation)
 			SetSliderDialogDefaultValue(OralmaxInflationDefault)
-			SetSliderDialogRange(0.1, 5.0)
+			; ( changed by 15, for a fuller belly
+			; SetSliderDialogRange(0.1, 5.0)
+			SetSliderDialogRange(0.1, 20.0)
+			; by 15 )
 			SetSliderDialogInterval(0.05)
 		ElseIf opt == animMultOID
 			SetSliderDialogStartValue(animMult)
@@ -787,8 +813,12 @@ State settings
 			SetToggleOptionValue(loggingOID, logging)
 			inflater.log("Logging set to: " + logging)
 		ElseIf opt == FHUSLIFOID
-			FHUSLIF != FHUSLIF
-			sr_SLIF.setvalue(FHUSLIF as int)
+			; ( change by 15, typo?
+			; FHUSLIF != FHUSLIF
+			; sr_SLIF.setvalue(FHUSLIF as int)
+			FHUSLIF = !FHUSLIF
+			sr_SLIF.SetValueInt(FHUSLIF as int)
+			; by 15 )
 			SetToggleOptionValue(FHUSLIFOID, FHUSLIF)
 		ElseIf opt == resetOID
 			if !resetting

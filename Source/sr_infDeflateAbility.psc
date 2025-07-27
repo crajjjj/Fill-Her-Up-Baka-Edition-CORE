@@ -53,7 +53,16 @@ Event OnKeyDown(int kc)
 			EndIf
 			
 			If p.GetActorValuePercentage("Stamina") >= 0.3
-				int type = inflater.GetMostRecentInflationType(p);Important
+				; ( add by 15, femboy can have VaginalCum but she connot deflate vaginal cum just absorb
+				; int type = inflater.GetMostRecentInflationType(p);Important
+				bool isFemboy = inflater.sexlab.GetGender(p) == 0 && p.GetLeveledActorBase().GetSex() == 1
+				int type = 0
+				If isFemboy
+					type = inflater.GetMostRecentInflationTypeFemboy(p)
+				Else
+					type = inflater.GetMostRecentInflationType(p)
+				EndIf
+				; by 15 )
 				int err = 0
 				log("Type: " + type)
 				If type > 0 && type < 3
@@ -140,12 +149,21 @@ EndEvent
 
 Function doPush(int type)
 	Actor p = GetActorReference()
+
+	; ( add by 15, femboy can have VaginalCum but she connot deflate vaginal cum just absorb
+	bool isFemboy = inflater.sexlab.GetGender(p) == 0 && p.GetLeveledActorBase().GetSex() == 1
+	If type == 1 && isFemboy
+		; StorageUtil.UnsetFloatValue(p, inflater.LAST_TIME_VAG)
+		return
+	EndIf
+	; by 15 )
+
 	Game.DisablePlayerControls()
 	Game.ForceThirdPerson()
-	
+
 	p.AddToFaction(inflater.inflaterAnimatingFaction)
 	p.SetFactionRank(inflater.inflaterAnimatingFaction, 1)
-	
+
 	String pool = ""
 	If type == 1
 		pool = inflater.CUM_VAGINAL
@@ -170,9 +188,28 @@ Function doPush(int type)
 	float originalInf = currentInf
 	bAnimController = true
 ;	log("Starting: inf: " + currentInf +", cum: " +cum + ", pool: " + pool)
+
+	; ( add by 15
+	; Debug.Notification(p.GetLeveledActorBase().GetName() + " deflate, before, a: " + type == 2 + ", v: " + type == 1 + ", o: " + type == 3)
+	; Debug.Notification(p.GetLeveledActorBase().GetName() + " deflate, before, cum: " + cum + ", tot_inf: " + originalInf)
+	; by 15 )
+
 	While keydown && p.GetActorValuePercentage("Stamina") > 0.02 && cum > 0.02
-		currentInf -= 0.05*(1.0/inflater.config.animMult)
-		cum -= 0.05*(1.0/inflater.config.animMult)
+		; ( add by 15, calc exactly value of currentInf for femboy bc she could not deflate vagCum
+		; currentInf -= 0.05*(1.0/inflater.config.animMult)
+		; cum -= 0.05*(1.0/inflater.config.animMult)
+		If isFemboy
+			currentInf -= 0.05*(1.0/inflater.config.animMult)
+			cum -= 0.05*(1.0/inflater.config.animMult)
+		Else
+			float deflateAmount = 0.05 * (1.0 / inflater.config.animMult)
+			If deflateAmount > cum
+				deflateAmount = cum
+			EndIf
+			currentInf -= deflateAmount
+			cum -= deflateAmount
+		EndIf
+		; by 15 )
 		if bAnimController;Prevents serious FPS drop due to heavy code stacks.
 			bAnimController = false
 			if config.BodyMorph && (pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL)
@@ -189,7 +226,14 @@ Function doPush(int type)
 					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph4)
 				endif
 			else
-				inflater.SetNodeScale(p, "NPC Belly", currentInf)
+				; ( change by 15, sent to SLIF sum of all pools
+				; inflater.SetNodeScale(p, "NPC Belly", currentInf)
+				if pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL
+					inflater.SetNodeScale(p, "NPC Belly", currentInf + inflater.GetOralCum(p))
+				elseif pool == inflater.CUM_ORAL
+					inflater.SetNodeScale(p, "NPC Belly", currentInf + inflater.GetInflation(p))
+				endif
+				; by 15 )
 			endif
 		else
 			bAnimController = true
@@ -217,11 +261,17 @@ Function doPush(int type)
 	
 ;	log("Final cum: "+cum+", cum diff from original: " + diff + ", final inflation: " + currentInf)
 	
-	If currentInf < 1.0
+	; ( comment by 15, hz what? does not take into account an oral inflation 
+	; If currentInf < 1.0
+	; 	currentInf = 0.0
+	; 	StorageUtil.FormListRemove(inflater, inflater.INFLATED_ACTORS, p, true)
+	; 	inflater.sr_plugged.SetValueInt(0)
+	; EndIf
+	If currentInf <= 0.0
 		currentInf = 0.0
-		StorageUtil.FormListRemove(inflater, inflater.INFLATED_ACTORS, p, true)
-		inflater.sr_plugged.SetValueInt(0)
 	EndIf
+	; by 15 )
+
 	if config.BodyMorph && (pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL)
 		;inflater.SetBellyMorphValue(p, currentInf, "PregnancyBelly")
 		inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph)
@@ -236,7 +286,14 @@ Function doPush(int type)
 			inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph4)
 		endif
 	else
-		inflater.SetNodeScale(p, "NPC Belly", currentInf)
+		; ( change by 15, sent to SLIF sum of all pools
+		; inflater.SetNodeScale(p, "NPC Belly", currentInf)
+		if pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL
+			inflater.SetNodeScale(p, "NPC Belly", currentInf + inflater.GetOralCum(p))
+		elseif pool == inflater.CUM_ORAL
+			inflater.SetNodeScale(p, "NPC Belly", currentInf + inflater.GetInflation(p))
+		endif
+		; by 15 )
 	endif
 	if type < 3
 		StorageUtil.SetFloatValue(p, inflater.INFLATION_AMOUNT, currentInf)
@@ -290,6 +347,15 @@ Function doPush(int type)
 			p.additem(FHUVomitCum, cumcompare)
 		endif
 	endif
+
+	; ( add by 15, delete actor from list of inflated actors
+	if StorageUtil.GetFloatValue(p, inflater.CUM_ANAL) == 0.0 && StorageUtil.GetFloatValue(p, inflater.CUM_VAGINAL) == 0.0 && StorageUtil.GetFloatValue(p, inflater.CUM_ORAL) == 0.0
+		StorageUtil.FormListRemove(inflater, inflater.INFLATED_ACTORS, p, true)
+		inflater.RemoveFaction(p)
+		inflater.UnencumberActor(p)
+		inflater.sr_plugged.setValueInt(0)
+	endif
+	; by 15 )
 EndFunction
 
 Function log(String msg)
