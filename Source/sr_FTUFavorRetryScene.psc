@@ -43,7 +43,7 @@ Function FillStart()
 	EndIf
 	ftu.StartMoanLoop(inflater.player)
 	RegisterForModEvent("ftu-favor-retryscene", "FillCont")
-	inflater.InflateTo(inflater.player, 1, 30.0, targetLevel = -1.0, callback = "ftu-favor-retryscene")
+	inflater.InflateTo(inflater.player, 1, targetLevel = -1.0, time = 30.0, callback = "ftu-favor-retryscene")
 EndFunction
 
 Event FillCont(Form akActor, float startVag, float startAn)
@@ -51,9 +51,9 @@ Event FillCont(Form akActor, float startVag, float startAn)
 	UnregisterForModEvent("ftu-favor-retryscene")
 	RegisterForModEvent("ftu-favor-retryscene2", "FillFinish")
 	
-	float target = (inflater.config.maxInflation - inflater.GetOriginalScale(inflater.player)) * 0.2 ; Fill anal pool 20%, not quite enough to trigger bursting which in reality is around ~126% of pool size
+	float target = (inflater.config.maxInflation - inflater.GetAnalCum(inflater.player)) * 0.2 ; Fill anal pool 20%, not quite enough to trigger bursting which in reality is around ~126% of pool size
 	
-	inflater.InflateTo(inflater.player, 2, 10.0, target, callback = "ftu-favor-retryscene2")
+	inflater.InflateTo(inflater.player, 2, target, 10.0, callback = "ftu-favor-retryscene2")
 EndEvent
 
 Event FillFinish(Form akActor, float startVag, float startAn)

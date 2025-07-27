@@ -314,7 +314,7 @@ Function AnimateAndFillPlayer()
 		Debug.SendAnimationEvent(inflater.player, "ZaZMOMBoundFurn_06")
 	EndIf
 	StartMoanLoop(inflater.Player)
-	inflater.inflateTo(inflater.player, 1, 20.0, 2.0)
+	inflater.inflateTo(inflater.player, 1, 2.0, 20.0)
 EndFunction
 
 Function InflationDone()
