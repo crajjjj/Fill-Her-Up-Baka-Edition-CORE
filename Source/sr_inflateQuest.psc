@@ -377,12 +377,12 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
     String stimulationLabel = sr_HentairimUtils.StimulationLabel(anim, Stage, pos)
     String penisActionLabel = sr_HentairimUtils.PenisActionLabel(anim, Stage, pos)
     String endingLabel = sr_HentairimUtils.EndingLabel(anim, Stage, pos)
-    log(">>Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel  )
+    ;log(">>Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel  )
    
     if isAnimationHentairimTaggedStrings(penetrationLabel, oralLabel, stimulationLabel, endingLabel, penisActionLabel)
         isAnimationHentairimTagged = true
     Else
-       log(">> No stage tags detected")
+       log(">> No hentairim stage tags detected")
     endif
 
 	Bool isCummedInside = sr_HentairimUtils.IsCummedInside(endingLabel)
