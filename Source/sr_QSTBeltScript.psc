@@ -28,7 +28,7 @@ Function DeviceMenuRemoveWithoutKey()
 			libs.Notify("You flood the "+deviceInventory.GetName()+" with arcane energies, but everything you cast gets absorbed by the " + deviceName + ".", messageBox=true)
 		endif
 	elseif deviceRemoveOption == 2 ; Brute force
-		DeviceMenuBruteForce()
+		EscapeAttemptStruggle()
 	elseif deviceRemoveOption == 3
         DeviceMenuCarryOn()
     endif
