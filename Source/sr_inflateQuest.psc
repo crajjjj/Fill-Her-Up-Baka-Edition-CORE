@@ -399,15 +399,15 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 		EndIf
 		int currentPool = 0
 		If anim.hasTag("Vaginal") && isVaginalInside
-			logAndPrint(">> Vaginal tags detected")
+			logAndPrint(">>(SLSO) Vaginal tags detected.")
 			currentPool = Math.LogicalOr(currentPool, VAGINAL)
 		EndIf
 		If anim.hasTag("Anal") && isAnalInside
-			logAndPrint(">> Anal tags detected")
+			logAndPrint(">>(SLSO) Anal tags detected")
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
 		If (anim.hasTag("Oral") || anim.hasTag("Blowjob")) && isOralInside
-			logAndPrint(">> Oral tags detected")
+			logAndPrint(">>(SLSO) Oral tags detected")
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
@@ -462,12 +462,15 @@ Event Orgasm(int thread, bool hasPlayer)
 
 		int currentPool = 0
 		If anim.hasTag("Vaginal")
+			logAndPrint(">> Vaginal tags detected.")
 			currentPool = Math.LogicalOr(currentPool, VAGINAL)
 		EndIf
 		If anim.hasTag("Anal")
+			logAndPrint(">> Anal tags detected")
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
 		If anim.hasTag("Oral") || anim.hasTag("Blowjob")
+			logAndPrint(">> Oral tags detected")
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
