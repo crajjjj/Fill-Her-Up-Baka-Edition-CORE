@@ -115,10 +115,7 @@ int maleEnabledOID
 String Property FHUMorphString = "PregnancyBelly" Auto
 String Property FHUMorphString2 = "" Auto
 String Property FHUMorphString3 = "" Auto
-; ( changed by 15, for a fuller belly
-; String Property FHUMorphString4 = "" Auto
-String Property FHUMorphString4 = "BigBelly" Auto
-; by 15 )
+String Property FHUMorphString4 = "" Auto
 String RACE_LIST = "sr.inflater.race.list"
 String CREATURERACE_LIST = "sr.inflater.creaturerace.list"
 string dupemsg = "$FHU_MORPHSTRING_DUPLICATION"
