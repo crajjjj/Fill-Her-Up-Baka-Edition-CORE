@@ -380,11 +380,12 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
     ;log(">>Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel  )
    
     if isAnimationHentairimTaggedStrings(penetrationLabel, oralLabel, stimulationLabel, endingLabel, penisActionLabel)
-        isAnimationHentairimTagged = true
+		isAnimationHentairimTagged = true
+		logAndPrint(">> Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel )
     Else
-       log(">> No hentairim stage tags detected")
+		logAndPrint(">> No hentairim stage tags detected. Fallback to regular tags")
     endif
-
+	
 	Bool isCummedInside = sr_HentairimUtils.IsCummedInside(endingLabel)
 	Bool isDP = IsGettingDoublePenetrated(penetrationLabel)
 
@@ -392,19 +393,21 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
     Bool isAnalInside = !isAnimationHentairimTagged || IsGettingVaginallyPenetrated(penetrationLabel) ||  isCummedInside || isDP
     Bool isOralInside =  !isAnimationHentairimTagged || IsSuckingoffOther(oralLabel)  || isCummedInside
 
-	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal")
+	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
 		If (!sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
 			return
 		EndIf
-
 		int currentPool = 0
 		If anim.hasTag("Vaginal") && isVaginalInside
+			logAndPrint(">> Vaginal tags detected")
 			currentPool = Math.LogicalOr(currentPool, VAGINAL)
 		EndIf
 		If anim.hasTag("Anal") && isAnalInside
+			logAndPrint(">> Anal tags detected")
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
-		If anim.hasTag("Oral") && isOralInside
+		If (anim.hasTag("Oral") || anim.hasTag("Blowjob")) && isOralInside
+			logAndPrint(">> Oral tags detected")
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
@@ -452,7 +455,7 @@ EndEvent
 Event Orgasm(int thread, bool hasPlayer)
 	Actor[] actors = sexlab.HookActors(thread)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
-	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal")
+	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
 		If ( !sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
 			return
 		EndIf
@@ -464,7 +467,7 @@ Event Orgasm(int thread, bool hasPlayer)
 		If anim.hasTag("Anal")
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
-		If anim.hasTag("Oral")
+		If anim.hasTag("Oral") || anim.hasTag("Blowjob")
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
@@ -2635,6 +2638,13 @@ Function log(String msg, int lvl = 0)
 		Debug.Trace("[FillHerUp]: " + msg)
 	EndIf
 	If sr_debug.getValueInt() == 1
+		MiscUtil.PrintConsole("[FillHerUp]: " + msg)
+	EndIf
+EndFunction
+
+Function logAndPrint(String msg, int lvl = 0)
+	If config.logging
+		Debug.Trace("[FillHerUp]: " + msg)
 		MiscUtil.PrintConsole("[FillHerUp]: " + msg)
 	EndIf
 EndFunction
