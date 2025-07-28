@@ -62,7 +62,7 @@ EndFunction
 
 sr_InfEventBase Function GetEventByName(String name)
 	int i = index.Find(name)
-	if 1 != -1
+	if i != -1
 		return events[i]
 	endIf
 	return none

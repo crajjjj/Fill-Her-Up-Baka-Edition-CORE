@@ -204,11 +204,11 @@ String Function ReplaceTokens(String raw, int sex = 1)
 				EndIf
 			ElseIf token == "is"
 				If sex == 1 ; If female
-					token == "are" ; Refer to both holes
+					token = "are" ; Refer to both holes
 				EndIf
 			ElseIf token == "s"
 				If sex == 1 ; If female
-					token == "" ; The verb is plural
+					token = "" ; The verb is plural
 				EndIf
 			EndIf
 			result = StringUtil.Substring(result, 0, left) + token + StringUtil.Substring(result, right + 1, StringUtil.GetLength(result) - right)

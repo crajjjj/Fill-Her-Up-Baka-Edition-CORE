@@ -290,7 +290,7 @@ String Function GetVersionString()
 	return "2.00"
 EndFunction
 
-Event Onint()
+Event OnInit()
 	BaboAnimsSet()
 ;	RegisterInjectorArray()
 	maintenance()
