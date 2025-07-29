@@ -478,7 +478,6 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 	int Stage = threadContr.Stage
 	
  	int pos = GetActorPositionFromList(actors, akActor)
-  	Bool isAnimationHentairimTagged = false
     ;String stageTagsAll = GetStageTagsAsString(animation, Stage)
     String penetrationLabel = sr_HentairimUtils.PenetrationLabel(anim, Stage, pos)
     String oralLabel = sr_HentairimUtils.OralLabel(anim, Stage, pos)
@@ -486,37 +485,43 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
     String penisActionLabel = sr_HentairimUtils.PenisActionLabel(anim, Stage, pos)
     String endingLabel = sr_HentairimUtils.EndingLabel(anim, Stage, pos)
     ;log(">>Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel  )
-   
+   	
+	Bool inflateTrigger = false
+	Bool legacyCondition = anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
+	Bool isCummedInside = false
+	Bool isDP = false
+
+    Bool isVaginalInside = true
+    Bool isAnalInside = true
+    Bool isOralInside= true
+
     if isAnimationHentairimTaggedStrings(penetrationLabel, oralLabel, stimulationLabel, endingLabel, penisActionLabel)
-		isAnimationHentairimTagged = true
-		logAndPrint(">> Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel )
+		logAndPrint(">>Actor:" + akActor.GetLeveledActorBase().GetName() + ":p[" + pos + "],s["+ stage + "]. Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel)
+    	isVaginalInside = IsGivingVaginalPenetration(penisActionLabel) 
+    	isAnalInside =  IsGivingAnalPenetration(penisActionLabel) 
+    	isOralInside =  IsGettingSuckedoff(penisActionLabel)
+		inflateTrigger = legacyCondition && (isVaginalInside || isAnalInside || isOralInside )
     Else
-		logAndPrint(">> No hentairim stage tags detected. Fallback to regular tags")
+		logAndPrint(">>Actor:" + akActor.GetLeveledActorBase().GetName() + ":p[" + pos + "],s["+ stage + "]. No hentairim stage tags detected. Fallback to regular tags")
+		inflateTrigger = legacyCondition
     endif
-	
-	Bool isCummedInside = sr_HentairimUtils.IsCummedInside(endingLabel)
-	Bool isDP = IsGettingDoublePenetrated(penetrationLabel)
 
-    Bool isVaginalInside = !isAnimationHentairimTagged || IsGettingVaginallyPenetrated(penetrationLabel) ||  isCummedInside || isDP
-    Bool isAnalInside = !isAnimationHentairimTagged || IsGettingVaginallyPenetrated(penetrationLabel) ||  isCummedInside || isDP
-    Bool isOralInside =  !isAnimationHentairimTagged || IsSuckingoffOther(oralLabel)  || isCummedInside
-
-	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
+	If inflateTrigger
 		If (!sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
 			return
 		EndIf
 		
 		int currentPool = 0
 		If anim.hasTag("Vaginal") && isVaginalInside
-			logAndPrint(">>(SLSO) Vaginal tags detected.")
+			logAndPrint(">>(SLSO) Vaginal penetration detected.")
 			currentPool = Math.LogicalOr(currentPool, VAGINAL)
 		EndIf
 		If anim.hasTag("Anal") && isAnalInside
-			logAndPrint(">>(SLSO) Anal tags detected")
+			logAndPrint(">>(SLSO) Anal penetration detected")
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
 		If (anim.hasTag("Oral") || anim.hasTag("Blowjob")) && isOralInside
-			logAndPrint(">>(SLSO) Oral tags detected")
+			logAndPrint(">>(SLSO) Oral penetration detected")
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
@@ -567,15 +572,15 @@ Event Orgasm(int thread, bool hasPlayer)
 		
 		int currentPool = 0
 		If anim.hasTag("Vaginal")
-			logAndPrint(">> Vaginal tags detected.")
+			logAndPrint(">> Vaginal penetration detected.")
 			currentPool = Math.LogicalOr(currentPool, VAGINAL)
 		EndIf
 		If anim.hasTag("Anal")
-			logAndPrint(">> Anal tags detected")
+			logAndPrint(">> Anal penetration detected")
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
 		If anim.hasTag("Oral") || anim.hasTag("Blowjob")
-			logAndPrint(">> Oral tags detected")
+			logAndPrint(">> Oral penetration detected")
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf

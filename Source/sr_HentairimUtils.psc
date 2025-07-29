@@ -280,6 +280,19 @@ endfunction
 Bool Function IsSuckingoffOther(String OralLabel) Global
 	return OralLabel == "SBJ" ||  OralLabel == "FBJ"
 endfunction
+
+Bool Function IsGivingAnalPenetration(String PenisActionLabel) Global
+	return PenisActionLabel == "FDA" || PenisActionLabel == "SDA"
+endfunction
+
+Bool Function IsGivingVaginalPenetration(String PenisActionLabel) Global
+	return PenisActionLabel =="FDV" || PenisActionLabel == "SDV"
+endfunction
+
+Bool Function IsGettingSuckedoff(String PenisActionLabel) Global
+	return PenisActionLabel == "SMF" ||  PenisActionLabel == "FMF"	
+endfunction
+
 ;SDV - Giving Soft/Slow Vaginal Penetration
 ;FDV - Giving Fast/Intense Vaginal Penetration
 ;SDA - Giving Soft/Slow Anal Penetration

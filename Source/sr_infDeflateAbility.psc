@@ -298,10 +298,6 @@ Function doPush(int type, int spermtype)
 
 	;Cumout(actor p, currentInf);While Script
 	While (keydown || p.HasMagicEffect(sr_ExpelCumMGEF)) && p.GetActorValuePercentage("Stamina") > 0.02 && cum > 0.02
-		float deflateAmount = 0.05 * (1.0 / inflater.config.animMult)
-		If deflateAmount > cum
-			deflateAmount = cum
-		EndIf
 		currentInf -= 0.05*(1.0/inflater.config.animMult)
 		cum -= 0.05*(1.0/inflater.config.animMult)
 		tick -= 0.3
