@@ -406,7 +406,7 @@ Function CheckGamePad()
 EndFunction
 
 Event OnConfigInit()
-	parent.OnGameReload()
+	parent.OnConfigInit()
 	PageReset()
 EndEvent
 

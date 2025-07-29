@@ -50,9 +50,7 @@ Event FillCont(Form akActor, float startVag, float startAn)
 	inflater.log("Favor retry fill continue")
 	UnregisterForModEvent("ftu-favor-retryscene")
 	RegisterForModEvent("ftu-favor-retryscene2", "FillFinish")
-	
-	float target = (inflater.config.maxInflation - inflater.GetAnalCum(inflater.player)) * 0.2 ; Fill anal pool 20%, not quite enough to trigger bursting which in reality is around ~126% of pool size
-	
+	float target = (inflater.config.maxInflation - StorageUtil.GetFloatValue(inflater.player, inflater.ORIGINAL_SCALE, 1.0)) * 0.2 ; Fill anal pool 20%, not quite enough to trigger bursting which in reality is around ~126% of pool size
 	inflater.InflateTo(inflater.player, 2, target, 10.0, callback = "ftu-favor-retryscene2")
 EndEvent
 
