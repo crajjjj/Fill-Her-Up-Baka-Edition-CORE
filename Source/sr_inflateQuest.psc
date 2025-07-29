@@ -229,6 +229,7 @@ Idle[] BaboAnimsAnusEnd
 int animnum
 ;int MoanType
 bool dhlpSuspend
+bool initialized = false
 
 Race Property ChaurusRace Auto
 Race Property ChaurusReaperRace Auto
@@ -342,8 +343,10 @@ String Function GetVersionString()
 EndFunction
 
 Event OnInit()
-	BaboAnimsSet()
-	maintenance()
+	If(!initialized)
+		initialized = true
+		maintenance()
+	EndIf
 EndEvent
 
 Function VersionUpdate()
@@ -371,6 +374,7 @@ Function VersionUpdate()
 EndFunction
 
 Function maintenance()
+	log("maintenance()")
 	if config.enabled
 		;debug.notification("FHU Maintenance")
 		RegisterForModEvent("HookOrgasmStart", "Orgasm")
@@ -380,6 +384,7 @@ Function maintenance()
 		RegisterForModEvent("dhlp-Resume", "OnDhlpResume" )
 		RestoreActors()
 	endif
+	BaboAnimsSet()
 	eventManager.Maintenance()
 	(sr_inflateExternalEventManager as sr_inflateExternalEventController).RegisterModEvent()
 	defAlias.Maintenance()

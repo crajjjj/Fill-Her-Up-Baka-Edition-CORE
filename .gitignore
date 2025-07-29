@@ -539,3 +539,9 @@ xmake-requires.lock
 skyrimse.ppj
 SkyrimSE.code-workspace
 .vscode
+
+
+# Andb Compile scripts
+/PAPYRUS
+/Build.ps1
+/include.txt

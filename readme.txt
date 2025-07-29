@@ -1,3 +1,11 @@
+V2.0.3.2
+- Hard Dependency: MfgFix NG
+
+V2.0.3.1 (vs 2.03)
+- Soft dependency: Hentairim
+- Various typo fixes
+
+-------------------------
 V1.1
 1. Changed the inflate value is sent to SLIF for the amount of two pools "oral" and "anal+vag". 
 
