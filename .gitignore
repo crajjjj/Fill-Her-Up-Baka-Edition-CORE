@@ -539,3 +539,4 @@ xmake-requires.lock
 skyrimse.ppj
 SkyrimSE.code-workspace
 .vscode
+*.pex
