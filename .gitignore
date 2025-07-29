@@ -545,3 +545,4 @@ SkyrimSE.code-workspace
 /PAPYRUS
 /Build.ps1
 /include.txt
+*.pex
