@@ -27,3 +27,7 @@ EndFunction
 int function DecimalCheck()
 	return 1
 EndFunction
+
+;/ Event onupdate() /;
+	;/ inflater.bDeflateAnimation = true /;
+;/ EndEvent /;

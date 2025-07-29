@@ -103,6 +103,9 @@ bool resettingquest = false
 int resetOID
 int resetquestOID
 
+int gamepadOID
+bool property bgamepad auto hidden
+
 bool property enabled = true auto hidden
 int enabledOID
 
@@ -141,8 +144,12 @@ int property SendeventCriterion Auto hidden
 int property SendeventCriterionDefault = 50 autoreadonly hidden
 
 bool events 
+bool property eventsImpregnation auto hidden
+bool property eventAnimation auto hidden
 bool property eventsDefault = true autoreadonly hidden
 int eventsOID
+int eventsImpregnationOID
+int eventAnimationOID
 int[] eventOIDs
 int[] ToggleSlotID
 int[] SlotValue
@@ -176,6 +183,10 @@ bool property FHUMorphSLIF auto hidden
 bool property FHUMorphSLIF2 auto hidden
 bool property FHUMorphSLIF3 auto hidden
 bool property FHUMorphSLIF4 auto hidden
+
+int BodyMorphApplyPeriodOID
+float property BodyMorphApplyPeriod auto hidden
+float property BodyMorphApplyPeriodDefault = 1.0 autoreadonly hidden
 
 int BodyMorphOID
 bool property BodyMorph = true Auto hidden
@@ -250,13 +261,17 @@ bool BeeingFemale_Installed
 bool SLIF_Installed
 bool Property FHUSLIF = true Auto hidden
 
+Faction Property zadAnimatingFaction auto 
+Faction Property DefeatFaction auto 
+Faction Property UDMinigameFaction auto 
+Faction Property BathinginSkyrimFaction auto 
 
 bool property addedEvents = true autoreadonly hidden
 int runCount = 0
 Keyword property ActorTypeNPC Auto
 
 int Function GetVersion()
-	return (100+3) ;(VersionNumFloatTruncatedToTenth*10)^2+SubversionNum
+	return (100+96) ;(VersionNumFloatTruncatedToTenth*10)^2+SubversionNum
 EndFunction
 
 Function VerifyMods()
@@ -302,6 +317,23 @@ Function VerifyMods()
 	Else
 		SLIF_Installed = false
 	Endif
+	
+	If Game.GetModByName("Devious Devices - Integration.esm") != 255
+		zadAnimatingFaction		= Game.GetFormFromFile(0x00029567, "Devious Devices - Integration.esm") as Faction
+	EndIf
+
+	If Game.GetModByName("SexLabDefeat.esp") != 255
+		DefeatFaction			= Game.GetFormFromFile(0x00001D92, "SexLabDefeat.esp") as Faction
+	EndIf
+
+	If Game.GetModByName("UnforgivingDevices.esp") != 255
+		UDMinigameFaction		= Game.GetFormFromFile(0x00150DA3, "UnforgivingDevices.esp") as Faction
+	EndIf
+
+	If Game.GetModByName("Bathing in Skyrim.esp") != 255
+		; TODO:
+		; BathinginSkyrimFaction = 
+	EndIf
 
 EndFunction
 
@@ -313,6 +345,7 @@ Function SetDefaults()
 	addRaceKey = addRaceKeyDefault
 	animDeflate = animDeflateDefault
 	animMult = animMultDefault
+	BodyMorphApplyPeriod = BodyMorphApplyPeriodDefault
 	encumber = encumberDefault
 	enabled = true
 	femaleEnabled = true
@@ -320,15 +353,21 @@ Function SetDefaults()
 	statusMsg = statusMsgDefault
 	npcComments = npcCommentsDefault
 	followerComments = followerCommentsDefault
+	If followerComments
+		sr_followerCommentChance.SetValueInt(26)
+	EndIf
 	eventManager.interval = eventIntervalDefault
 	SendeventChance = SendeventChanceDefault
+	sr_SendingSpermDataChance.setvalue(SendeventChance)
 	SendeventCriterion = SendeventCriterionDefault
+	sr_SendingSpermDataCriterion.setvalue(SendeventCriterion)
 	events = eventsDefault
 	bellyScale = bellyScaleDefault
 	BodyMorph = true
-	FHUSLIF = true
 	MoanSound = true
+	sr_MoanSound.setvalue(1)
 	SexlabMoanSound = true
+	sr_SexlabMoanSound.setvalue(1)
 	Deflatechance = DeflatechanceDefault
 	sr_ExpelFaliure.setvalue(Deflatechance)
 	VariousCum = VariousCumDefault
@@ -362,6 +401,10 @@ Function RegisterKeys()
 	EndIf
 EndFunction
 
+Function CheckGamePad()
+	bgamepad = Game.UsingGamepad()
+EndFunction
+
 Event OnConfigInit()
 	parent.OnGameReload()
 	PageReset()
@@ -382,6 +425,7 @@ EndFunction
 
 Event OnVersionUpdate(int newVersion)
 	If newVersion != currentVersion
+		VerifyMods()
 		ModName = "Fill her up"
 		bool monitoring = inflater.GetState() == "MonitoringInflation"
 		inflater.stop()
@@ -404,6 +448,12 @@ Event OnVersionUpdate(int newVersion)
 
 		If currentVersion == 0
 			SetDefaultCumAmounts()
+			if SLIF_Installed
+				sr_SLIF.setvalue(1)
+				FHUSLIF = true
+			else
+				FHUSLIF = false
+			endif
 		EndIf
 		InitCumMagicEffects()
 		sr_inflatedCommentChance.SetValueInt(26)
@@ -416,13 +466,8 @@ Event OnVersionUpdate(int newVersion)
 		EndIf
 		Debug.Notification("Fill Her Up " + inflater.GetVersionString() + " initialized.")
 	EndIf
-	; ( changed by 15
-	; debug.messagebox("Fill Her Up Update")
-	debug.Notification("Fill Her Up Update")
-	; by 15 )
+	;debug.Notification("Fill Her Up Update from " + CurrentVersion + " to " + newVersion)
 EndEvent
-
-
 
 Event OnPageReset(String page)
 	if sr_InfReInit.GetValueInt() > 0
@@ -498,10 +543,16 @@ Event OnPageReset(String page)
 				FHUMorphSLIF4OID = AddToggleOption("$FHU_MORPHSLIF4", false, OPTION_FLAG_DISABLED)
 			endif
 		endif
-		FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF)
+		if SLIF_Installed
+			FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF)
+		else
+			FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF, OPTION_FLAG_DISABLED)
+		endif
+		BodyMorphApplyPeriodOID = AddSliderOption("$FHU_BODYMORPH_APPLY_PERIOD", BodyMorphApplyPeriod, "{1}")
 		addRaceKeyOID = AddKeyMapOption("$FHU_ADD_RACE", addRaceKey, OPTION_FLAG_WITH_UNMAP)
 		consolePrintOID = AddToggleOption("$FHU_CONSOLE_PRINT", consolePrint)
 		loggingOID = AddToggleOption("$FHU_LOGGING", logging)
+		gamepadOID = AddToggleOption("$FHU_GAMEPAD", bgamepad)
 		resetOID = AddTextOption("$FHU_RESET_ACTORS", "$FHU_RESET")
 		resetquestOID = AddTextOption("$FHU_RESET_QUEST", "$FHU_RESETQUEST")
 		AddEmptyOption()
@@ -517,6 +568,8 @@ Event OnPageReset(String page)
 		SetCursorPosition(1)
 		eventsOID = AddToggleOption("$FHU_EVENTS", events)
 		eventIntervalOID = AddSliderOption("$FHU_EVENT_INTERVAL", eventManager.interval, "{2} hours")
+		eventsImpregnationOID = AddToggleOption("$FHU_EVENT_IMPREGNATION", eventsImpregnation)
+		eventAnimationOID = AddToggleOption("$FHU_EVENT_ANIMATION", eventAnimation)
 		eventSendeventChanceOID = AddSliderOption("$FHU_SENDEVENT_CHANCE", SendeventChance, "{0}%")
 		eventSendeventCriterionOID = AddSliderOption("$FHU_SENDEVENT_CRITERION", SendeventCriterion, "{0}%")
 		
@@ -532,15 +585,15 @@ Event OnPageReset(String page)
 		AddHeaderOption("$FHU_Compatibility")
 		
 		If BeeingFemale_Installed
-		BeeingFemaleOID = Addtextoption("$FHU_BeeingFemale", "$Installed")
+			BeeingFemaleOID = Addtextoption("$FHU_BeeingFemale", "$Installed")
 		Else
-		BeeingFemaleOID = Addtextoption("$FHU_BeeingFemale", "$NotInstalled")
+			BeeingFemaleOID = Addtextoption("$FHU_BeeingFemale", "$NotInstalled")
 		EndIf
 		
 		If Fertility_Installed
-		FertilityOID = Addtextoption("$FHU_Fertility", "$Installed")
+			FertilityOID = Addtextoption("$FHU_Fertility", "$Installed")
 		Else
-		FertilityOID = Addtextoption("$FHU_Fertility", "$NotInstalled")
+			FertilityOID = Addtextoption("$FHU_Fertility", "$NotInstalled")
 		EndIf
 
 		OnEventSpermPlayerOID = AddToggleOption("$FHU_OnEventSpermPC_EFFECT", sr_OnEventSpermPlayer.getvalue())
@@ -594,17 +647,10 @@ Event OnPageReset(String page)
 		AddHeaderOption(inflater.player.GetLeveledActorBase().GetName())
 		If inflater.sexlab.GetGender(inflater.player)==1
 			AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(inflater.player), 0, 5))
-		; ( add by 15, femboy can have VaginalCum if he had OralBursting or random from anal and oral sex
-		ElseIf inflater.player.GetLeveledActorBase().Getsex() == 1 && inflater.GetVaginalCum(inflater.player) > 0
-			AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(inflater.player), 0, 5))
-		; by 15 )
 		EndIf
 		AddTextOption("$FHU_AN_AMOUNT", StringUtil.SubString(inflater.GetAnalCum(inflater.player), 0, 5))
 		AddTextOption("$FHU_OR_AMOUNT", StringUtil.SubString(inflater.GetOralCum(inflater.player), 0, 5))
-		; ( add by 15, show total amount, vag + anal + oral
-		; AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(inflater.player), 0, 5))
-		AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(inflater.player) + inflater.GetOralCum(inflater.player), 0, 5))
-		; by 15 )
+		AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(inflater.player), 0, 5))
 		Actor a
 		int i = StorageUtil.FormListCount(inflater, inflater.INFLATED_ACTORS)
 		While i > 0
@@ -614,19 +660,22 @@ Event OnPageReset(String page)
 				AddHeaderOption(a.GetLeveledActorBase().GetName())
 				If inflater.sexlab.GetGender(a)== 1
 					AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(a), 0, 5))
-				; ( add by 15, femboy can have VaginalCum if he had OralBursting
-				ElseIf a.GetLeveledActorBase().Getsex() == 1 && inflater.GetVaginalCum(a) > 0
-					AddTextOption("$FHU_VAG_AMOUNT", StringUtil.SubString(inflater.GetVaginalCum(a), 0, 5))
-				; by 15 )
 				EndIf
 				AddTextOption("$FHU_AN_AMOUNT", StringUtil.SubString(inflater.GetAnalCum(a), 0, 5))
-				; ( add by 15, other npc have oral inflation
 				AddTextOption("$FHU_OR_AMOUNT", StringUtil.SubString(inflater.GetOralCum(a), 0, 5))
-				; by 15 )
-				; ( add by 15, show total amount. vag + anal + oral
-				; AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(a), 0, 5))
-				AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(a) + inflater.GetOralCum(a), 0, 5))
-				; by 15 )
+				AddTextOption("$FHU_TOTAL_INF", StringUtil.SubString(inflater.GetInflation(a),0,5))
+				
+				int iinjector = StorageUtil.FormListCount(a, "sr.inflater.injector")
+				while iinjector > 0
+					iinjector -= 1
+					Actor injector = StorageUtil.FormListGet(a, "sr.inflater.injector", iinjector) as Actor
+					If injector
+						AddTextOption(injector.GetLeveledActorBase().GetName(), DefineSex(injector))
+					Else
+						AddTextOption("Unknown", "Unknown")
+					EndIf
+				endwhile
+
 			EndIf
 		EndWhile
 		SetCursorPosition(1)
@@ -634,29 +683,60 @@ Event OnPageReset(String page)
 		int iinjector = sr_InjectorFormlist.getsize()
 		while iinjector > 0
 			iinjector -= 1
-			AddTextOption((sr_InjectorFormlist.getat(iinjector) as actor).GetLeveledActorBase().GetName(), DefineSex(sr_InjectorFormlist.getat(iinjector) as actor))
+			Actor injector = sr_InjectorFormlist.getat(iinjector) as actor
+			If injector
+				AddTextOption(injector.GetLeveledActorBase().GetName(), DefineSex(injector))
+			Else
+				AddTextOption("Unknown", "Unknown")
+			EndIf
 		EndWhile
 	ElseIf page == pages[3] ; Human Cum Amounts
-		GoToState("humancumamount")
-		AddHeaderOption("$FHU_RACE_AMOUNTS")
-		int n = StorageUtil.FormListCount(self, RACE_LIST)
-		int i = 0
-		while i < n
-			Race raze = StorageUtil.FormListGet(self, RACE_LIST, i) as Race
-			raceOID[i] = AddSliderOption(MiscUtil.GetRaceEditorID(raze), StorageUtil.GetFloatValue(raze, inflater.RACE_CUM_AMOUNT, 0.75), "{2}")
-			i += 1
-		endWhile
+		int n
+		int i
+		Race raze
+		if (inflater.GetOralCum(inflater.player) + inflater.GetAnalCum(inflater.player) + inflater.GetVaginalCum(inflater.player)) > 0
+			GoToState("Locked_humancumamount")
+			AddHeaderOption("$FHU_RACE_AMOUNTS_LOCKED")
+			n = StorageUtil.FormListCount(self, RACE_LIST)
+			i = 0
+			while i < n
+				raze = StorageUtil.FormListGet(self, RACE_LIST, i) as Race
+				raceOID[i] = AddTextOption(MiscUtil.GetRaceEditorID(raze), StorageUtil.GetFloatValue(raze, inflater.RACE_CUM_AMOUNT, 0.75))
+				i += 1
+			endWhile
+		else
+			GoToState("humancumamount")
+			AddHeaderOption("$FHU_RACE_AMOUNTS")
+			n = StorageUtil.FormListCount(self, RACE_LIST)
+			i = 0
+			while i < n
+				raze = StorageUtil.FormListGet(self, RACE_LIST, i) as Race
+				raceOID[i] = AddSliderOption(MiscUtil.GetRaceEditorID(raze), StorageUtil.GetFloatValue(raze, inflater.RACE_CUM_AMOUNT, 0.75), "{2}")
+				i += 1
+			endWhile
+		endif
 	ElseIf page == pages[4] ; Creature Cum Amounts
+	int nc = 48
+	int ic = 0
+	Race Creatureraze
+	if (inflater.GetOralCum(inflater.player) + inflater.GetAnalCum(inflater.player) + inflater.GetVaginalCum(inflater.player)) > 0
+		GoToState("Locked_creaturecumamount")
+		AddHeaderOption("$FHU_CREATURERACE_AMOUNTS_LOCKED")
+		while ic < nc
+			Creatureraze = StorageUtil.FormListGet(self, CREATURERACE_LIST, ic) as Race
+			CreatureRaceOID[ic] = AddTextOption(MiscUtil.GetRaceEditorID(Creatureraze), StorageUtil.GetFloatValue(Creatureraze, inflater.CREATURERACE_CUM_AMOUNT, 0.75))
+			ic += 1
+		endWhile
+	else	
 		GoToState("creaturecumamount")
 		AddHeaderOption("$FHU_CREATURERACE_AMOUNTS")
-;		int nc = StorageUtil.FormListCount(self, CREATURERACE_LIST)
-		int nc = 48
-		int ic = 0
 		while ic < nc
-			Race Creatureraze = StorageUtil.FormListGet(self, CREATURERACE_LIST, ic) as Race
+			Creatureraze = StorageUtil.FormListGet(self, CREATURERACE_LIST, ic) as Race
 			CreatureRaceOID[ic] = AddSliderOption(MiscUtil.GetRaceEditorID(Creatureraze), StorageUtil.GetFloatValue(Creatureraze, inflater.CREATURERACE_CUM_AMOUNT, 0.75), "{2}")
 			ic += 1
 		endWhile
+	endif
+
 	EndIf	
 EndEvent
 
@@ -685,16 +765,18 @@ State settings
 		ElseIf opt == OralmaxInflationOID
 			SetSliderDialogStartValue(OralmaxInflation)
 			SetSliderDialogDefaultValue(OralmaxInflationDefault)
-			; ( changed by 15, for a fuller belly
-			; SetSliderDialogRange(0.1, 5.0)
-			SetSliderDialogRange(0.1, 20.0)
-			; by 15 )
+			SetSliderDialogRange(0.1, 5.0)
 			SetSliderDialogInterval(0.05)
 		ElseIf opt == animMultOID
 			SetSliderDialogStartValue(animMult)
 			SetSliderDialogDefaultValue(animMultDefault)
 			SetSliderDialogRange(1.0, 20.0)
 			SetSliderDialogInterval(1.0)
+		ElseIf opt == BodyMorphApplyPeriodOID
+			SetSliderDialogStartValue(BodyMorphApplyPeriod)
+			SetSliderDialogDefaultValue(BodyMorphApplyPeriodDefault)
+			SetSliderDialogRange(0.2, 2.0)
+			SetSliderDialogInterval(0.2)
 		ElseIf opt == cumMultOID
 			SetSliderDialogStartValue(inflater.cumMult)
 			SetSliderDialogDefaultValue(1.00)
@@ -730,6 +812,10 @@ State settings
 			animMult = val
 			SetSliderOptionValue(opt, animMult, "{1}")
 			inflater.log("Animation duration multiplier set to: " + animMult)
+		ElseIf opt == BodyMorphApplyPeriodOID
+			BodyMorphApplyPeriod = val
+			SetSliderOptionValue(opt, BodyMorphApplyPeriod, "{1}")
+			inflater.log("BodyMorph Apply Period set to: " + animMult)
 		ElseIf opt == cumMultOID
 			inflater.cumMult = val
 			SetSliderOptionValue(opt, val, "{2}")
@@ -810,12 +896,8 @@ State settings
 			SetToggleOptionValue(loggingOID, logging)
 			inflater.log("Logging set to: " + logging)
 		ElseIf opt == FHUSLIFOID
-			; ( change by 15, typo?
-			; FHUSLIF != FHUSLIF
-			; sr_SLIF.setvalue(FHUSLIF as int)
 			FHUSLIF = !FHUSLIF
 			sr_SLIF.SetValueInt(FHUSLIF as int)
-			; by 15 )
 			SetToggleOptionValue(FHUSLIFOID, FHUSLIF)
 		ElseIf opt == resetOID
 			if !resetting
@@ -1021,6 +1103,8 @@ State settings
 			SetInfoText("$FHU_STATUS_MESSAGES_CHANCE_HELP")
 		ElseIf opt == animMultOID
 			SetInfoText("$FHU_ANIM_MULT_HELP")
+		ElseIf opt == BodyMorphApplyPeriodOID
+			SetInfoText("$FHU_BODYMORPH_APPLY_PERIOD_HELP")
 		ElseIf opt == bellyScaleOID
 			SetInfoText("$FHU_VISUAL_BELLY_HELP")
 		ElseIf opt == BodyMorphOID
@@ -1060,7 +1144,7 @@ State settings
 EndState
 
 State humancumamount
-Event OnOptionSliderOpen(int opt)
+	Event OnOptionSliderOpen(int opt)
 		int i = StorageUtil.FormListCount(self, RACE_LIST)
 			While i > 0
 				i -= 1
@@ -1085,6 +1169,10 @@ Event OnOptionSliderOpen(int opt)
 			endWhile
 	EndEvent
 EndState
+
+state Locked_humancumamount
+
+endstate
 
 State creaturecumamount
 	Event OnOptionSliderOpen(int opt)
@@ -1111,6 +1199,9 @@ State creaturecumamount
 				EndIf
 			endWhile
 	EndEvent
+EndState
+
+State Locked_creaturecumamount
 EndState
 
 State events
@@ -1212,6 +1303,13 @@ State events
 			Else
 				eventManager.StopEvents()
 			EndIf
+		elseIf opt == eventsImpregnationOID
+			eventsImpregnation = !eventsImpregnation
+			SetToggleOptionValue(eventsImpregnationOID, eventsImpregnation)
+		elseIf opt == eventAnimationOID
+			eventAnimation = !eventAnimation
+			inflater.RubAnimation = eventAnimation
+			SetToggleOptionValue(eventAnimationOID, eventAnimation)
 		Else
 			int idx = ToggleSlotID.Find(opt)
 			if (idx >= 0)
@@ -1287,6 +1385,10 @@ State events
 			SetInfoText("$FHU_OnEventSpermPC_EFFECT_HELP")
 		ElseIf opt == OnEventSpermNPCOID
 			SetInfoText("$FHU_OnEventSpermNPC_EFFECT_HELP")
+		ElseIf opt == eventsImpregnationOID
+			SetInfoText("$FHU_EVENT_IMPREGNATION_HELP")	
+		ElseIf opt == eventAnimationOID
+			SetInfoText("$FHU_EVENT_ANIMATION_HELP")
 		elseif opt >= ToggleSlotID[0] && opt <= ToggleSlotID[31]
 			SetInfoText("$FHU_TOGGLESLOT_HELP")
 		Else
@@ -1329,6 +1431,9 @@ Event OnOptionDefault(int opt)
 	ElseIf opt == animMultOID
 		animMult = animMultDefault
 		SetSliderOptionValue(opt, animMult, "{1}")
+	ElseIf opt == BodyMorphApplyPeriodOID
+		BodyMorphApplyPeriod = BodyMorphApplyPeriodDefault
+		SetSliderOptionValue(opt, BodyMorphApplyPeriod, "{1}")
 	ElseIf opt == encumberOID
 		encumber = encumberDefault
 		SetToggleOptionValue(encumberOID, encumber)

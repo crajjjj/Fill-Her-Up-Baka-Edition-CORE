@@ -5,12 +5,14 @@ import sr_HentairimUtils
 
 sr_inflateConfig Property config auto
 sr_infDeflateAbility Property defAlias Auto
-sr_inflateMessages Property dialogue auto
+sr_inflateMessages Property dialogue auto 
 sr_infEventManager Property eventManager auto
+sr_infPlayer Property infplayer auto
+ 
 Quest Property sr_inflateExternalEventManager Auto
 GlobalVariable Property sr_debug auto
 Keyword Property sr_WhyWontYouDispel Auto
-Spell Property sr_inflateBurstSpell Auto
+Spell Property sr_inflateBurstSpell Auto 
 LeveledItem Property TongueLVL Auto
 Armor TongueA
 Armor Property Tongue Auto
@@ -67,6 +69,8 @@ GlobalVariable Property SRSlotMaskB Auto
 Armor[] wornforms
 
 
+Faction Property sr_Impregnated Auto
+Faction Property sr_Impregnatedanal Auto
 Faction Property sr_DARAnimatingType Auto
 Faction Property inflaterAnimatingFaction Auto
 Faction Property inflateFaction Auto
@@ -77,27 +81,34 @@ Spell Property encumber15 Auto
 Spell Property encumber20 Auto
 Spell Property encumber25 Auto
 
+Spell Property sr_expelcumspell Auto
 SexLabFramework Property sexlab auto
 Faction Property slAnimatingFaction auto
+Faction Property zadAnimatingFaction auto 
+Faction Property DefeatFaction auto 
+Faction Property UDMinigameFaction auto 
 
 Package Property stayStillPackage auto
 
 GlobalVariable Property GameDaysPassed auto
 bool zad = false
-Keyword Property zad_DeviousPlugAnal auto
-Keyword Property zad_DeviousPlugVaginal auto
-Keyword Property zad_DeviousBelt auto
-Keyword Property zad_PermitAnal auto
+Keyword Property zad_DeviousGag auto 
+Keyword Property zad_PermitOral auto 
+
+Keyword Property zad_DeviousPlugAnal auto 
+Keyword Property zad_DeviousPlugVaginal auto 
+Keyword Property zad_DeviousBelt auto 
+Keyword Property zad_PermitAnal auto 
 
 ImpactDataSet Property SFU_CumImpactDataSet Auto
 ImpactDataSet Property SFU_CumMidImpactDataSet Auto
 ImpactDataSet Property SFU_CumHighImpactDataSet Auto
 
-Actor[] Property Injector Auto
-Actor[] Property InjectorPlayer Auto
+;Actor[] Property Injector Auto ; deprecated
+;Actor[] Property InjectorPlayer Auto ; deprecated
 formlist Property sr_InjectorFormlist auto
 Actor Property Player Auto
-Actor DeflateActor
+;Actor DeflateActor
 Static Property xMarker Auto
 ;Spell Property puddleSpell Auto
 
@@ -106,12 +117,12 @@ Keyword Property SLA_AnalPlugBeads Auto
 Keyword Property SLA_AnalPlugTail Auto
 Keyword Property SLA_VaginalBeads Auto
 
-int property Tongueri auto
-int property cumtypei auto
+;int property Tongueri auto
+;int property cumtypei auto
 
 sr_inflateThread[] Property threads auto
 
-Bool TongueOut
+;Bool TongueOut
 
 GlobalVariable Property sr_CumMultiplier Auto
 GlobalVariable Property sr_SLIF Auto
@@ -119,7 +130,7 @@ float Property cumMult hidden
 	float Function Get()
 		return sr_CumMultiplier.GetValue()
 	EndFunction
-
+	
 	Function Set(float val)
 		sr_CumMultiplier.SetValue(val)
 	EndFunction
@@ -127,17 +138,21 @@ EndProperty
 
 float Property BURST_MULT = 1.2 autoreadonly hidden
 
+String Property EXPEL_SWITCH = "sr.inflater.expel.switch" autoreadonly hidden;Do we need this?
+
 String Property ORIGINAL_SCALE = "sr.inflater.scale.original" autoreadonly hidden
 String Property INFLATION_AMOUNT = "sr.inflater.amount" autoreadonly hidden
 String Property INFLATED_ACTORS = "sr.inflater.Actors" autoreadonly hidden
 
-String Property LAST_TIME_VAG = "sr.inflater.time.vaginal" autoreadonly hidden
+String Property LAST_TIME_VAG = "sr.inflater.time.vaginal" autoreadonly hidden 
 String Property LAST_TIME_ANAL = "sr.inflater.time.anal" autoreadonly hidden
 String Property LAST_TIME_ORAL = "sr.inflater.time.oral" autoreadonly hidden
 
 String Property CUM_VAGINAL = "sr.inflater.cum.vaginal" autoreadonly hidden
 String Property CUM_ANAL = "sr.inflater.cum.anal" autoreadonly hidden
 String Property CUM_ORAL = "sr.inflater.cum.oral" autoreadonly hidden
+
+String Property CUM_LUMP_VAGINAL = "sr.inflater.lump.vaginal" autoreadonly hidden
 
 String Property InflateMorph = "PregnancyBelly" Auto
 String property InflateMorph2 = "" Auto
@@ -157,7 +172,7 @@ String property CREATURERACE_CUM_EFFECTS = "sr.inflater.Creaturerace.cum.effects
 String Property START_INFLATION = "sr.inflater.start" autoreadonly hidden
 String Property START_ABSORPTION = "sr.inflater.absorb" autoreadonly hidden
 
-int property VAGINAL	= 0x01 autoreadonly hidden
+int property VAGINAL		= 0x01 autoreadonly hidden
 int property ANAL		= 0x02 autoreadonly hidden
 int property ORAL		= 0x04 autoreadonly hidden
 
@@ -165,6 +180,10 @@ GlobalVariable Property sr_EstrusChaurus auto
 GlobalVariable Property sr_Fertility auto
 GlobalVariable Property sr_BeeingFemale auto
 
+Idle property BaboStomachRubbing auto
+Idle property BaboSpermExpelPanting auto
+Idle property BaboSpermExpelRefuse auto
+Idle property BaboSpermAnusExpelFail auto
 Idle property BaboSpermExpel auto
 Idle property BaboSpermOut01Start auto
 Idle property BaboSpermOut02Start auto
@@ -201,14 +220,15 @@ Idle[] BaboAnimsStart
 Idle[] BaboAnimsEnd
 
 Idle[] BaboAnimsOral
-Idle[] BaboAnimsOralStart
-Idle[] BaboAnimsOralEnd
+Idle[] BaboAnimsOralStart 
+Idle[] BaboAnimsOralEnd 
 
 Idle[] BaboAnimsAnusStart
 Idle[] BaboAnimsAnusEnd
 
 int animnum
-int MoanType
+;int MoanType
+bool dhlpSuspend
 
 Race Property ChaurusRace Auto
 Race Property ChaurusReaperRace Auto
@@ -220,23 +240,42 @@ Race Property FrostbiteSpiderRaceGiant Auto
 Race Property FrostbiteSpiderRaceLarge Auto
 Race Property DLC2ExpSpiderBaseRace Auto
 Race Property DLC2ExpSpiderPackmuleRace Auto
-int Property spermtype Auto
-Bool AnalDeflation
+;int Property spermtype Auto ; deprecated
+;Bool AnalDeflation
 
-Sound Property sr_FHUMoanMildMarker  Auto
-Sound Property sr_FHUMoanHardMarker  Auto
-Sound Property sr_FHUMoanDenialMarker  Auto
-Sound Property sr_FHUCumDeflationOralMarker  Auto
-Sound Property sr_FHUCumDeflationVaginalHardMarker  Auto
-Sound Property sr_FHUCumDeflationVaginalMildMarker  Auto
-Sound Property sr_FHUCumDeflationOralFailMarker  Auto
-Sound Property sr_FHUCumDeflationOralAfterMarker  Auto
-Sound Property sr_FHUCumDeflationAnalMildMarker  Auto
-Sound Property sr_FHUCumDeflationAnalHardMarker  Auto
+Sound Property sr_FHUMoanMildMarker  Auto  
+Sound Property sr_FHUMoanHardMarker  Auto  
+Sound Property sr_FHUMoanDenialMarker  Auto  
+Sound Property sr_FHUCumDeflationOralMarker  Auto  
+Sound Property sr_FHUCumDeflationVaginalHardMarker  Auto  
+Sound Property sr_FHUCumDeflationVaginalMildMarker  Auto  
+Sound Property sr_FHUCumDeflationOralFailMarker  Auto  
+Sound Property sr_FHUCumDeflationOralAfterMarker  Auto  
+Sound Property sr_FHUCumDeflationAnalMildMarker  Auto  
+Sound Property sr_FHUCumDeflationAnalHardMarker  Auto  
 
 Keyword Property ActorTypeNPC Auto
 formlist property sr_CreatureRaceList auto
 
+race property sr_DeathwormRace auto
+race property sr_MimicRace auto
+
+Bool Property bPlayerImpregnated auto hidden
+Bool Property bPlayerImpregnatedAnal auto hidden
+
+Bool Property bDeflateAnimation auto hidden
+MagicEffect Property sr_ExpelCumMGEF Auto
+
+Sound Property sr_FHUEggCrackingMarker Auto
+Sound Property sr_FHUStomachRumblingMarker Auto
+
+Referencealias[] property PregnantActors auto
+
+Actor[] currentActors
+int currentType = 0
+Bool Property RubAnimation Auto hidden
+
+Actor Property TempActor Auto Hidden
 Function BaboAnimsSet()
 
 BaboAnimsOral = new idle[1]
@@ -278,9 +317,21 @@ BaboAnimsAnusEnd[3] = BaboSpermAnalOut04End
 
 EndFunction
 
+Function EggHatchEffect(actor akactor)
+	if !akactor.isinfaction(inflaterAnimatingFaction) && Game.IsMovementControlsEnabled() && RubAnimation 
+		akactor.playidle(BaboStomachRubbing)
+	endif
+	sr_FHUEggCrackingMarker.play(akactor)
+	notify("$FHU_IMPREGNATION_MESSAGES")
+EndFunction
 
-Actor[] currentActors
-int currentType = 0
+Function RubStomach(actor akactor)
+	if !akactor.isinfaction(inflaterAnimatingFaction) && Game.IsMovementControlsEnabled() && RubAnimation
+		akactor.playidle(BaboStomachRubbing)
+	endif
+	sr_FHUStomachRumblingMarker.play(akactor)
+	notify("$FHU_STOMACHRUMBLE_MESSAGES")
+EndFunction
 
 float Function GetVersion()
 	return 2.00
@@ -292,22 +343,28 @@ EndFunction
 
 Event OnInit()
 	BaboAnimsSet()
-;	RegisterInjectorArray()
 	maintenance()
 EndEvent
-
-Function RegisterInjectorArray()
-	;InjectorPlayer = new actor[4]
-	;Injector = new actor[4]
-EndFunction
 
 Function VersionUpdate()
 	If Game.GetModByName("Devious Devices - Assets.esm") != 255
 		zad = true
+		zad_DeviousGag		= Game.GetFormFromFile(0x00007EB8, "Devious Devices - Assets.esm") as Keyword
+		zad_PermitOral		= Game.GetFormFromFile(0x0000FAC9, "Devious Devices - Assets.esm") as Keyword
+		
 		zad_DeviousPlugAnal		= Game.GetFormFromFile(0x0001DD7D, "Devious Devices - Assets.esm") as Keyword
 		zad_DeviousPlugVaginal	= Game.GetFormFromFile(0x0001DD7C, "Devious Devices - Assets.esm") as Keyword
 		zad_DeviousBelt			= Game.GetFormFromFile(0x00003330, "Devious Devices - Assets.esm") as Keyword
 		zad_PermitAnal			= Game.GetFormFromFile(0x0000FACA, "Devious Devices - Assets.esm") as Keyword
+	EndIf
+	If Game.GetModByName("Devious Devices - Integration.esm") != 255
+		zadAnimatingFaction		= Game.GetFormFromFile(0x00029567, "Devious Devices - Integration.esm") as Faction
+	EndIf
+	If Game.GetModByName("SexLabDefeat.esp") != 255
+		DefeatFaction			= Game.GetFormFromFile(0x00001D92, "SexLabDefeat.esp") as Faction
+	EndIf
+	If Game.GetModByName("UnforgivingDevices.esp") != 255
+		UDMinigameFaction		= Game.GetFormFromFile(0x00150DA3, "UnforgivingDevices.esp") as Faction
 	EndIf
 	SetIntValue(Player, "CI_CumInflation_ON", 1)
 	eventManager.StartEvents()
@@ -319,51 +376,97 @@ Function maintenance()
 		RegisterForModEvent("HookOrgasmStart", "Orgasm")
 		RegisterForModEvent("HookAnimationEnd", "FHUSexlabEnd")
 		RegisterForModEvent("SexLabOrgasmSeparate", "OrgasmSeparate")
+		RegisterForModEvent("dhlp-Suspend", "OnDhlpSuspend" )
+		RegisterForModEvent("dhlp-Resume", "OnDhlpResume" )
 		RestoreActors()
 	endif
 	eventManager.Maintenance()
 	(sr_inflateExternalEventManager as sr_inflateExternalEventController).RegisterModEvent()
 	defAlias.Maintenance()
+	bDeflateAnimation = false
 EndFunction
+
+;dhlp event handlers
+Event OnDhlpSuspend( string eventName, string strArg, float numArg, Form sender )
+	dhlpSuspend = True
+EndEvent
+Event OnDhlpResume( string eventName, string strArg, float numArg, Form sender )
+	dhlpSuspend = False
+EndEvent
+
+event EggHatch()
+
+Endevent
 
 event FHUSexlabEnd(int tid, bool HasPlayer)
 	Actor[] actors = sexlab.HookActors(tid)
 	sslBaseAnimation anim = sexlab.HookAnimation(tid)
-
+	
 	Actor Victim = actors[0]
 	actor Male = actors[1]
 	log("Fill her up sex end")
-	; ( add by 15, handle femboy, she can have VaginalCum if he had OralBursting or random from anal and oral
-	; If anim.hasTag("Vaginal")
-	bool isFemboy = sexlab.GetGender(Victim) == 0 && Victim.GetLeveledActorBase().GetSex() == 1
-	; by 15 )
-	If anim.hasTag("Vaginal") || (isFemboy && (anim.hasTag("Anal") || anim.hasTag("Oral")))
+	int iinjector = 0
+	String injectorstring = ""
+	if anim.hasTag("Vaginal");Do I need both vaginal and anal case?
+		injectorstring = "sr.inflater.injector"
+		iinjector = 1
+	elseif anim.hasTag("Anal")
+		injectorstring = "sr.inflater.analinjector"
+		iinjector = 2
+	endif
+	
+	
+	If iinjector
 		if HasPlayer
 			int i = actors.length
-			InjectorPlayer = actors
 			while i > 1
 				i -= 1
-				sr_InjectorFormlist.addform(actors[i])
+				int raceintkey = GetCreatureRaceint(actors[i])
+				if iinjector == 1;vaginal
+					sr_InjectorFormlist.addform(actors[i])
+					if raceintkey >= 4 && raceintkey <= 6
+						if AddImpregnatedFaction(Player)
+							RemoveSpermFromActor(player, 1, "Chaurus", false)
+						endif
+					endif
+				else;anal
+					FormListAdd(Victim, injectorstring, actors[i])
+					if raceintkey >= 4 && raceintkey <= 6
+						if AddImpregnatedAnalFaction(Player)
+							RemoveSpermFromActor(player, 2, "Chaurus", false)
+						endif
+					endif
+				endif
 			endwhile
-			; debug.notification(tid)
-			; Debug.Notification(victim.GetLeveledActorBase().GetName() + " took sperm from " + injectorPlayer[0].GetLeveledActorBase().GetName())
+;			debug.notification(tid)
 		else
-			injector[0] = actors[1]
-			injector[1] = actors[2]
-			injector[2] = actors[3]
-			injector[3] = actors[4]
-			; Debug.Notification(victim.GetLeveledActorBase().GetName() + " (NPC) took sperm from " + Male.GetLeveledActorBase().GetName())
+			Actor[] injectorArray = new Actor[4]
+			int i = 0
+			while i < 4
+				if i < (actors.length - 1)
+					injectorArray[i] = actors[i + 1]
+				endif
+				i += 1
+			endwhile
+			FormListClear(Victim, injectorstring)
+			i = 0
+			while i < 4
+				;WIP if chaurus, send event for NPC
+				If injectorArray[i]
+					FormListAdd(Victim, injectorstring, injectorArray[i])
+				EndIf
+				i += 1
+			endwhile
+			Debug.Notification(victim.GetLeveledActorBase().GetName() + " (NPC) took sperm from " + Male.GetLeveledActorBase().GetName())
 		endif
 	else
-		log("No vaginal fail")
+		log("No vaginal or anal fail")
 	endif
 endevent
 
-;Hentairim enabled
-
 Event OrgasmSeparate(Form ActorRef, Int Thread)
 	actor akActor = ActorRef as actor
-
+	
 	Actor[] actors = sexlab.HookActors(thread)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
 	SslThreadController threadContr = SexLab.GetController(thread)
@@ -397,6 +500,7 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 		If (!sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
 			return
 		EndIf
+		
 		int currentPool = 0
 		If anim.hasTag("Vaginal") && isVaginalInside
 			logAndPrint(">>(SLSO) Vaginal tags detected.")
@@ -411,40 +515,36 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
-
-		If sexlab.Threads[Thread].hasPlayer
-			dialogue.modMod(30)
-			currentActors = actors
-			currentType = currentPool
-		EndIf
-
+		
 		String callback = ""
 		int i = actors.length
+		Actor[] cumSource = new Actor[1]
+		cumSource[0] = akActor
+
 		while i > 0
 			i -= 1
 			int cumSpot = anim.GetCum(i)
 			int actorGender = sexlab.GetGender(actors[i])
 		;	log(anim.name + " - cumSpot for position " + i + ": " + cumSpot)
 			If akActor != actors[i]
-				; ( add by 15, oral inflate too
-				; If ((actorGender == 1 && config.femaleEnabled) || (actorGender == 0 && config.maleEnabled)) && cumSpot != -1 && cumSpot != 2
-				;	; only inflate if the actor is female (or male pretending to be female!) and the animation position has cum effect set for something else than oral only
-				If ((actorGender == 1 && config.femaleEnabled) || (actorGender == 0 && config.maleEnabled)) && cumSpot != -1
-				; by 15 )
+				If ((actorGender == 1 && config.femaleEnabled) || (actorGender == 0 && config.maleEnabled)) && cumSpot != -1; && cumSpot != 2
+					; only inflate if the actor is female (or male pretending to be female!) and the animation position has cum effect set for something else than oral only
 					If actors[i] == player && sr_CumEffectsEnabled.GetValueInt() > 0
+						dialogue.modMod(30)
+						currentActors = cumSource
+						currentType = currentPool
 						RegisterForModEvent("fhu.playerInflated", "PlayerInflationDone")
 						callback = "fhu.playerInflated"
 					Else
 						callback = ""
 					EndIf
-
-					int tid = QueueActor(actors[i], true, currentPool, GetCumAmountForActor(actors[i], actors), 3.0, callback)
-					;sr_InjectorFormlist.addform(actors[i])
-					if tid < 0
-						warn("Inflaton slots full, skipping " + actors[i].GetLeveledActorBase().GetName() + "!")
-					Else
-						log(actors[i].GetLeveledActorBase().GetName() + " slotted to thread " + tid +".")
-					EndIf
+						int tid = QueueActor(actors[i], true, currentPool, GetCumAmountForActor(actors[i], cumSource), 3.0, callback)
+						;sr_InjectorFormlist.addform(actors[i])
+						if tid < 0
+							warn("Inflaton slots full, skipping " + actors[i].GetLeveledActorBase().GetName() + "!")
+						Else
+							log(actors[i].GetLeveledActorBase().GetName() + " slotted to thread " + tid +".")
+						EndIf
 				EndIf
 			EndIf
 		EndWhile
@@ -457,9 +557,9 @@ Event Orgasm(int thread, bool hasPlayer)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
 	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
 		If ( !sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
-			return
+			return 
 		EndIf
-
+		
 		int currentPool = 0
 		If anim.hasTag("Vaginal")
 			logAndPrint(">> Vaginal tags detected.")
@@ -474,13 +574,7 @@ Event Orgasm(int thread, bool hasPlayer)
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
-
-		If hasPlayer
-			dialogue.modMod(30)
-			currentActors = actors
-			currentType = currentPool
-		EndIf
-
+		
 		String callback = ""
 		int i = actors.length
 		while i > 0
@@ -488,10 +582,12 @@ Event Orgasm(int thread, bool hasPlayer)
 			int cumSpot = anim.GetCum(i)
 			int actorGender = sexlab.GetGender(actors[i])
 		;	log(anim.name + " - cumSpot for position " + i + ": " + cumSpot)
-			;If ((actorGender == 1 && config.femaleEnabled) || (actorGender == 0 && config.maleEnabled)) && cumSpot != -1 && cumSpot != 2
-			If ((actorGender == 1 && config.femaleEnabled) || (actorGender == 0 && config.maleEnabled)) && cumSpot != -1
+			If ((actorGender == 1 && config.femaleEnabled) || (actorGender == 0 && config.maleEnabled)) && cumSpot != -1; && cumSpot != 2
 				; only inflate if the actor is female (or male pretending to be female!) and the animation position has cum effect set for something else than oral only
 				If actors[i] == player && sr_CumEffectsEnabled.GetValueInt() > 0
+					dialogue.modMod(30)
+					currentActors = actors
+					currentType = currentPool
 					RegisterForModEvent("fhu.playerInflated", "PlayerInflationDone")
 					callback = "fhu.playerInflated"
 				Else
@@ -509,43 +605,53 @@ Event Orgasm(int thread, bool hasPlayer)
 	EndIf
 EndEvent
 
-Event OnUpdate()
-MfgConsoleFunc.ResetPhonemeModifier(DeflateActor)
-EmotionWhenLeakage(DeflateActor)
+;/ Event onUpdate() /;
+	;/ MfgConsoleFunc.ResetPhonemeModifier(TempActor) /;
+	;/ if btongueout /;
+		;/ EquiprandomTongue(TempActor, false) /;
+	;/ endif /;
+	;/ EquipArmor(TempActor) /;
+;/ EndEvent /;
+
+
+bool Function UpdateFHUmoan(ObjectReference aksource, int cumType, int spermtype)
+	Actor DeflateActor = aksource as Actor
+	MfgConsoleFunc.ResetPhonemeModifier(DeflateActor)
+	EmotionWhenLeakage(DeflateActor)
+	bool needUpdate = false
 	if DeflateActor.isinfaction(inflaterAnimatingFaction)
-		if CumTypei < 3
+		needUpdate = true
+		if cumType < 3
 			if GetInflationPercentage(DeflateActor) < 50
-				FHUmoanSoundEffect(DeflateActor as ObjectReference, 1)
+				FHUmoanSoundEffect(aksource, 1, cumType)
 			else
-				FHUmoanSoundEffect(DeflateActor as ObjectReference, 2)
+				FHUmoanSoundEffect(aksource, 2, cumType)
 			endif
-			MouthOpen(DeflateActor, TongueOut, 0)
-		elseif CumTypei == 3
-			MouthOpen(DeflateActor, true, 0)
+			MouthOpen(DeflateActor, 0)
+		elseif cumType == 3
+			MouthOpen(DeflateActor, 0)
 			if GetOralPercentage(DeflateActor) < 50
-				FHUmoanSoundEffect(DeflateActor as ObjectReference, 1)
+				FHUmoanSoundEffect(aksource, 1, cumType)
 			else
-				FHUmoanSoundEffect(DeflateActor as ObjectReference, 2)
+				FHUmoanSoundEffect(aksource, 2, cumType)
 			endif
 		endif
 	else
-		FHUmoanSoundAfterEffect(DeflateActor as ObjectReference, 0)
-		MouthOpen(DeflateActor, true, 5)
+		FHUmoanSoundAfterEffect(aksource, 0, cumType)
+		MouthOpen(DeflateActor, 5)
 	endif
-EndEvent
-
-Function RegisterFHUUpdate()
-	RegisterForSingleUpdate(10.0)
+	return needUpdate
 EndFunction
 
-Function FHUmoanSoundEffect(ObjectReference aksource, int type); looping
+Function FHUmoanSoundEffect(ObjectReference aksource, int type, int CumType); looping
 {type 1 = mild, type 2 = hard, type 3 = deflation fail}
+log("FHUmoanSoundEffect for " + aksource + " " +sr_MoanSound.getvalue())
 if sr_MoanSound.getvalue() == 1
 	;if aksource == Player as objectreference && type < 3
-	DeflateActor = aksource as actor
-	RegisterFHUUpdate()
+	;DeflateActor = aksource as actor
+	;RegisterFHUUpdate()
 	;endif
-	MoanType = Type
+	;MoanType = Type
 	if sr_SexlabMoanSound.getvalue() == 1
 		if type == 1
 			UseSexlabVoice(aksource as actor, 50, true)
@@ -557,51 +663,60 @@ if sr_MoanSound.getvalue() == 1
 			UseSexlabVoice(aksource as actor, 40, false)
 		endif
 	else
-		if CumTypei == 1;Vaginal
+		if CumType == 1;Vaginal
 			if type == 1
 				sr_FHUCumDeflationVaginalMildMarker.play(aksource)
+				log("FHUmoanSoundEffect Vaginal 1 " + aksource)
 			elseif type == 2
 				sr_FHUCumDeflationVaginalHardMarker.play(aksource)
+				log("FHUmoanSoundEffect Vaginal 2 " + aksource)
 			else
 				sr_FHUMoanDenialMarker.play(aksource)
+				log("FHUmoanSoundEffect Vaginal 3 " + aksource)
 			endif
 			;sr_FHUMoanMildMarker.play(aksource);No longer used. Save it for another update. Burst effect maybe
-		elseif CumTypei == 2
+		elseif CumType == 2
 			;sr_FHUMoanHardMarker.play(aksource);No longer used. Save it for another update. Burst effect maybe
 			if type == 1
 				sr_FHUCumDeflationAnalMildMarker.play(aksource)
+				log("FHUmoanSoundEffect Anal 1 " + aksource)
 			elseif type == 2
 				sr_FHUCumDeflationAnalHardMarker.play(aksource)
+				log("FHUmoanSoundEffect Anal 2 " + aksource)
 			else
 				sr_FHUMoanDenialMarker.play(aksource)
+				log("FHUmoanSoundEffect Anal 3 " + aksource)
 			endif
-		elseif CumTypei == 3
+		elseif CumType == 3
 			;sr_FHUMoanOralMarker.play(aksource)
 			if type == 1
 				sr_FHUCumDeflationOralMarker.play(aksource)
+				log("FHUmoanSoundEffect Oral 1 " + aksource)
 			elseif type == 2
 				sr_FHUCumDeflationOralMarker.play(aksource)
+				log("FHUmoanSoundEffect Oral 2 " + aksource)
 			else
 				sr_FHUCumDeflationOralFailMarker.play(aksource)
+				log("FHUmoanSoundEffect Oral 3 " + aksource)
 			endif
 		endif
 	endif
 endif
 EndFunction
 
-Function FHUmoanSoundAfterEffect(ObjectReference aksource, int type);No loop
+Function FHUmoanSoundAfterEffect(ObjectReference aksource, int type, int CumType);No loop
 if sr_MoanSound.getvalue() == 1
 	if sr_SexlabMoanSound.getvalue() == 1
 		;Nothing
 	else
-		if cumtypei == 3
+		if CumType == 3
 			sr_FHUCumDeflationOralAfterMarker.play(aksource)
 		endif
 	endif
 endif
 
 Utility.wait(6.0)
-MfgConsoleFunc.ResetPhonemeModifier(DeflateActor)
+MfgConsoleFunc.ResetPhonemeModifier(aksource as Actor)
 EndFunction
 
 Function UseSexlabVoice(actor ActorRef, int Strength, bool isvictim)
@@ -637,15 +752,16 @@ int Function GetCreatureRaceint(Actor Target)
     If Target.haskeyword(ActorTypeNPC)
         return -1
     EndIf
-
+    
 	String RaceName = sslCreatureAnimationSlots.GetRaceKey(Target.GetLeveledActorBase().GetRace())
+	log(RaceName + " get registered in Fill Her Up")
     If RaceName == "Ashhoppers"
 		return 0
 	elseIf RaceName == "Bears"
 		return 1
 	elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
 		return 2
-	elseIf RaceName == "Canines" || RaceName == "Wolf"
+	elseIf RaceName == "Canines" || RaceName == "Wolf" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
 		return 3
 	elseIf RaceName == "Chaurus"
 		return 4
@@ -735,6 +851,10 @@ int Function GetCreatureRaceint(Actor Target)
 		return 46
 	elseIf RaceName == "WispMothers" || RaceName == "Wisps"
 		return 47
+	;/ elseIf Targetrace == sr_DeathwormRace /;
+		;/ return 101 /;
+	;/ elseIf Targetrace == sr_MimicRace /;
+		;/ return 102 /;
 	Endif
 EndFunction
 
@@ -747,7 +867,7 @@ float CreatureCumAmount = 0
 		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(1) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
 	elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
 		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(2) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Canines" || RaceName == "Wolf"
+	elseIf RaceName == "Canines" || RaceName == "Wolf" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
 		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(3) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
 	elseIf RaceName == "Chaurus"
 		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(4) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
@@ -877,7 +997,88 @@ Function Absorbto(Actor akActor, int poolMask, float targetLevel = -1.0, float t
 	AbsorptionQueued()
 EndFunction
 
-Function CheckingLastActor(actor akactor)
+Function RemoveSpermFromActor(actor akactor, int type = 1, String ReserveRace = "", bool bEvent = false)
+int i
+	if type == 1
+		If akactor == player
+			i = sr_InjectorFormlist.getsize()
+		Else
+			i = FormListCount(akactor, "sr.inflater.injector")
+		EndIf
+	elseif type == 2
+		i = FormListCount(akactor,  "sr.inflater.analinjector")
+	endif
+	
+	if i > 0
+		int randomi = Utility.randomint(0, i - 1)
+		actor injector
+		if type == 1
+			If akactor == player
+				injector = sr_InjectorFormlist.getat(randomi) as Actor
+			else
+				injector = FormListGet(akactor, "sr.inflater.injector", randomi) as Actor
+			endif
+		elseif type == 2
+			injector = FormListGet(akactor, "sr.inflater.analinjector", randomi) as Actor
+		endif
+
+		int actori = GetCreatureRaceint(injector)
+		if ReserveRace == "Chaurus" && (actori >= 4 && actori <= 6)
+			if type == 1
+				if !akactor.isinfaction(sr_Impregnated)
+					If akactor == player
+						bPlayerImpregnated = true
+					endif
+					akactor.addtofaction(sr_Impregnated)
+					return
+				endif
+				if bevent
+					if akactor.getfactionrank(sr_Impregnated) == 0
+						akactor.setfactionrank(sr_Impregnated, 1);hatched
+						EggHatchEffect(akactor)
+					elseif akactor.getfactionrank(sr_Impregnated) == 1
+						InflateDeflate(akactor, true, type, 0.5, 0.2, "")
+						RubStomach(akactor)
+					endif
+				endif
+				;Feel something in my belly message fire
+			elseif type == 2
+				if !akactor.isinfaction(sr_Impregnatedanal)
+					If akactor == player
+						bPlayerImpregnatedAnal = true
+					endif
+					akactor.addtofaction(sr_Impregnatedanal)
+				endif
+				if bevent
+					if akactor.getfactionrank(sr_Impregnatedanal) == 0
+						akactor.setfactionrank(sr_Impregnatedanal, 1);hatched
+						EggHatchEffect(akactor)
+					elseif akactor.getfactionrank(sr_Impregnatedanal) == 1
+						InflateDeflate(akactor, true, type, 0.5, 0.2, "")
+						RubStomach(akactor)
+					endif
+				endif
+				;Feel something in my belly message fire
+			endif
+			return
+		elseif ReserveRace == "Chaurus" && (actori < 4 || actori > 6)
+			if type == 1
+				If akactor == player
+					sr_InjectorFormlist.RemoveAddedForm(injector)
+				else
+					FormListRemove(akactor, "sr.inflater.injector", injector)
+				endif
+			elseif type == 2
+				FormListRemove(akactor, "sr.inflater.analinjector", injector)
+			endif
+		endif
+
+	endif
+
+EndFunction
+
+Int Function GetSpermLastActor(actor akactor, int type = 1)
+;type == 1 vaginal type == 2 anal 
 form Male
 race malerace
 float chaurusnum = 0
@@ -887,51 +1088,85 @@ float ashHoppernum = 0
 float Draugrnum = 0
 float Spriggannum = 0
 float StoneAtronachnum = 0
+float FlameAtronachnum = 0
+float FrostAtronachnum = 0
+float sr_Deathwormnum = 0
+float sr_Mimicnum = 0
 float beastcumnum = 0
 float RaceAmount
-;int i = injectorPlayer.length
+;int i = sr_InjectorFormlist.getsize()
 int actori = -1
-int i = sr_InjectorFormlist.getsize()
+int spermtype = 0
+string stringinjector
+int i
+
+	if type == 1
+		stringinjector = "sr.inflater.injector"
+		If akactor == player
+			i = sr_InjectorFormlist.getsize()
+		Else
+			i = FormListCount(akactor, stringinjector)
+		EndIf
+	elseif type == 2
+		stringinjector = "sr.inflater.analinjector"
+		i = FormListCount(akactor, stringinjector)
+	endif
+	
 	while i > 0
 		i -= 1
-		Male = sr_InjectorFormlist.getat(i)
-		actori = GetCreatureRaceint(Male as actor)
+		If akactor == player
+			Male = sr_InjectorFormlist.getat(i)
+		Else
+			Male = FormListGet(akactor, stringinjector, i) as Actor
+		EndIf
+		;Male = sr_InjectorFormlist.getat(i)
+		;actori = GetCreatureRaceint(Male as actor)
 		;malerace = (injectorPlayer[i].GetActorBase()).getrace()
 		;Debug.Notification(injectorPlayer[i].GetLeveledActorBase().GetName() + " sperm " + i)
-
-		;if injectorPlayer[i]
+		
 		if Male
+			actori = GetCreatureRaceint(Male as actor)
             if actori == -1
 				humannum += 0.5
 			elseif actori == 0
-				ashHoppernum += GetFloatValue(sr_CreatureRaceList.getat(0) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				ashHoppernum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 4
-				chaurusnum += GetFloatValue(sr_CreatureRaceList.getat(4) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				chaurusnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 5
-				chaurusnum += GetFloatValue(sr_CreatureRaceList.getat(5) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				chaurusnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 6
-				chaurusnum += GetFloatValue(sr_CreatureRaceList.getat(6) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				chaurusnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 13
-				Draugrnum += GetFloatValue(sr_CreatureRaceList.getat(13) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				Draugrnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+			elseif actori == 19
+				FlameAtronachnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+			elseif actori == 21
+				FrostAtronachnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 39
-				StoneAtronachnum += GetFloatValue(sr_CreatureRaceList.getat(39) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				StoneAtronachnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 40
-				spidernum += GetFloatValue(sr_CreatureRaceList.getat(40) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				spidernum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 41
-				spidernum += GetFloatValue(sr_CreatureRaceList.getat(41) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				spidernum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 42
-				spidernum += GetFloatValue(sr_CreatureRaceList.getat(42) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				spidernum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			elseif actori == 43
-				Spriggannum += GetFloatValue(sr_CreatureRaceList.getat(43) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+				Spriggannum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
+			;elseif actori == 48
+			;	sr_Deathwormnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75);WIP
+			;elseif actori == 49
+			;	sr_Mimicnum += GetFloatValue(sr_CreatureRaceList.getat(actori) as race, CREATURERACE_CUM_AMOUNT, 0.75)
 			else
 				beastcumnum += 1
 			endif
 		else
-			sr_InjectorFormlist.RemoveAddedForm(Male)
+			If akactor == player
+				sr_InjectorFormlist.RemoveAddedForm(Male)
+			EndIf
 		endif
 	endwhile
 
-RaceAmount = chaurusnum + Draugrnum + spidernum + humannum + ashHoppernum + beastcumnum + Spriggannum + StoneAtronachnum
+RaceAmount = chaurusnum + Draugrnum + spidernum + humannum + ashHoppernum + beastcumnum + Spriggannum + StoneAtronachnum + FlameAtronachnum + FrostAtronachnum
 float RandomSperm = Utility.randomfloat(0, RaceAmount)
 
 	if RandomSperm > 0
@@ -947,16 +1182,21 @@ float RandomSperm = Utility.randomfloat(0, RaceAmount)
 			spermtype = 4;Chaurus
 		elseif RandomSperm <= humannum + beastcumnum + Draugrnum + spidernum + chaurusnum + Spriggannum
 			spermtype = 5;Spriggan
-		elseif RandomSperm <= humannum + beastcumnum + Draugrnum + spidernum + chaurusnum + StoneAtronachnum
+		elseif RandomSperm <= humannum + beastcumnum + Draugrnum + spidernum + chaurusnum + Spriggannum + StoneAtronachnum
 			spermtype = 6;StoneAtronach
-		elseif RandomSperm <= humannum + beastcumnum + Draugrnum + spidernum + chaurusnum + StoneAtronachnum + ashHoppernum
+		elseif RandomSperm <= humannum + beastcumnum + Draugrnum + spidernum + chaurusnum + Spriggannum + StoneAtronachnum + ashHoppernum
 			spermtype = 7;ashHopper
+		elseif RandomSperm <= humannum + beastcumnum + Draugrnum + spidernum + chaurusnum + Spriggannum + StoneAtronachnum + ashHoppernum + FlameAtronachnum
+			spermtype = 8;FlameAtronach
+		elseif RandomSperm <= humannum + beastcumnum + Draugrnum + spidernum + chaurusnum + Spriggannum + StoneAtronachnum + ashHoppernum + FlameAtronachnum + FrostAtronachnum
+			spermtype = 9;FrostAtronach
 		endif
 	else
 		spermtype = 0
 	endif
-
-akactor.setfactionrank(sr_DARAnimatingType, spermtype)
+	
+	akactor.setfactionrank(sr_DARAnimatingType, spermtype)
+	return spermtype
 EndFunction
 
 ;0human
@@ -967,78 +1207,83 @@ EndFunction
 ;5;Spriggan
 ;6;StoneAtronach
 ;7;ashHopper
+;8;FlameAtronach
+;9;FrostAtronach
 
 Function EquiprandomTongue(actor akActor, Bool BEquip)
 if BEquip
-	Tongueri = Utility.RandomInt(1, 10)
+	int Tongueri = Utility.RandomInt(1, 10)
 	if Tongueri == 1
 		akActor.addItem(sr_linga1armor, 1, true)
 		akActor.equipItem(sr_linga1armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga1armor)
 	elseif Tongueri == 2
 		akActor.addItem(sr_linga2armor, 1, true)
 		akActor.equipItem(sr_linga2armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga2armor)
 	elseif Tongueri == 3
 		akActor.addItem(sr_linga3armor, 1, true)
 		akActor.equipItem(sr_linga3armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga3armor)
 	elseif Tongueri == 4
 		akActor.addItem(sr_linga4armor, 1, true)
 		akActor.equipItem(sr_linga4armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga4armor)
 	elseif Tongueri == 5
 		akActor.addItem(sr_linga5armor, 1, true)
 		akActor.equipItem(sr_linga5armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga5armor)
 	elseif Tongueri == 6
 		akActor.addItem(sr_linga6armor, 1, true)
 		akActor.equipItem(sr_linga6armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga6armor)
 	elseif Tongueri == 7
 		akActor.addItem(sr_linga7armor, 1, true)
 		akActor.equipItem(sr_linga7armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga7armor)
 	elseif Tongueri == 8
 		akActor.addItem(sr_linga8armor, 1, true)
 		akActor.equipItem(sr_linga8armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga8armor)
 	elseif Tongueri == 9
 		akActor.addItem(sr_linga9armor, 1, true)
 		akActor.equipItem(sr_linga9armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga9armor)
 	elseif Tongueri == 10
 		akActor.addItem(sr_linga10armor, 1, true)
 		akActor.equipItem(sr_linga10armor, abSilent=true)
+		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga10armor)
 	endif
 else
-	if Tongueri == 1
-		akActor.unequipItem(sr_linga1armor, abSilent=true)
-		akActor.removeItem(sr_linga1armor, 99, true)
-	elseif Tongueri == 2
-		akActor.unequipItem(sr_linga2armor, abSilent=true)
-		akActor.removeItem(sr_linga2armor, 99, true)
-	elseif Tongueri == 3
-		akActor.unequipItem(sr_linga3armor, abSilent=true)
-		akActor.removeItem(sr_linga3armor, 99, true)
-	elseif Tongueri == 4
-		akActor.unequipItem(sr_linga4armor, abSilent=true)
-		akActor.removeItem(sr_linga4armor, 99, true)
-	elseif Tongueri == 5
-		akActor.unequipItem(sr_linga5armor, abSilent=true)
-		akActor.removeItem(sr_linga5armor, 99, true)
-	elseif Tongueri == 6
-		akActor.unequipItem(sr_linga6armor, abSilent=true)
-		akActor.removeItem(sr_linga6armor, 99, true)
-	elseif Tongueri == 7
-		akActor.unequipItem(sr_linga7armor, abSilent=true)
-		akActor.removeItem(sr_linga7armor, 99, true)
-	elseif Tongueri == 8
-		akActor.unequipItem(sr_linga8armor, abSilent=true)
-		akActor.removeItem(sr_linga8armor, 99, true)
-	elseif Tongueri == 9
-		akActor.unequipItem(sr_linga9armor, abSilent=true)
-		akActor.removeItem(sr_linga9armor, 99, true)
-	elseif Tongueri == 10
-		akActor.unequipItem(sr_linga10armor, abSilent=true)
-		akActor.removeItem(sr_linga10armor, 99, true)
-	endif
+	int i = FormListCount(akActor, "sr.inflater.equipped_tongue")
+	while(i > 0)
+		i -= 1
+		Armor aTongue = FormListGet(akActor, "sr.inflater.equipped_tongue", i) as Armor
+		akActor.unequipItem(aTongue, abSilent=true)
+		akActor.removeItem(aTongue, 99, true)
+	endwhile
+	FormListClear(akActor, "sr.inflater.equipped_tongue")
 endif
 EndFunction
 
-;Function StartLeakage(Actor akActor, bool isAnal, int animate)
-Function StartLeakage(Actor akActor, int CumType, int animate)
+Function EquipLeak(Actor akActor, Armor leak)
+	Armor curr_armor = akActor.GetWornForm(leak.GetSlotMask()) as Armor
+	if curr_armor && SexLabUtil.HasKeywordSub(curr_armor, "NoStrip")
+		return
+	endif
+	If curr_armor
+		log("EquipLeak "+leak+" for " + akActor.GetLeveledActorBase().GetName() + " replace armor " + curr_armor)
+		FormListAdd(akActor, "sr.inflater.unequipped", curr_armor)
+	Else	
+		log("EquipLeak "+leak+" for " + akActor.GetLeveledActorBase().GetName())
+	EndIf
+	akActor.addItem(leak, 1, true)
+	Utility.Wait(0.5)
+	akActor.equipItem(leak, abSilent=true)
+	FormListAdd(akActor, "sr.inflater.equipped_leak", leak)
+EndFunction
+
+Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	bool isAnal
 	if Cumtype == 2
 		isAnal = true
@@ -1046,43 +1291,44 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 		isAnal = false
 	endif
 
-	cumtypei = cumtype
+	;cumtypei = cumtype
 
 	If !akActor.Is3DLoaded()
 	;	log("Skipping animation for " + akActor.GetLeveledActorBase().GetName())
 		return
 	EndIf
 ;	log("Starting animation for " + akActor.GetLeveledActorBase().GetName())
-	if Cumtype < 3
+	if CumType < 3
 		if GetInflationPercentage(akactor) < 50
-			FHUmoanSoundEffect(akActor as ObjectReference, 1)
+			FHUmoanSoundEffect(akActor as ObjectReference, 1, CumType)
 		else
-			FHUmoanSoundEffect(akActor as ObjectReference, 2)
+			FHUmoanSoundEffect(akActor as ObjectReference, 2, CumType)
 		endif
-	elseif Cumtype == 3
+	elseif CumType == 3
 		if GetOralPercentage(akactor) < 50
-			FHUmoanSoundEffect(akActor as ObjectReference, 1)
+			FHUmoanSoundEffect(akActor as ObjectReference, 1, CumType)
 		else
-			FHUmoanSoundEffect(akActor as ObjectReference, 2)
+			FHUmoanSoundEffect(akActor as ObjectReference, 2, CumType)
 		endif
 	endif
 
-	If config.animDeflate
-		if Cumtype < 3;Nostrip when oral
-			StripActor(akActor)
-		endif
-		;StripCover(akActor, isAnal)
-		MfgConsoleFunc.ResetPhonemeModifier(akActor)
-		If Utility.RandomInt(0, 99) < 40 && sr_TongueEffect.getvalue() == 1
-			EquiprandomTongue(akactor, true)
-			EmotionWhenLeakage(akActor)
-			MouthOpen(akActor, true, 0)
-			TongueOut = true
-		Else
-			EmotionWhenLeakage(akActor)
-			MouthOpen(akActor, false, 0)
-			TongueOut = false
-		EndIf
+	If !config.animDeflate
+		SetIntValue(akActor, ANIMATING, -1)
+		return
+	EndIf
+	FormListClear(akActor, "sr.inflater.equipped_tongue")
+
+
+	;if Cumtype < 3;Nostrip when oral
+	;	StripActor(akActor)
+	;endif
+	;StripCover(akActor, isAnal)
+	MfgConsoleFunc.ResetPhonemeModifier(akActor)
+	If Utility.RandomInt(0, 99) < 40 && sr_TongueEffect.getvalue() == 1
+		EquiprandomTongue(akactor, true)
+	EndIf
+	EmotionWhenLeakage(akActor)
+	MouthOpen(akActor, 0)
 
 ;		If Utility.RandomInt(0, 99) < 33
 ;			sexlab.ApplyCum(akActor, 5)
@@ -1091,315 +1337,404 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 ;		Else
 ;			sexlab.ApplyCum(akActor, 1)
 ;		EndIf
+		
+	If CumType == 1
+		sexlab.AddCum(akActor, true, false, false)
+	elseif CumType == 2
+		sexlab.AddCum(akActor, false, false, true)
+	elseif CumType == 3
+		sexlab.AddCum(akActor, false, true, false)
+	else
+		sexlab.AddCum(akActor)
+	endif
 
-		If CumType == 1
-			sexlab.AddCum(akActor, true, false, false)
-		elseif CumType == 2
-			sexlab.AddCum(akActor, false, false, true)
-		elseif CumType == 3
-			sexlab.AddCum(akActor, false, true, false)
-		else
-			sexlab.AddCum(akActor)
+	if animate < 0
+		SetIntValue(akActor, ANIMATING, -1)
+		return
+	endIf
+		
+	;AnalDeflation = isAnal
+	
+	if (config.SFU_PlacePuddles)
+		if Cumtype < 3
+			ApplyPuddle(akActor, 0, 0, 1)
+		elseif Cumtype == 3;oral
+			ApplyPuddle(akActor, 26, 0, 1)
 		endif
+	endif
 
-		if animate < 0
-			SetIntValue(akActor, ANIMATING, -1)
-			return
-		endIf
+	If akActor.IsInCombat() || isAnimating(akActor)
+		SetIntValue(akActor, ANIMATING, 0)
+		log("StartLeakage Animation blocked for " + akActor.GetLeveledActorBase().GetName())
+		return
+	EndIf
 
-		AnalDeflation = isAnal
+	FormListClear(akActor, "sr.inflater.unequipped")
+	FormListClear(akActor, "sr.inflater.equipped_leak")
 
-		If akActor == Player
-			Game.ForceThirdPerson()
+log("StartLeakage for " + akActor.GetLeveledActorBase().GetName() + "; animate:" + animate + "; CumType: " + CumType + "; spermtype: " + spermtype)
+	If animate == 2
+		; Burst deflate 
+	;	log("	burst deflate")
+		if CumType == 1
+			EquipLeak(akActor, sr_VagLeak)
+		elseif CumType == 2
+			EquipLeak(akActor, sr_AnalLeak)
+		elseif CumType == 3
+			EquipLeak(akActor, sr_OralLeak)
 		EndIf
+		if Cumtype < 3;Nostrip when oral
+			StripActor(akActor)
+		endif
+		SetIntValue(akActor, ANIMATING, 2)
+		If akActor == player
+			Game.ForceThirdPerson()
+			int handle = ModEvent.Create("dhlp-weapondrop")
+			ModEvent.PushBool(handle, true)
+			ModEvent.PushFloat(handle, 1.5)
+			ModEvent.PushString(handle, "$FHU_BURST_WEAPON_DROP")
+			ModEvent.PushString(handle, "$FHU_BURST_SPELL_DROP")
+			If animate >= 10
+				akActor.PlayIdle(BaboAnimsStart[animate - 10])
+			Else
+				animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
+				akActor.PlayIdle(BaboAnimsStart[animnum])
+			EndIf
+			If ModEvent.Send(handle)
+				Utility.Wait(1.2)
+			EndIf
+		EndIf 
+		Debug.SendAnimationEvent(akActor, "BleedOutStart");WIP need animation
+	ElseIf animate == 1 || (animate == 0 && Utility.RandomInt(0, 99) < 80) || animate >= 10
+		; normal, less-violent deflate 
+	;	log("	normal deflate")
 
-		if (config.SFU_PlacePuddles)
-			if Cumtype < 3
-				ApplyPuddle(akActor, 0, 0, 1)
-			elseif Cumtype == 3;oral
-				ApplyPuddle(akActor, 26, 0, 1)
+		SetIntValue(akActor, ANIMATING, 1)
+		if akActor == player
+			if Cumtype < 3;Nostrip when oral
+				StripActor(akActor)
+			endif
+			Game.ForceThirdPerson()
+			if config.bgamepad
+				Input.TapKey(Input.GetMappedKey("Forward", 0x02)); Need Test WIP
+			else
+				Input.TapKey(Input.GetMappedKey("Forward"))
+			endif
+			Game.DisablePlayerControls()
+		Else
+			ActorUtil.AddPackageOverride(akActor, stayStillPackage, 100, 1)
+			akActor.EvaluatePackage()
+			akActor.SetRestrained(true)
+			akActor.SetDontMove(true)
+			akActor.StopTranslation()
+		EndIf
+		(akActor as ObjectReference).SetAnimationVariableInt("IsNPC", 0)
+
+		;Form RightHand = akActor.GetEquippedObject(1)
+		;If(RightHand)
+		;	log("StartLeakage UnequipItemEX " + RightHand.GetName())
+		;	akActor.UnequipItemEX(RightHand, akActor.EquipSlot_RightHand, false)
+			;ret = PapyrusUtil.PushForm(ret, RightHand)
+			;StorageUtil.SetIntValue(RightHand, "Hand", 1)
+		;EndIf
+		;Form LeftHand = akActor.GetEquippedObject(0)
+		;If(LeftHand)
+		;	log("StartLeakage UnequipItemEX " + LeftHand.GetName())
+		;	akActor.UnequipItemEX(LeftHand, akActor.EquipSlot_LeftHand, false)
+			;ret = PapyrusUtil.PushForm(ret, LeftHand)
+			;StorageUtil.SetIntValue(RightHand, "Hand", 2)
+		;EndIf
+
+		If akActor.IsWeaponDrawn()
+			
+			;akActor.SheatheWeapon()
+			Utility.Wait(0.8)
+			int attempts = 10
+			While attempts > 0 && akActor.IsWeaponDrawn()
+				attempts -= 1
+				Utility.Wait(0.2)
+			EndWhile
+			Utility.Wait(1)
+		EndIf
+		If animate >= 10
+			akActor.PlayIdle(BaboAnimsStart[animate - 10])
+		Else
+			if spermtype == 0
+				if CumType == 1
+					animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_VagLeak)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_AnalLeak)
+				elseif CumType == 3
+					;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
+					;akActor.PlayIdle(BaboAnimsOral[animnum])
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeak)
+				endif
+			elseif spermtype == 1;BeastCum
+				if CumType == 1
+					animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_vagLeakBeast)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_analLeakBeast)
+				elseif CumType == 3
+					;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
+					;akActor.PlayIdle(BaboAnimsOral[animnum])
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeakBeast)
+				endif
+				if sr_Cumvariation.getvalue() == 1
+					if GetInflation(akactor) > 3.0 && CumType < 3
+						EquipLeak(akActor, sr_ThickCum)
+					elseif GetOralCum(akactor) > 1.0 && CumType == 3
+						EquipLeak(akActor, sr_ThickCum)
+					endif
+				endif
+			elseif spermtype == 2;dragur
+				if CumType == 1
+					animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_vagLeakRotten)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_analLeakRotten)
+				elseif CumType == 3
+					;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
+					;akActor.PlayIdle(BaboAnimsOral[animnum])
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeakRotten)
+				endif
+			elseif spermtype == 3;Spider
+				if CumType == 1
+					animnum = 3
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_VagLeak)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_AnalLeak)
+				elseif CumType == 3
+					;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
+					;akActor.PlayIdle(BaboAnimsOral[animnum])
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeak)
+				endif
+				if sr_Cumvariation.getvalue() == 1
+					EquipLeak(akActor, sr_SpiderEggs)
+				endif
+			elseif spermtype == 4;Chaurus
+				if CumType == 1
+					animnum = 3
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_VagLeak)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_AnalLeak)
+				elseif CumType == 3
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeak)
+				endif
+				if sr_Cumvariation.getvalue() == 1
+					;if GetInflation(akactor) >= 3.0 && CumType < 3;WIP Larva hatches after few days later
+					;	EquipLeak(akActor, sr_ChaurusLarvaeEggs)
+					;elseif GetInflation(akactor) < 3.0 && CumType < 3
+					;	EquipLeak(akActor, sr_ChaurusEggs)
+					;elseif CumType == 3
+					;	EquipLeak(akActor, sr_ChaurusEggs)
+					;endif
+					if CumType == 1
+						if akActor.getfactionrank(sr_Impregnated) == 1
+							EquipLeak(akActor, sr_ChaurusLarvaeEggs)
+						else
+							EquipLeak(akActor, sr_ChaurusEggs)
+						endif
+					elseif CumType == 2
+						if akActor.getfactionrank(sr_Impregnatedanal) == 1
+							EquipLeak(akActor, sr_ChaurusLarvaeEggs)
+						else
+							EquipLeak(akActor, sr_ChaurusEggs)
+						endif
+					elseif CumType == 3
+						EquipLeak(akActor, sr_ChaurusEggs)
+					endif
+				endif
+			elseif spermtype == 5;Spriggan
+				if CumType == 1
+					animnum = 3
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_vagLeakGreen)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_analLeakGreen)
+				elseif CumType == 3
+					;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
+					;akActor.PlayIdle(BaboAnimsOral[animnum])
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeakGreen)
+				endif
+				if sr_Cumvariation.getvalue() == 1
+					if GetInflation(akactor) >= 3.0 && CumType < 3
+						EquipLeak(akActor, sr_SprigganSlug)
+					elseif GetInflation(akactor) < 3.0 && CumType < 3
+						EquipLeak(akActor, sr_ThickCumGreen)
+					elseif CumType == 3
+						EquipLeak(akActor, sr_ThickCumGreen)
+					endif
+				endif
+			elseif spermtype == 6;StoneAtronach
+				if CumType == 1
+					animnum = 3
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_VagLeak)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_AnalLeak)
+				elseif CumType == 3
+					;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
+					;akActor.PlayIdle(BaboAnimsOral[animnum])
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeak)
+				endif
+				if sr_Cumvariation.getvalue() == 1
+					EquipLeak(akActor, sr_AtronachStones)
+				endif
+			elseif spermtype == 7;AshHopper
+				if CumType == 1
+					animnum = 3
+					akActor.PlayIdle(BaboAnimsStart[animnum])
+					EquipLeak(akActor, sr_VagLeak)
+				elseif CumType == 2
+					animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
+					akActor.PlayIdle(BaboAnimsAnusStart[animnum])
+					EquipLeak(akActor, sr_AnalLeak)
+				elseif CumType == 3
+					;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
+					;akActor.PlayIdle(BaboAnimsOral[animnum])
+					akActor.PlayIdle(BaboAnimsOralStart[0])
+					EquipLeak(akActor, sr_OralLeak)
+				endif
+				if sr_Cumvariation.getvalue() == 1
+					EquipLeak(akActor, sr_AshHopperEggs)
+				endif
+			endif
+		EndIf
+		
+		if akActor != player && Cumtype < 3;Nostrip when oral
+			StripActor(akActor)
+		endif
+	endif
+EndFunction
+
+Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int spermtype = 0)
+	bool btongueout = false
+	MfgConsoleFunc.ResetPhonemeModifier(akActor)
+	EmotionWhenLeakage(akactor)
+	MouthOpen(akActor, 0)
+	if Utility.RandomInt(0, 99) < 40 && sr_TongueEffect.getvalue() == 1 && btongue
+		EquiprandomTongue(akactor, true)
+		btongueout = true
+	endif
+	
+	if Cumtype < 3 && spermtype > 2;Nostrip when oral
+		StripActor(akActor)
+	endif
+	
+	if CumType == 1
+		akActor.PlayIdle(BaboSpermExpel)
+	elseif CumType == 2
+		akActor.PlayIdle(BaboSpermAnusExpelFail)
+	elseif CumType == 3
+		akActor.PlayIdle(BaboSpermOralOut)
+	elseif CumType == 4
+		akActor.PlayIdle(BaboSpermExpelPanting);Stamina out
+	elseif CumType == 5
+		akActor.PlayIdle(BaboSpermExpelRefuse);I don't want to expel in front of people
+	endif
+	
+	;if spermtype == 1;BeastCum WIP
+		;if sr_Cumvariation.getvalue() == 1
+		;	if GetInflation(akactor) > 3.0 && CumType < 3
+		;		EquipLeak(akActor, sr_ThickCum)
+		;	elseif GetOralCum(akactor) > 1.0 && CumType == 3
+		;		EquipLeak(akActor, sr_ThickCum)
+		;	endif
+		;endif
+
+	if spermtype == 3;Spider
+		if sr_Cumvariation.getvalue() == 1 && CumType < 3
+			EquipLeak(akActor, sr_SpiderEggs)
+		endif
+	elseif spermtype == 4;Chaurus
+		if sr_Cumvariation.getvalue() == 1
+			if CumType == 1
+				if akActor.getfactionrank(sr_Impregnated) == 1
+					EquipLeak(akActor, sr_ChaurusLarvaeEggs)
+				else
+					EquipLeak(akActor, sr_ChaurusEggs)
+				endif
+			elseif CumType == 2
+				if akActor.getfactionrank(sr_Impregnatedanal) == 1
+					EquipLeak(akActor, sr_ChaurusLarvaeEggs)
+				else
+					EquipLeak(akActor, sr_ChaurusEggs)
+				endif
+			elseif CumType == 3
+				EquipLeak(akActor, sr_ChaurusEggs)
 			endif
 		endif
-
-		If !akActor.IsOnMount()
-			If animate == 2
-				; Burst deflate
-			;	log("	burst deflate")
-				if CumType == 1
-					akActor.addItem(sr_VagLeak, 1, true)
-					akActor.equipItem(sr_VagLeak, abSilent=true)
-				elseif CumType == 2
-					akActor.addItem(sr_AnalLeak, 1, true)
-					akActor.equipItem(sr_AnalLeak, abSilent=true)
-				elseif CumType == 3
-					akActor.addItem(sr_OralLeak, 1, true)
-					; ( add by 15
-					Utility.Wait(0.5)
-					; by 15 )
-					akActor.equipItem(sr_OralLeak, abSilent=true)
-				EndIf
-				SetIntValue(akActor, ANIMATING, 2)
-				If akActor == player
-					int handle = ModEvent.Create("dhlp-weapondrop")
-					ModEvent.PushBool(handle, true)
-					ModEvent.PushFloat(handle, 1.5)
-					ModEvent.PushString(handle, "$FHU_BURST_WEAPON_DROP")
-					ModEvent.PushString(handle, "$FHU_BURST_SPELL_DROP")
-					If animate >= 10
-						akActor.PlayIdle(BaboAnimsStart[animate - 10])
-					Else
-						animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
-						akActor.PlayIdle(BaboAnimsStart[animnum])
-					EndIf
-					If ModEvent.Send(handle)
-						Utility.Wait(1.2)
-					EndIf
-				EndIf
-				Debug.SendAnimationEvent(akActor, "BleedOutStart")
-			ElseIf animate == 1 || (animate == 0 && Utility.RandomInt(0, 99) < 80) || animate >= 10
-				; normal, less-violent deflate
-			;	log("	normal deflate")
-				If akActor.IsWeaponDrawn()
-					akActor.SheatheWeapon()
-					Utility.Wait(0.8)
-				EndIf
-				SetIntValue(akActor, ANIMATING, 1)
-				if akActor == player
-					Input.TapKey(Input.GetMappedKey("Forward"))
-					Game.DisablePlayerControls()
-				Else
-					ActorUtil.AddPackageOverride(akActor, stayStillPackage, 100)
-				EndIf
-				If animate >= 10
-					akActor.PlayIdle(BaboAnimsStart[animate - 10])
-				Else
-					if spermtype == 0
-						if CumType == 1
-							animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_VagLeak, 1, true)
-							akActor.equipItem(sr_VagLeak, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_AnalLeak, 1, true)
-							akActor.equipItem(sr_AnalLeak, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeak, 1, true)
-							akActor.equipItem(sr_OralLeak, abSilent=true)
-						endif
-					elseif spermtype == 1;BeastCum
-						if CumType == 1
-							animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_vagLeakBeast, 1, true)
-							akActor.equipItem(sr_vagLeakBeast, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_analLeakBeast, 1, true)
-							akActor.equipItem(sr_analLeakBeast, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeakBeast, 1, true)
-							akActor.equipItem(sr_OralLeakBeast, abSilent=true)
-						endif
-						if sr_Cumvariation.getvalue() == 1
-							if GetInflation(akactor) > 3.0 && CumType < 3
-								akActor.addItem(sr_ThickCum, 1, true)
-								akActor.equipItem(sr_ThickCum, abSilent=true)
-							elseif GetOralCum(akactor) > 1.0 && CumType == 3
-								akActor.addItem(sr_ThickCum, 1, true)
-								akActor.equipItem(sr_ThickCum, abSilent=true)
-							endif
-						endif
-					elseif spermtype == 2;dragur
-						if CumType == 1
-							animnum = Utility.RandomInt(0, BaboAnimsStart.length - 1)
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_vagLeakRotten, 1, true)
-							akActor.equipItem(sr_vagLeakRotten, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_analLeakRotten, 1, true)
-							akActor.equipItem(sr_analLeakRotten, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeakRotten, 1, true)
-							akActor.equipItem(sr_OralLeakRotten, abSilent=true)
-						endif
-					elseif spermtype == 3;Spider
-						if CumType == 1
-							animnum = 3
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_VagLeak, 1, true)
-							akActor.equipItem(sr_VagLeak, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_AnalLeak, 1, true)
-							akActor.equipItem(sr_AnalLeak, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeak, 1, true)
-							akActor.equipItem(sr_OralLeak, abSilent=true)
-						endif
-						if sr_Cumvariation.getvalue() == 1
-							akActor.addItem(sr_SpiderEggs, 1, true)
-							akActor.equipItem(sr_SpiderEggs, abSilent=true)
-						endif
-					elseif spermtype == 4;Chaurus
-						if CumType == 1
-							animnum = 3
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_VagLeak, 1, true)
-							akActor.equipItem(sr_VagLeak, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_AnalLeak, 1, true)
-							akActor.equipItem(sr_AnalLeak, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeak, 1, true)
-							akActor.equipItem(sr_OralLeak, abSilent=true)
-						endif
-						if sr_Cumvariation.getvalue() == 1
-							if GetInflation(akactor) >= 3.0 && CumType < 3
-								akActor.addItem(sr_ChaurusLarvaeEggs, 1, true)
-								akActor.equipItem(sr_ChaurusLarvaeEggs, abSilent=true)
-							elseif GetInflation(akactor) < 3.0 && CumType < 3
-								akActor.addItem(sr_ChaurusEggs, 1, true)
-								akActor.equipItem(sr_ChaurusEggs, abSilent=true)
-							elseif CumType == 3
-								akActor.addItem(sr_ChaurusEggs, 1, true)
-								akActor.equipItem(sr_ChaurusEggs, abSilent=true)
-							endif
-						endif
-					elseif spermtype == 5;Spriggan
-						if CumType == 1
-							animnum = 3
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_vagLeakGreen, 1, true)
-							akActor.equipItem(sr_vagLeakGreen, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_analLeakGreen, 1, true)
-							akActor.equipItem(sr_analLeakGreen, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeakGreen, 1, true)
-							akActor.equipItem(sr_OralLeakGreen, abSilent=true)
-						endif
-						if sr_Cumvariation.getvalue() == 1
-							if GetInflation(akactor) >= 3.0 && CumType < 3
-								akActor.addItem(sr_SprigganSlug, 1, true)
-								akActor.equipItem(sr_SprigganSlug, abSilent=true)
-							elseif GetInflation(akactor) < 3.0 && CumType < 3
-								akActor.addItem(sr_ThickCumGreen, 1, true)
-								akActor.equipItem(sr_ThickCumGreen, abSilent=true)
-							elseif CumType == 3
-								akActor.addItem(sr_ThickCumGreen, 1, true)
-								akActor.equipItem(sr_ThickCumGreen, abSilent=true)
-							endif
-						endif
-					elseif spermtype == 6;StoneAtronach
-						if CumType == 1
-							animnum = 3
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_VagLeak, 1, true)
-							akActor.equipItem(sr_VagLeak, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_AnalLeak, 1, true)
-							akActor.equipItem(sr_AnalLeak, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeak, 1, true)
-							akActor.equipItem(sr_OralLeak, abSilent=true)
-						endif
-						if sr_Cumvariation.getvalue() == 1
-							akActor.addItem(sr_AtronachStones, 1, true)
-							akActor.equipItem(sr_AtronachStones, abSilent=true)
-						endif
-					elseif spermtype == 7;AshHopper
-						if CumType == 1
-							animnum = 3
-							akActor.PlayIdle(BaboAnimsStart[animnum])
-							akActor.addItem(sr_VagLeak, 1, true)
-							akActor.equipItem(sr_VagLeak, abSilent=true)
-						elseif CumType == 2
-							animnum = Utility.RandomInt(0, BaboAnimsAnusStart.length - 1)
-							akActor.PlayIdle(BaboAnimsAnusStart[animnum])
-							akActor.addItem(sr_AnalLeak, 1, true)
-							akActor.equipItem(sr_AnalLeak, abSilent=true)
-						elseif CumType == 3
-							;animnum = Utility.RandomInt(0, BaboAnimsOral.length - 1)
-							;akActor.PlayIdle(BaboAnimsOral[animnum])
-							akActor.PlayIdle(BaboAnimsOralStart[0])
-							akActor.addItem(sr_OralLeak, 1, true)
-							akActor.equipItem(sr_OralLeak, abSilent=true)
-						endif
-						if sr_Cumvariation.getvalue() == 1
-							akActor.addItem(sr_AshHopperEggs, 1, true)
-							akActor.equipItem(sr_AshHopperEggs, abSilent=true)
-						endif
-					endif
-				EndIf
-			EndIf
-		EndIf
-	EndIf
-EndFunction
-
-Function DeflateFailMotion(actor akactor, int cumi)
+	;elseif spermtype == 5;Spriggan WIP
+	elseif spermtype == 6;StoneAtronach
+		if sr_Cumvariation.getvalue() == 1
+			EquipLeak(akActor, sr_AtronachStones)
+		endif
+	elseif spermtype == 7;AshHopper
+		if sr_Cumvariation.getvalue() == 1
+			EquipLeak(akActor, sr_AshHopperEggs)
+		endif
+	endif
+	
+	FHUmoanSoundEffect(akactor as objectreference, 3, CumType)
+	TempActor = akActor
+	;RegisterForSingleUpdate(10.0)
+	Utility.wait(11.0)
 	MfgConsoleFunc.ResetPhonemeModifier(akActor)
-	if Utility.RandomInt(0, 99) < 40 && sr_TongueEffect.getvalue() == 1
-		EmotionWhenLeakage(akactor)
-		MouthOpen(akActor, true, 0)
-		TongueOut = true
-	else
-		EmotionWhenLeakage(akactor)
-		MouthOpen(akActor, false, 0)
-		TongueOut = false
+	if btongueout
+		equiprandomtongue(akactor, false)
 	endif
-	if cumi == 1
-		akActor.PlayIdle(BaboSpermExpel)
-	elseif cumi == 2
-		akActor.PlayIdle(BaboSpermExpel);wip
-	elseif cumi == 3
-		akActor.PlayIdle(BaboSpermOralOut)
-	endif
-	FHUmoanSoundEffect(akactor as objectreference, 3)
+	EquipArmor(akactor)
+	;infplayer.RegisterForSingleUpdate(15.0); Just in case when the actor is interrupted and the animation stops 
+	;if akActor.WaitForAnimationEvent("IdleForceDefaultState") || EmergencySwitch || bDeflateAnimation ; WaitForAnimationEvent is wonky
+	;/ if EmergencySwitch || bDeflateAnimation /;
+		;/ EmergencySwitch = false /;
+		;/ bDeflateAnimation = false /;
+		;/ ;Debug.notification("DeflateFailMotion End Debug Text") /;
+		;/ MfgConsoleFunc.ResetPhonemeModifier(akActor) /;
+		;/ if btongueout /;
+			;/ EquiprandomTongue(akactor, false) /;
+		;/ endif /;
+		;/ EquipArmor(akactor) /;
 EndFunction
 
-
-Function MouthOpen(actor akActor, bool Tongue, int randomi)
+Function MouthOpen(actor akActor, int randomi)
 {randomi 1-3 normal, 4-5 oralcum, 0 covers all}
+int aTongue = FormListCount(akActor, "sr.inflater.equipped_tongue")
 if randomi == 0
 	randomi = Utility.RandomInt(1, 5)
 elseif randomi < 4
 	randomi = Utility.RandomInt(1, 3)
 endif
 	if randomi == 1
-		if Tongue
+		if aTongue > 0
 			MfgConsoleFunc.SetPhoneme(akActor,1,70)
 			MfgConsoleFunc.SetPhoneme(akActor,14,30)
 		Else
@@ -1408,7 +1743,7 @@ endif
 			MfgConsoleFunc.SetPhoneme(akActor,7,50)
 		Endif
 	elseif randomi == 2
-		if Tongue
+		if aTongue > 0
 			MfgConsoleFunc.SetPhoneme(akActor,1,70)
 			MfgConsoleFunc.SetPhoneme(akActor,14,30)
 		Else
@@ -1416,7 +1751,7 @@ endif
 			MfgConsoleFunc.SetPhoneme(akActor,12,70)
 		Endif
 	elseif randomi == 3
-		if Tongue
+		if aTongue > 0
 			MfgConsoleFunc.SetPhoneme(akActor,0,40)
 			MfgConsoleFunc.SetPhoneme(akActor,0,50)
 		Else
@@ -1462,7 +1797,7 @@ Function EmotionWhenLeakage(actor akActor)
 	EndIf
 EndFunction
 
-Function StopLeakage(Actor akActor)
+Function StopLeakage(Actor akActor, int cumType, int spermtype)
 	int anim = GetIntValue(akActor, ANIMATING,0)
 	If anim > 0
 		If anim == 1
@@ -1471,11 +1806,11 @@ Function StopLeakage(Actor akActor)
 			;else
 			;	akActor.PlayIdle(BaboAnimsEnd[animnum])
 			;endif
-			if cumtypei == 1
+			if cumType == 1
 				akActor.PlayIdle(BaboAnimsEnd[animnum])
-			elseif cumtypei == 2
+			elseif cumType == 2
 				akActor.PlayIdle(BaboAnimsAnusEnd[animnum])
-			elseif cumtypei == 3
+			elseif cumType == 3
 				akActor.PlayIdle(BaboAnimsOralEnd[0])
 			endif
 		ElseIf anim == 2
@@ -1485,75 +1820,38 @@ Function StopLeakage(Actor akActor)
 	ElseIf anim < 0
 		return
 	EndIf
-
+	
 	if akActor == player
-		Game.EnablePlayerControls()
+		If anim > 0
+			Game.EnablePlayerControls()
+			Debug.SendAnimationEvent(akActor as ObjectReference,"IdleForceDefaultState")
+		EndIf
 	Else
 		MfgConsoleFunc.ResetPhonemeModifier(akActor);Player expression is controlled here(OnKeyUp)
 		ActorUtil.RemovePackageOverride(akActor, stayStillPackage)
+		akActor.EvaluatePackage()
+		akActor.SetRestrained(False)
+		akActor.SetDontMove(False)
+		If anim > 0
+			Debug.SendAnimationEvent(akActor as ObjectReference,"IdleForceDefaultState")
+		EndIf
 	EndIf
 
-	if spermtype == 1
-		akActor.unequipItem(sr_analLeakBeast, abSilent=true)
-		akActor.unequipItem(sr_vagLeakBeast, abSilent=true)
-		akActor.unequipItem(sr_ThickCum, abSilent=true)
-		akActor.unequipItem(sr_OralLeakBeast, abSilent=true)
-		akActor.removeItem(sr_analLeakBeast, 99, true)
-		akActor.removeItem(sr_vagLeakBeast, 99, true)
-		akActor.removeItem(sr_ThickCum, 99, true)
-		akActor.removeItem(sr_OralLeakBeast, 99, true)
-	elseif spermtype == 2
-		akActor.unequipItem(sr_analLeakRotten, abSilent=true)
-		akActor.removeItem(sr_vagLeakRotten, 99, true)
-		akActor.unequipItem(sr_OralLeakRotten, abSilent=true)
-		akActor.removeItem(sr_OralLeakRotten, 99, true)
-	elseif spermtype == 3
-		akActor.unequipItem(sr_SpiderEggs, abSilent=true)
-		akActor.removeItem(sr_SpiderEggs, 99, true)
-	elseif spermtype == 4
-		akActor.unequipItem(sr_ChaurusEggs, abSilent=true)
-		akActor.unequipItem(sr_ChaurusLarvaeEggs, abSilent=true)
-		akActor.removeItem(sr_ChaurusEggs, 99, true)
-		akActor.removeItem(sr_ChaurusLarvaeEggs, 99, true)
-	elseif spermtype == 5
-		akActor.unequipItem(sr_analLeakGreen, abSilent=true)
-		akActor.unequipItem(sr_vagLeakGreen, abSilent=true)
-		akActor.unequipItem(sr_SprigganSlug, abSilent=true)
-		akActor.unequipItem(sr_ThickCumGreen, abSilent=true)
-		akActor.unequipItem(sr_OralLeakGreen, abSilent=true)
-		akActor.removeItem(sr_analLeakGreen, 99, true)
-		akActor.removeItem(sr_vagLeakGreen, 99, true)
-		akActor.removeItem(sr_SprigganSlug, 99, true)
-		akActor.removeItem(sr_ThickCumGreen, 99, true)
-		akActor.removeItem(sr_OralLeakGreen, 99, true)
-	elseif spermtype == 6
-		akActor.unequipItem(sr_AtronachStones, abSilent=true)
-		akActor.removeItem(sr_AtronachStones, 99, true)
-	elseif spermtype == 7
-		akActor.unequipItem(sr_AshHopperEggs, abSilent=true)
-		akActor.removeItem(sr_AshHopperEggs, 99, true)
-	endif
-
-	akActor.unequipItem(sr_VagLeak, abSilent=true)
-	akActor.unequipItem(sr_AnalLeak, abSilent=true)
-	akActor.unequipItem(sr_OralLeak, abSilent=true)
-
+	(akActor as ObjectReference).SetAnimationVariableInt("IsNPC", 1)
+	
 	;akActor.unequipItem(TongueA, abSilent=true)
 	EquiprandomTongue(akactor, false)
-	akActor.removeItem(sr_VagLeak, 99, true)
-	akActor.removeItem(sr_AnalLeak, 99, true)
-	akActor.removeItem(sr_OralLeak, 99, true)
 	;akActor.removeItem(TongueA, 99, true)
-
+	StopExpelSpell(akActor)
 	;MfgConsoleFunc.ResetPhonemeModifier(akActor) ; Remove any previous modifiers and phenomes
-
+	
 	If anim > 0
 		UnstripActor(akActor)
 	EndIf
 EndFunction
 
 Function RestoreActors()
-	int n = FormListCount(self, INFLATED_ACTORS)
+	int n = FormListCount(self, INFLATED_ACTORS) 
 	while n > 0
 		n -= 1
 		Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
@@ -1572,12 +1870,9 @@ Function RestoreActors()
 					SetBellyMorphValue(a, GetOralCum(a), InflateMorph4)
 				endif
 			Else
-				; ( change by 15, sent to SLIF sum of all pools
-				; SetNodeScale(a, BELLY_NODE, GetInflation(a))
-				SetNodeScale(a, BELLY_NODE, GetInflation(a) + GetOralCum(a))
-				; by 15 )
+				SetNodeScale(a, BELLY_NODE, GetInflation(a))
 			Endif
-
+			
 		endIf
 		UpdateFaction(a)
 		UpdateOralFaction(a)
@@ -1597,7 +1892,7 @@ int Function QueueActor(Actor a, bool inflate, int poolmask, float amount, float
 			res = i
 			i = m ; break
 		endIf
-		i += 1
+		i += 1		
 	endWhile
 	If res < 0
 		warn("Failed to slot " + a.GetLeveledActorBase().GetName() + " for processing!")
@@ -1617,7 +1912,7 @@ int Function QueueAbsorbActor(Actor a, bool inflate, int poolmask, float amount,
 			res = i
 			i = m ; break
 		endIf
-		i += 1
+		i += 1		
 	endWhile
 	If res < 0
 		warn("Failed to slot " + a.GetLeveledActorBase().GetName() + " for processing!")
@@ -1657,90 +1952,80 @@ Function FertilityEventGo(string eventname, Form akactor, string fatherName, For
 EndFunction
 
 Function FertilityChance(Actor a)
-	int ri = Utility.randomint(1, 100)
-	if ri > sr_SendingSpermDataChance.getvalue() as int
-		return
-	endif
 
-	int fullness = (GetVaginalPercentage(a) * 100) as int
-	actor Male = none
-	int i
+int ri = Utility.randomint(1, 100)
+if ri > sr_SendingSpermDataChance.getvalue() as int
+	return
+endif
 
+int fullness = (GetVaginalPercentage(a) * 100) as int
+actor Male = none
+int i
 	if sr_Fertility.getvalue() == 1
-		if a == Player
-
-			i = sr_InjectorFormlist.getsize()
-			while i > 0
-				i -= 1
-				Male = sr_InjectorFormlist.getat(i) as actor
-				if (Male.GetBaseObject() as Actorbase).getsex() == 0
-					FertilityEventGo("FertilityModeAddSperm", a as form, Male.Getleveledactorbase().getname(), Male as form)
-					If fullness > sr_SendingSpermDataCriterion.getvalue() as int
-						FertilityEventGo("FertilityModeImpregnate", a as form, Male.Getleveledactorbase().getname(), None)
-						; ( add by 15, one impregnation will be enough
-						i = 0
-						; by 15 )
-					EndIf
-					Utility.wait(1.0)
-				endif
-			endwhile
-		else
-			i = injector.length
-
-			while i > 0
-				i -= 1
-				if (injector[i].GetActorBase()).getsex() == 0
-					Male = injector[i]
-					FertilityEventGo("FertilityModeAddSperm", a as form, Male.Getleveledactorbase().getname(), Male as form)
-					If fullness > sr_SendingSpermDataCriterion.getvalue() as int
-						FertilityEventGo("FertilityModeImpregnate", a as form, Male.Getleveledactorbase().getname(), None)
-						; ( add by 15, one impregnation will be enough
-						i = 0
-						; by 15 )
-					EndIf
-					Utility.wait(1.0)
-				endif
-			endwhile
-		endif
+	
+	if a == Player
+		i = sr_InjectorFormlist.getsize()
+		while i > 0
+			i -= 1
+			Male = sr_InjectorFormlist.getat(i) as actor
+			if Male && (Male.GetBaseObject() as Actorbase).getsex() == 0
+				FertilityEventGo("FertilityModeAddSperm", a as form, Male.Getleveledactorbase().getname(), Male as form)
+				If fullness > sr_SendingSpermDataCriterion.getvalue() as int
+					FertilityEventGo("FertilityModeImpregnate", a as form, Male.Getleveledactorbase().getname(), None)
+				EndIf
+				Utility.wait(1.0)
+			endif
+		endwhile
+	else
+		i = FormListCount(a, "sr.inflater.injector")
+		while i > 0
+			i -= 1
+			Male = FormListGet(a, "sr.inflater.injector", i) as Actor
+			if Male && (Male.GetActorBase()).getsex() == 0
+				log("FertilityModeAddSperm to " + a + " from " + Male)
+				FertilityEventGo("FertilityModeAddSperm", a as form, Male.Getleveledactorbase().getname(), Male as form)
+				If fullness > sr_SendingSpermDataCriterion.getvalue() as int
+					FertilityEventGo("FertilityModeImpregnate", a as form, Male.Getleveledactorbase().getname(), None)
+				EndIf
+				Utility.wait(1.0)
+			endif
+		endwhile
 	endif
 
+	endif
+	
 	if sr_BeeingFemale.getvalue() == 1
-		if a == Player
-			;i = injectorPlayer.length
-			i = sr_InjectorFormlist.getsize()
-			while i > 0
-				i -= 1
-				Male = sr_InjectorFormlist.getat(i) as actor
-				if (Male.GetBaseObject() as Actorbase).getsex() == 0
-					Male.SendModEvent("BeeingFemale", "AddSperm", a.GetFormID())
-					; ( add by 15, one impregnation will be enough
-					i = 0
-					; by 15 )
-					Utility.wait(1.0)
-				endif
-			endwhile
-		else
-			i = injector.length
+	
+	if a == Player
+		i = sr_InjectorFormlist.getsize()
+		while i > 0
+			i -= 1
+			Male = sr_InjectorFormlist.getat(i) as actor
+			if Male && (Male.GetBaseObject() as Actorbase).getsex() == 0
+				Male.SendModEvent("BeeingFemale", "AddSperm", a.GetFormID())
+				Utility.wait(1.0)
+			endif
+		endwhile
+	else
+		i = FormListCount(a, "sr.inflater.injector")
+		while i > 0
+			i -= 1
+			Male = FormListGet(a, "sr.inflater.injector", i) as Actor
+			if (Male && (Male.GetActorBase()).getsex() == 0) && (Player != Male)
+				;debug.notification("yes male")
+				log("BeeingFemale AddSperm to " + a + " from " + Male)
+				Male.SendModEvent("BeeingFemale", "AddSperm", a.GetFormID())
+				Utility.wait(1.0)
+			else
+				;debug.notification("No male")
+			endif
+		endwhile
+	endif
 
-			while i > 0
-				i -= 1
-				if ((injector[i].GetActorBase()).getsex() == 0) && (Player != injector[i])
-					;debug.notification("yes male")
-					Male = injector[i]
-					Male.SendModEvent("BeeingFemale", "AddSperm", a.GetFormID())
-					; ( add by 15, one impregnation will be enough
-					i = 0
-					; by 15 )
-					Utility.wait(1.0)
-				else
-					;debug.notification("No male")
-				endif
-			endwhile
-		endif
+	If fullness > sr_SendingSpermDataCriterion.getvalue() as int
+		a.SendModEvent("BeeingFemale", "CanBecomePregnant", 1)
+	EndIf
 
-		If fullness > sr_SendingSpermDataCriterion.getvalue() as int
-			a.SendModEvent("BeeingFemale", "CanBecomePregnant", 1)
-		EndIf
 	endif
 EndFunction
 
@@ -1750,68 +2035,77 @@ State MonitoringInflation
 		RegisterForSingleUpdateGameTime(1.0)
 	EndEvent
 
+	function RemoveSpermFromActor(actor akactor, int type = 1, String ReserveRace = "", bool bEvent = false)
+		If !(akactor == player)
+			return
+		endif
+		int i
+		if type == 1
+			i = sr_InjectorFormlist.getsize()
+		elseif type == 2
+			i = FormListCount(akactor,  "sr.inflater.analinjector")
+		endif
+		
+		if i > 0
+			int randomi = Utility.randomint(0, i - 1)
+			actor injector
+			if type == 1
+				injector = sr_InjectorFormlist.getat(randomi) as Actor
+			elseif type == 2
+				injector = FormListGet(akactor, "sr.inflater.analinjector", randomi) as Actor
+			endif
+
+			int actori = GetCreatureRaceint(injector)
+			if ReserveRace == "Chaurus" && (actori >= 4 && actori <= 6)
+				if type == 1
+					if !akactor.isinfaction(sr_Impregnated)
+						bPlayerImpregnated = true
+						akactor.addtofaction(sr_Impregnated)
+					endif
+				elseif type == 2
+					if !akactor.isinfaction(sr_Impregnatedanal)
+						bPlayerImpregnatedAnal = true
+						akactor.addtofaction(sr_Impregnatedanal)
+					endif
+				endif
+				return
+			elseif ReserveRace == "Chaurus" && (actori < 4 || actori > 6)
+				if type == 1
+					sr_InjectorFormlist.RemoveAddedForm(injector)
+				elseif type == 2
+					FormListRemove(akactor, "sr.inflater.analinjector", injector)
+				endif
+			endif
+		endif
+	endfunction
+
 	Event OnUpdateGameTime()
-		int n = FormListCount(self, INFLATED_ACTORS)
+		int n = FormListCount(self, INFLATED_ACTORS) 
 		if n > 0
+			If dhlpSuspend
+				RegisterForSingleUpdateGameTime(0.5)
+				return
+			EndIf
+			SendModEvent("dhlp-Suspend")
 			float startTime = Utility.GetCurrentGameTime()
 			While n > 0
-
-				bool start_deflate = false
-				bool start_absorb = false
+				
 				int queued = 0
 				while queued < threads.length && n > 0
 					n -= 1
 					Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
-					if a && !a.IsDead() && !a.IsInCombat() && a.GetCurrentScene() == none && !a.IsInFaction(slAnimatingFaction)
-						float lastVagTime = GetFloatValue(a, LAST_TIME_VAG)
+					;int blockedtype = GetAvailableExpelPool(a)
+					if a && !a.IsDead() && !a.IsInCombat() && !a.IsInFaction(slAnimatingFaction) ; && a.GetCurrentScene() == none - we need it? moved to `isAnimating` function
+						float lastVagTime = GetFloatValue(a, LAST_TIME_VAG) 
 						float lastAnalTime = GetFloatValue(a, LAST_TIME_ANAL)
 						float lastoralTime = GetFloatValue(a, LAST_TIME_ORAL)
-						bool deflateVag = lastVagTime > 0.0 && ( GameDaysPassed.GetValue() - lastVagTime ) * 24 >= config.minInflationTime; Needs improvement
-						bool deflateAnal = lastAnalTime > 0.0 && ( GameDaysPassed.GetValue() - lastAnalTime ) * 24 >= config.minInflationTime
-						bool deflateOral = lastoralTime > 0.0 && ( GameDaysPassed.GetValue() - lastoralTime ) * 24 >= config.minInflationTime
-
-						; ( add by 15, femboy could not deflate vag
-						; Debug.Notification(a.GetLeveledActorBase().GetName() + " FHU OnUpdate, ltv: " + lastVagTime + ", dv: " + deflateVag)
-						; Debug.Notification(a.GetLeveledActorBase().GetName() + " FHU OnUpdate, lta: " + lastAnalTime + ", da: " + deflateAnal)
-						; Debug.Notification(a.GetLeveledActorBase().GetName() + " FHU OnUpdate, lto: " + lastOralTime + ", do: " + deflateOral)
-
 						float vagCum = GetFloatValue(a, CUM_VAGINAL)
 						float analCum = GetFloatValue(a, CUM_ANAL)
 						float oralCum = GetFloatValue(a, CUM_ORAL)
-
-						; for male move vagcum to analcum
-						if vagCum > 0.0 && a.GetLeveledActorBase().GetSex() == 0
-							UnsetFloatValue(a, CUM_VAGINAL)
-							UnsetFloatValue(a, LAST_TIME_VAG)
-							analCum += vagCum
-							vagCum = 0.0
-							SetFloatValue(a, CUM_ANAL, analCum)
-							SetFloatValue(a, LAST_TIME_ANAL, GameDaysPassed.GetValue())
-							deflateAnal = true
-						endif
-
-						; check if there something to deflate or absorb
-						if vagCum == 0.0
-							deflateVag = false
-						endif
-						if analCum == 0.0
-							deflateAnal = false
-						endif
-						if oralCum == 0.0
-							deflateOral = false
-						endif
-
-						; Debug.Notification(a.GetLeveledActorBase().GetName() + " FHU OnUpdate, da: " + deflateAnal + ", dv: " + deflateVag + ", do: " + deflateOral)
-
-						; femboy can only absorb vagcum
-						bool absorbVag = false
-						bool isFemboy = sexlab.GetGender(a) == 0 && a.GetLeveledActorBase().GetSex() == 1
-						if isFemboy
-							absorbVag = deflateVag
-							deflateVag = false
-						endif
-						; by 15 )
-
+						bool deflateVag = vagCum > 0 && lastVagTime > 0.0 && ( GameDaysPassed.GetValue() - lastVagTime ) * 24 >= config.minInflationTime; Needs improvement
+						bool deflateAnal = analCum > 0 && lastAnalTime > 0.0 && ( GameDaysPassed.GetValue() - lastAnalTime ) * 24 >= config.minInflationTime
+						bool deflateOral = oralCum > 0 && lastoralTime > 0.0 && ( GameDaysPassed.GetValue() - lastoralTime ) * 24 >= config.minInflationTime
+						
 						If deflateAnal && deflateVag ; only deflate once per tic
 							If Utility.RandomInt(0, 99) < 50 || isPlugged(a) == 2;Why either one at a time?
 								deflateAnal = false
@@ -1819,206 +2113,118 @@ State MonitoringInflation
 								deflateVag = false
 							EndIf
 						EndIf
+						If deflateAnal || deflateVag
+							deflateOral = false
+						EndIf
 
-					;	log("Deflate actor " + a.GetLeveledActorBase().GetName() + "? Anal: " + deflateAnal +", Vaginal: " + deflateVag)
-
+						log("Deflate actor " + a.GetLeveledActorBase().GetName() + "? Anal: " + deflateAnal +", Vaginal: " + deflateVag +", Oral: " + deflateOral)
+						
 						int plugged = isPlugged(a)
-
-						; ( add by 15, call FertilityChance() only if actor has vag cum
-						; also clear list of injectors if it not empty
-						; if sr_OnEventSpermNPC.getvalue() == 1 && !(a == player)
-						; 	FertilityChance(a)
-						; elseif sr_OnEventSpermPlayer.getvalue() == 1 && (a == player)
-						; 	FertilityChance(a)
-						; endif
-						If vagCum != 0.0
+						If deflateVag
 							if sr_OnEventSpermNPC.getvalue() == 1 && !(a == player)
 								FertilityChance(a)
 							elseif sr_OnEventSpermPlayer.getvalue() == 1 && (a == player)
 								FertilityChance(a)
 							endif
-						; clear injector list
-						ElseIf a == player && sr_InjectorFormlist.getsize() > 0
-							sr_InjectorFormlist.revert()
 						EndIf
-						; by 15 )
-
+						
 						If a == player
 							sr_plugged.setValueInt(plugged)
 						EndIf
-
+						
 						int tid = 0
 						float defTime = Utility.Randomint(2, 4) * config.animMult
 					;	float defTime = Utility.RandomFloat(4.0, 8.0)
 					;	log("deflate time: " + deftime)
-
-						; ( add by 15, sanitize list of inflated from empty actors
-						if vagCum == 0.0 && analCum == 0.0 && oralCum == 0.0
-							tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, 1)
-							start_absorb = true
-							queued += 1
-						endif
-						; by 15 )
-
+						
 						if deflateVag && Utility.RandomInt(0, 99) < GetDeflateChance(a)
 					;		log("Trying to remove vaginal cum")
-							; ( changed by 15, always animate, can absorb or deflate, can absorb when plugged
-							; if plugged == 1 || plugged == 3
-							; 	log("Plugged!")
-							; 	if a == Player && Utility.RandomInt(0, 99) < 25
-							; 		notify("$FHU_PLUGGED_VAG")
-							; 	endIf
-							; Else
-							; 	if sr_OnEventNoDeflation.getvalue() == 0
-							; 		tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
-							; 		queued += 1
-							; 	else
-							; 		if sr_OnEventAbsorbSperm.getvalue() == 1
-							; 			tid = QueueAbsorbActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
-							; 			queued += 1
-							; 		endif
-							; 	endif
-							; endIf
-							if sr_OnEventNoDeflation.getvalue() == 0
-								if (plugged != 1 && plugged != 3) && Utility.RandomInt(1, 100) < ((GetVaginalPercentage(a) * 100) as int)
-									tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime, "", 1)
-									start_deflate = true
+							if plugged == 1 || plugged == 3
+								log("Plugged!")
+								if a == Player && Utility.RandomInt(0, 99) < 25
+									notify("$FHU_PLUGGED_VAG")
+								endIf
+							Else
+								if sr_OnEventNoDeflation.getvalue() == 0
+									;if blockedtype == 0
+									;	tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime, "", 0)
+									;elseif blockedtype == 1
+									;	tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime, "", -1)
+									;else
+									;	;None
+									;endif
+									tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
 									queued += 1
-								elseif sr_OnEventAbsorbSperm.getvalue() == 1
-									tid = QueueAbsorbActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
-									start_absorb = true
-									queued += 1
+								else
+									if sr_OnEventAbsorbSperm.getvalue() == 1
+										tid = QueueAbsorbActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
+										queued += 1
+									endif
 								endif
-							else
-								if sr_OnEventAbsorbSperm.getvalue() == 1
-									tid = QueueAbsorbActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
-									start_absorb = true
-									queued += 1
-								endif
-							endif
-						; by 15 )
-						; ( add by 15, femboy cannot deflate vagCum, but can absorb very slowly and small part
-						elseif absorbVag
-							int chance = GetDeflateChance(a) / Utility.RandomInt(2, 5)
-							if chance < 5
-								chance = 5
-							endif
-							; Debug.Notification(a.GetLeveledActorBase().GetName() + ", femboy absorb vagcum chance: " + chance)
-							if Utility.RandomInt(0, 99) < chance
-								float amount = Config.SpermRemovalAmountvag / Utility.RandomInt(2, 5)
-								if amount < 0.1
-									amount = 0.1
-								endif
-								tid = QueueAbsorbActor(a, false, VAGINAL, amount, 1)
-								start_absorb = true
-								queued += 1
-								; Debug.Notification(a.GetLeveledActorBase().GetName() + ", femboy absorb vagcum amount: " + amount)
-							endif
-						; by 15 )
+							endIf
 						EndIf
-
+						
 						if deflateAnal && Utility.RandomInt(0, 99) < GetDeflateChance(a)
 						;	log("Trying to remove anal cum")
-							; ( changed by 15, always animate, can absorb or deflate, can absorb when plugged
-							; if plugged == 2 || plugged == 3
-							; 	log("Plugged!")
-							; 	if a == Player && Utility.RandomInt(0, 99) < 25
-							; 		notify("$FHU_PLUGGED_AN")
-							; 	endIf
-							; Else
-							; 	if sr_OnEventNoDeflation.getvalue() == 0
-							; 		tid = QueueActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
-							; 		queued += 1
-							; 	else
-							; 		if sr_OnEventAbsorbSperm.getvalue() == 1
-							; 			tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
-							; 			start_absorb = true
-							; 			queued += 1
-							; 		endif
-							; 	endif
-							; endIf
-							if sr_OnEventNoDeflation.getvalue() == 0
-								if (plugged != 2 && plugged != 3) && Utility.RandomInt(1, 100) < ((GetAnalPercentage(a) * 100) as int)
-									tid = QueueActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime, "", 1)
-									start_deflate = true
+							if plugged == 2 || plugged == 3
+								log("Plugged!")
+								if a == Player && Utility.RandomInt(0, 99) < 25
+									notify("$FHU_PLUGGED_AN")
+								endIf
+							Else
+								if sr_OnEventNoDeflation.getvalue() == 0
+									tid = QueueActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
 									queued += 1
-								elseif sr_OnEventAbsorbSperm.getvalue() == 1
-									tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, 1)
-									start_absorb = true
-									queued += 1
-								endif
-							else
-								if sr_OnEventAbsorbSperm.getvalue() == 1
-									tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, 1)
-									start_absorb = true
-									queued += 1
-								endif
-							endif
-						EndIf
-						; by 15 )
-
-						; ( changed by 15, (!deflateVag && !deflateAnal) != deflateOral
-						; if !deflateVag && !deflateAnal && Utility.RandomInt(0, 99) < GetDeflateChance(a)
-						if deflateOral && Utility.RandomInt(0, 99) < GetDeflateChance(a)
-						; by 15 )
-							if sr_OnEventNoDeflation.getvalue() == 0
-								; ( changed by 15, always animate and always absorb
-								; tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
-
-								; tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime, "", 1)
-								if Utility.RandomInt(1, 100) < ((GetOralPercentage(a) * 100) as int)
-									tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime, "", 1)
-									start_deflate = true
 								else
-									tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, 1)
-									start_absorb = true
+									if sr_OnEventAbsorbSperm.getvalue() == 1
+										tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
+										queued += 1
+									endif
 								endif
-								; by 15 )
+							endIf
+						EndIf
+						
+						if deflateOral && Utility.RandomInt(0, 99) < GetOralDeflateChance(a)
+							if sr_OnEventNoDeflation.getvalue() == 0
+								tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
 								queued += 1
 							else
 								if sr_OnEventAbsorbSperm.getvalue() == 1 && sr_OnEventAbsorbSpermOral.getvalue() == 1
-									; ( changed by 15
-									; tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
-									tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, 1)
-									start_absorb = true
-									; by 15 )
+									tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
 									queued += 1
 								endif
 							endif
 						endif
-
+						
 						if tid < 0
 							log("retrying " + a.GetLeveledActorBase().GetName() + ".")
 							queued += threads.length ; break the inner loop
 							n += 1 ; retry...
-						endIf
-
+						endIf 
+							
 					ElseIf a == none || a.isDead() || a.isdisabled()
 						warn("Found dead or none actor in inflated actor list, removing.")
 						FormListRemoveAt(self, INFLATED_ACTORS, n)
+						FormListClear(a, "sr.inflater.injector")
+						FormListClear(a, "sr.inflater.analinjector")
 					;	FormListRemove(self, INFLATED_ACTORS, FormListGet(self, INFLATED_ACTORS, n), true)
+					Else
+						log("QueueActor blocked for " + a.GetLeveledActorBase().GetName())
 					EndIf
 				EndWhile
 
-				; ( changed by 15, always animate and always absorb
-				; if sr_OnEventNoDeflation.getvalue() == 1
-				; 	if (sr_OnEventAbsorbSperm.getvalue() == 1)
-				; 		AbsorptionQueued()
-				; 	;elseif (sr_OnEventAbsorbSpermOral.getvalue() == 1)
-				; 		;AbsorptionQueued()
-				; 	endif
-				; else
-				; 	InflateQueued()
-				; endif
-				if start_deflate
+				if sr_OnEventNoDeflation.getvalue() == 1
+					if (sr_OnEventAbsorbSperm.getvalue() == 1)
+						AbsorptionQueued()
+					;elseif (sr_OnEventAbsorbSpermOral.getvalue() == 1)
+						;AbsorptionQueued()
+					endif
+				else
 					InflateQueued()
 				endif
-				if start_absorb
-					AbsorptionQueued()
-				endif
-				; by 15 )
-				Utility.Wait(10.0) ; Wait for all queued threads to finish
+					Utility.Wait(10.0) ; Wait for all queued threads to finish
 			EndWhile
+			SendModEvent("dhlp-Resume")
 			float duration = (Utility.GetCurrentGameTime() - startTime) * 24
 			float nextUpdate = 1.0 - duration
 			If nextUpdate < 0.1
@@ -2029,7 +2235,7 @@ State MonitoringInflation
 			GoToState("")
 		EndIf
 	EndEvent
-
+	
 	Event OnEndState()
 		log("Stopping inflation monitor")
 		UnregisterForUpdateGameTime()
@@ -2046,10 +2252,18 @@ int Function GetDeflateChance(Actor akActor)
 	return chance
 EndFunction
 
+int Function GetOralDeflateChance(Actor akActor)
+	int chance = (GetOralPercentage(akActor) + 0.5) as int
+	chance += 33
+	If chance > 90
+		chance = 90
+	endIf
+	return chance
+EndFunction
 
 Function ResetActors(bool force = false)
 	GoToState("")
-	int n = FormListCount(self, INFLATED_ACTORS)
+	int n = FormListCount(self, INFLATED_ACTORS) 
 	while n > 0
 		n -= 1
 		Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
@@ -2071,7 +2285,9 @@ Function ResetActors(bool force = false)
 		Else
 			RemoveNodeScale(a, BELLY_NODE)
 		Endif
-
+		FormListClear(a, "sr.inflater.injector")
+		FormListClear(a, "sr.inflater.analinjector")
+		
 		UnsetFloatValue(a, INFLATION_AMOUNT)
 		UnsetFloatValue(a, CUM_ANAL)
 		UnsetFloatValue(a, CUM_VAGINAL)
@@ -2084,7 +2300,7 @@ Function ResetActors(bool force = false)
 		RemoveFaction(a)
 	EndWhile
 	FormListClear(self, INFLATED_ACTORS)
-
+	
 	; Make sure player is always reset
 	log("Resetting " + player.GetLeveledActorBase().GetName() + "...")
 	if config.Bodymorph
@@ -2115,7 +2331,8 @@ Function ResetActors(bool force = false)
 	RemoveFaction(player)
 	SendPlayerCumUpdate(0.0, true)
 	SendPlayerCumUpdate(0.0, false)
-
+	sr_InjectorFormlist.revert()
+	
 	notify("$FHU_ACTORS_RESET")
 EndFunction
 
@@ -2150,10 +2367,12 @@ Function ResetActor(Actor a)
 	UnencumberActor(a)
 	RemoveFaction(a)
 	FormListRemove(self, INFLATED_ACTORS, a, true)
+	FormListClear(a, "sr.inflater.injector")
+	FormListClear(a, "sr.inflater.analinjector")
 	If a == player
 		SendPlayerCumUpdate(0.0, true)
 		SendPlayerCumUpdate(0.0, false)
-	EndIf
+	EndIf 
 EndFunction
 
 Function UpdateFaction(Actor a)
@@ -2171,6 +2390,31 @@ EndFunction
 
 Function RemoveFaction(Actor a)
 	a.RemoveFromFaction(inflateFaction)
+	a.RemoveFromFaction(sr_Impregnated)
+	bPlayerImpregnated = false
+EndFunction
+
+Function RemoveAnalFaction(Actor a)
+	a.RemoveFromFaction(sr_Impregnatedanal)
+	bPlayerImpregnatedAnal = false
+EndFunction
+
+bool Function AddImpregnatedFaction(Actor a)
+	If !a.IsInFaction(sr_Impregnated)
+		a.addToFaction(sr_Impregnated)
+		return false
+	else
+		return true
+	EndIf
+EndFunction
+
+bool Function AddImpregnatedAnalFaction(Actor a)
+	If !a.IsInFaction(sr_Impregnatedanal)
+		a.addToFaction(sr_Impregnatedanal)
+		return false
+	else
+		return true
+	EndIf
 EndFunction
 
 Function UpdateOralFaction(Actor a)
@@ -2190,22 +2434,21 @@ Function RemoveOralFaction(Actor a)
 	a.RemoveFromFaction(SR_InflateOralFaction)
 EndFunction
 
-
 Function PlayerInflationDone(Form a, float startVag, float startAn, float startOr)
 	if a != player
 		return
 	EndIf
 	UnregisterForModEvent("fhu.playerInflated")
-
+	
 	log("PlayerInflationDone()")
 	int n = currentActors.length
 	log(n + " actors")
 	while n > 0
 		n -= 1
 		If currentActors[n] != none && currentActors[n] != player && currentActors[n].haskeyword(ActorTypeNPC)
-			ApplyCumEffect(currentActors[n].GetLeveledActorBase().GetRace(), currentType, startVag, startAn)
+			ApplyCumEffect(currentActors[n].GetLeveledActorBase().GetRace(), currentType, startVag, startAn, startOr)
 		Elseif currentActors[n] != none && currentActors[n] != player && !currentActors[n].haskeyword(ActorTypeNPC)
-			ApplyCreatureCumEffect(sr_CreatureRaceList.getat(GetCreatureRaceint(currentActors[n])) as race, currentType, startVag, startAn)
+			ApplyCreatureCumEffect(sr_CreatureRaceList.getat(GetCreatureRaceint(currentActors[n])) as race, currentType, startVag, startAn, startOr)
 		EndIf
 
 	EndWhile
@@ -2213,74 +2456,90 @@ Function PlayerInflationDone(Form a, float startVag, float startAn, float startO
 	currentActors = new Actor[1]
 EndFunction
 
-Function ApplyCreatureCumEffect(Race rce, int pool, float startVag, float startAn)
-	if pool <= 0
+Function ApplyCreatureCumEffect(Race rce, int pool, float startVag, float startAn, float startOr)
+	if pool <= 0 
 		warn("Tried to apply cum effect without a pool.")
 		return
 	EndIf
-	log("Trying to apply cum effect for " + rce.GetName())
+	log("Trying to apply cum effect for " + rce.GetName() + "; startVag=" + startVag + "; startAn=" + startAn + "; startOr=" + startOr)
 	int n = FormListCount(rce, CREATURERACE_CUM_EFFECTS)
 	log("Found " + n + " effects.")
 	if n < 1
 		return
 	EndIf
-	Spell theSpell = FormListGet(rce, CREATURERACE_CUM_EFFECTS, Utility.RandomInt(0, n  - 1)) as Spell
-	log("Applying " + theSpell.GetName())
-
-	bool isAnal
+	;Spell theSpell = FormListGet(rce, CREATURERACE_CUM_EFFECTS, Utility.RandomInt(0, n  - 1)) as Spell
+	;log("Applying " + theSpell.GetName())
+	
+	bool isVaginal = false
+	bool isAnal = false
+	bool isOral = false
 	if(Math.LogicalAnd(pool, ANAL) && !Math.LogicalAnd(pool, VAGINAL))
 		isAnal = true
 	elseIf(!Math.LogicalAnd(pool, ANAL) && Math.LogicalAnd(pool, VAGINAL))
-		isAnal = false
-	Else ; both
+		isVaginal = true
+	ElseIf (Math.LogicalAnd(pool, ANAL) || Math.LogicalAnd(pool, VAGINAL)); both
 		isAnal = Utility.RandomInt(0,1) == 1
+		isVaginal = !isAnal
 	EndIf
-	player.AddSpell(theSpell, abVerbose = false)
-	int evnt = ModEvent.Create("fhu.playerCumEffectStart")
-	If isAnal
-		ModEvent.pushFloat(evnt, startAn)
-	Else
-		ModEvent.pushFloat(evnt, startVag)
+
+	If isAnal || isVaginal ;No Oral state is needed. Oral is Wip
+		Spell theSpell = FormListGet(rce, CREATURERACE_CUM_EFFECTS, Utility.RandomInt(0, n  - 1)) as Spell
+		log("Applying " + theSpell.GetName())
+		player.AddSpell(theSpell, abVerbose = false)
+		int evnt = ModEvent.Create("fhu.playerCumEffectStart")
+		If isAnal
+			ModEvent.pushFloat(evnt, startAn)
+		Else
+			ModEvent.pushFloat(evnt, startVag)
+		EndIf
+		ModEvent.pushBool(evnt, isAnal)
+		ModEvent.pushForm(evnt, theSpell) 
+		Utility.Wait(0.75)
+		ModEvent.Send(evnt)
 	EndIf
-	ModEvent.pushBool(evnt, isAnal)
-	ModEvent.pushForm(evnt, theSpell)
-	Utility.Wait(0.75)
-	ModEvent.Send(evnt)
 EndFunction
 
-Function ApplyCumEffect(Race rce, int pool, float startVag, float startAn)
-	if pool <= 0
+Function ApplyCumEffect(Race rce, int pool, float startVag, float startAn, float startOr)
+	if pool <= 0 
 		warn("Tried to apply cum effect without a pool.")
 		return
 	EndIf
-	log("Trying to apply cum effect for " + rce.GetName())
+	log("Trying to apply cum effect for " + rce.GetName() + "; startVag=" + startVag + "; startAn=" + startAn + "; startOr=" + startOr)
 	int n = FormListCount(rce, RACE_CUM_EFFECTS)
 	log("Found " + n + " effects.")
 	if n < 1
 		return
 	EndIf
-	Spell theSpell = FormListGet(rce, RACE_CUM_EFFECTS, Utility.RandomInt(0, n  - 1)) as Spell
-	log("Applying " + theSpell.GetName())
-
-	bool isAnal
+	;Spell theSpell = FormListGet(rce, RACE_CUM_EFFECTS, Utility.RandomInt(0, n  - 1)) as Spell
+	;log("Applying " + theSpell.GetName())
+	
+	bool isVaginal = false
+	bool isAnal = false
+	bool isOral = false
 	if(Math.LogicalAnd(pool, ANAL) && !Math.LogicalAnd(pool, VAGINAL))
 		isAnal = true
 	elseIf(!Math.LogicalAnd(pool, ANAL) && Math.LogicalAnd(pool, VAGINAL))
-		isAnal = false
-	Else ; both
+		isVaginal = true
+	ElseIf (Math.LogicalAnd(pool, ANAL) || Math.LogicalAnd(pool, VAGINAL)); both
 		isAnal = Utility.RandomInt(0,1) == 1
+		isVaginal = !isAnal
 	EndIf
-	player.AddSpell(theSpell, abVerbose = false)
-	int evnt = ModEvent.Create("fhu.playerCumEffectStart")
-	If isAnal
-		ModEvent.pushFloat(evnt, startAn)
-	Else
-		ModEvent.pushFloat(evnt, startVag)
+	
+	If isAnal || isVaginal ;No Oral state is needed. Oral is Wip
+		Spell theSpell = FormListGet(rce, RACE_CUM_EFFECTS, Utility.RandomInt(0, n  - 1)) as Spell
+		log("Applying " + theSpell.GetName())
+		player.AddSpell(theSpell, abVerbose = false)
+		int evnt = ModEvent.Create("fhu.playerCumEffectStart")
+		If isAnal
+			ModEvent.pushFloat(evnt, startAn)
+		Else
+			ModEvent.pushFloat(evnt, startVag)
+		EndIf
+		ModEvent.pushBool(evnt, isAnal)
+		ModEvent.pushForm(evnt, theSpell) 
+		Utility.Wait(0.75)
+		ModEvent.Send(evnt)
 	EndIf
-	ModEvent.pushBool(evnt, isAnal)
-	ModEvent.pushForm(evnt, theSpell)
-	Utility.Wait(0.75)
-	ModEvent.Send(evnt)
 EndFunction
 
 Function SendPlayerCumUpdate(float current, bool isAnal)
@@ -2312,10 +2571,12 @@ endfunction
 
 Function StripActor(Actor akActor)
 	If config.strip
+		log("StripActor " + akActor)
 		UnequipArmor(akActor)
 	endIf
 EndFunction
 
+; Unused
 Function StripCover(Actor akActor, bool isAnal)
 	If config.strip
 		int slot = 0x1000000
@@ -2330,51 +2591,100 @@ Function StripCover(Actor akActor, bool isAnal)
 EndFunction
 
 Function UnstripActor(Actor akActor)
+	log("UnstripActor " + akActor)
 	EquipArmor(akActor)
 EndFunction
 
 Function UnequipArmor(Actor target)
-	wornforms = new Armor[32]
+;wornforms = new Armor[32]
 
-	;int index = wornforms.length
-	int index = 0
-	Armor curr_armor
-	Int CurrentArmorSlotsMaskB = Math.LeftShift(SRSlotMaskB.GetValue() As Int, 24)
-	Int CurrentArmorSlotsMaskA = SRSlotMask.GetValue() As Int
+;int index = wornforms.length
+int index = 0
+Armor curr_armor
+Int CurrentArmorSlotsMaskB = Math.LeftShift(SRSlotMaskB.GetValue() As Int, 24)
+Int CurrentArmorSlotsMaskA = SRSlotMask.GetValue() As Int
 
-	Int slotsChecked = Math.LogicalOr(CurrentArmorSlotsMaskA, CurrentArmorSlotsMaskB)
-	int thisSlot = 0x01
+Int slotsChecked = Math.LogicalOr(CurrentArmorSlotsMaskA, CurrentArmorSlotsMaskB)
+
+int thisSlot = 0x01
 	while (thisSlot < 0x80000000)
-		if (Math.LogicalAnd(thisSlot, slotsChecked) != thisSlot)
-			curr_armor = target.GetWornForm(thisSlot) as Armor
-			if curr_armor
-				if (!SexLabUtil.HasKeywordSub(curr_armor, "NoStrip"))
-					wornforms[index] = curr_armor
-					Target.UnequipItem(curr_armor, false, true)
-					index += 1
-				EndIf
-			endif
+	if (Math.LogicalAnd(thisSlot, slotsChecked) != thisSlot)
+		curr_armor = target.GetWornForm(thisSlot) as Armor
+		if curr_armor
+			if !SexLabUtil.HasKeywordSub(curr_armor, "NoStrip") && (FormListFind(target, "sr.inflater.equipped_leak", curr_armor) == -1) && (FormListFind(target, "sr.inflater.equipped_tongue", curr_armor) == -1)
+				;wornforms[index] = curr_armor
+				Target.UnequipItem(curr_armor, false, true)
+				log("UnequipArmor from " + target + ": " + curr_armor)
+				FormListAdd(target, "sr.inflater.unequipped", curr_armor)
+				index += 1
+			EndIf
 		endif
+	endif
 		thisSlot *= 2 ;double the number to move on to the next slot
 	endWhile
+	
 EndFunction
 
 Function EquipArmor(Actor target)
 
-int index = wornforms.length
+	int i = FormListCount(target, "sr.inflater.unequipped")
 
-	while index > 0
-		index -= 1
-		if wornforms[index]
-			Target.equipItem(wornforms[index], false, true)
-		EndIf
-	endWhile
-
+	while(i > 0)
+		i -= 1
+		Armor curr_armor = FormListGet(target, "sr.inflater.unequipped", i) as Armor
+		if curr_armor && !target.IsEquipped(curr_armor)
+			bool inInventory = true ; false - TODO: need optimization
+			;Int iIndex = target.GetNumItems()
+			;While iIndex > 0
+			;	iIndex -= 1
+			;	If target.GetNthForm(iIndex) == curr_armor
+			;		inInventory = true
+			;	EndIf
+			;EndWhile
+			If inInventory
+				log("EquipArmor to " + target + ": " + curr_armor)
+				Target.equipItem(curr_armor, false, true)
+			Else
+				log("EquipArmor to " + target + ": " + curr_armor + " failed by !inInventory")
+			EndIf
+		Else
+			if(!curr_armor)
+				log("EquipArmor to " + target + ": " + curr_armor + " failed by !curr_armor")
+			endif
+			if(target.IsEquipped(curr_armor))
+				log("EquipArmor to " + target + ": " + curr_armor + " failed by IsEquipped")
+			endif
+		endif
+		FormListRemoveAt(target, "sr.inflater.unequipped", i)
+	endwhile
+	FormListClear(target, "sr.inflater.unequipped")
+	RemoveLeak(target)
+	;/ i = FormListCount(target, "sr.inflater.equipped_leak") /;
+	;/ while(i > 0) /;
+		;/ i -= 1 /;
+		;/ Armor leak = FormListGet(target, "sr.inflater.equipped_leak", i) as Armor /;
+		;/ target.unequipItem(leak, abSilent=true) /;
+		;/ target.removeItem(leak, 99, true) /;
+	;/ endwhile /;
+	;/ FormListClear(target, "sr.inflater.equipped_leak") /;
 EndFunction
 
+Function RemoveLeak(Actor target)
+	int i = FormListCount(target, "sr.inflater.equipped_leak")
+	while(i > 0)
+		i -= 1
+		Armor leak = FormListGet(target, "sr.inflater.equipped_leak", i) as Armor
+		target.unequipItem(leak, abSilent=true)
+		target.removeItem(leak, 99, true)
+	endwhile
+	FormListClear(target, "sr.inflater.equipped_leak")
+EndFunction
 
-
-
+Function StopExpelSpell(Actor a)
+	if a.HasMagicEffect(sr_ExpelCumMGEF)
+		a.RemoveSpell(sr_expelcumspell)
+	endif
+EndFunction
 
 Function EncumberActor(Actor a)
 	If !config.encumber
@@ -2405,7 +2715,7 @@ Function UnencumberActor(Actor a)
 EndFunction
 
 Function UnencumberAllActors()
-	int n = FormListCount(self, INFLATED_ACTORS)
+	int n = FormListCount(self, INFLATED_ACTORS) 
 	while n > 0
 		n -= 1
 		Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
@@ -2414,7 +2724,7 @@ Function UnencumberAllActors()
 EndFunction
 
 Function EncumberAllActors()
-	int n = FormListCount(self, INFLATED_ACTORS)
+	int n = FormListCount(self, INFLATED_ACTORS) 
 	while n > 0
 		n -= 1
 		Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
@@ -2433,6 +2743,12 @@ EndFunction
 ; -------
 ; Helpers
 ; -------
+
+int function GetAvailableExpelPool(Actor a)
+	return GetintValue(a, EXPEL_SWITCH)
+	;{0: expel available 1: expel unavailable 2: auto deflate unavailable as well}
+	;Abort - {0: expel available 1: vaginal expel unavailable 2: Anal expel unavailable 3: both vaginal and anal unavailable 4: Oral expel unavailable 5: vaginal + oral unavailable 6: anal + oral unavailable 9: All the holes unavailable}
+endfunction
 
 float Function GetOralPoolSize(Actor a)
 	return config.OralmaxInflation
@@ -2505,15 +2821,27 @@ int Function isPlugged(Actor akActor);4Oral is not ready WIP
 		return 2
 	Else
 		return 0
-	EndIf
+	EndIf		
 EndFunction
+
+int Function isGagged(Actor akActor);0 = Not gagged, 1 = PermitOral Gagged, 2 = Gagged
+	If akActor.WornHasKeyword(zad_DeviousGag)
+		if akActor.WornHasKeyword(zad_PermitOral)
+			return 1
+		else
+			return 2
+		endif
+	else
+		return 0
+	endif
+Endfunction
 
 bool Function isFilledAndPlugged(Actor akActor)
 	int plugged = isPlugged(akActor)
 	if plugged <= 0 || akActor.GetFactionRank(inflateFaction) <= 0
 		return false
 	EndIf
-
+	
 	return plugged == 3 || ( plugged == 1 && GetVaginalCum(akActor) > 0.0 ) || ( plugged == 2 && GetAnalCum(akActor) > 0.0 )
 EndFunction
 
@@ -2543,10 +2871,10 @@ EndFunction
 ; 2 - Anal
 ; 3 - Oral
 int Function GetMostRecentInflationType(Actor a)
-	float an = GetFloatValue(a, CUM_ANAL)
 	float vag = GetFloatValue(a, CUM_VAGINAL)
+	float an = GetFloatValue(a, CUM_ANAL)
 	float ora = GetFloatValue(a, CUM_ORAL)
-
+	
 	If an > 0.0 || vag > 0.0 || ora > 0.0
 		If vag > an
 			if ora > vag
@@ -2563,31 +2891,54 @@ int Function GetMostRecentInflationType(Actor a)
 		EndIf
 	Else
 		return 0
-	EndIf
+	EndIf	
 EndFunction
 
-; ( add by 15, femboy cannot deflate VaginalCum only absorb
-int Function GetMostRecentInflationTypeFemboy(Actor a)
+int Function GetMoreInflationType(Actor a, int itype);exclude type 1: Vaginal 2: Anal 3: Oral
+
+	float vag = GetFloatValue(a, CUM_VAGINAL)
 	float an = GetFloatValue(a, CUM_ANAL)
 	float ora = GetFloatValue(a, CUM_ORAL)
 
-	If an > 0.0 || ora > 0.0
-		If an > ora
-			return 2
+	if itype == 1
+		If an > 0.0 || ora > 0.0
+			if an >= ora
+				return 2
+			elseif an < ora
+				return 3
+			endif
 		else
-			return 3
+			return 0
 		endif
-	Else
-		return 0
-	EndIf
+	elseif itype == 2
+		If vag > 0.0 || ora > 0.0
+			if vag >= ora
+				return 1
+			elseif vag < ora
+				return 3
+			endif
+		else
+			return 0
+		endif
+	elseif itype == 3
+		If vag > 0.0 || an > 0.0
+			if vag >= an
+				return 1
+			elseif vag < an
+				return 2
+			endif
+		else
+			return 0
+		endif
+	endif
+
 EndFunction
-; by 15 )
 
 float Function GetHoursSinceLastInflation(Actor a)
 	float an = GetFloatValue(a, LAST_TIME_ANAL)
 	float vag = GetFloatValue(a, LAST_TIME_VAG)
 	float ora = GetFloatValue(a, LAST_TIME_ORAL)
-
+	
 	If an > 0.0 || vag > 0.0 || ora > 0.0
 		If vag > an
 			if ora > vag
@@ -2604,20 +2955,20 @@ float Function GetHoursSinceLastInflation(Actor a)
 		EndIf
 	Else
 		return -1.0
-	EndIf
+	EndIf	
 EndFunction
 
 float Function GetHoursSinceInflation(Actor a, int type)
 	If type == 1
 		float vag = GetFloatValue(a, LAST_TIME_VAG)
-		If vag > 0.0
+		If vag > 0.0 
 			return (GameDaysPassed.GetValue() - vag) * 24
 		Else
 			return -1.0
 		EndIf
 	ElseIf type == 2
 		float an = GetFloatValue(a, LAST_TIME_ANAL)
-		If an > 0.0
+		If an > 0.0 
 			return (GameDaysPassed.GetValue() - an) * 24
 		Else
 			return -1.0
@@ -2745,32 +3096,24 @@ EndFunction
 ;Added SLIF compatibility + .esp key so nioverride will auto remove morphs if FHU is unistalled
 
 String Property FHU_KEY = "sr_FillHerUp.esp" autoreadonly
-
+ 
 Function SetBellyMorphValue(Actor akActor, float value, string MorphName)
+	if MorphName == ""
+		return
+	endif
+	
 	If value != 0.0
 		if sr_SLIF.getvalue() == 1
 			if MorphName == InflateMorph && config.FHUMorphSLIF
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
-				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
-			endif
-
-			if MorphName == InflateMorph2 && config.FHUMorphSLIF2
+			elseif MorphName == InflateMorph2 && config.FHUMorphSLIF2
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
-				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
-			endif
-
-			if MorphName == InflateMorph3 && config.FHUMorphSLIF3
+			elseif MorphName == InflateMorph3 && config.FHUMorphSLIF3
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
-				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
-			endif
-
-			if MorphName == InflateMorph4 && config.FHUMorphSLIF4
+			elseif MorphName == InflateMorph4 && config.FHUMorphSLIF4
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
-				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
+			;else
+			;	NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
 			endif
 		else
 			NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
@@ -2779,42 +3122,28 @@ Function SetBellyMorphValue(Actor akActor, float value, string MorphName)
 		if sr_SLIF.getvalue() == 1
 			if MorphName == InflateMorph && config.FHUMorphSLIF
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
-				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
-				NiOverride.ClearBodyMorph(akActor, MorphName, FHU_KEY)
-			endif
-
-			if MorphName == InflateMorph2 && config.FHUMorphSLIF2
+			elseif MorphName == InflateMorph2 && config.FHUMorphSLIF2
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
-				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
-				NiOverride.ClearBodyMorph(akActor, MorphName, FHU_KEY)
-			endif
-
-			if MorphName == InflateMorph3 && config.FHUMorphSLIF3
+			elseif MorphName == InflateMorph3 && config.FHUMorphSLIF3
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
-				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
-				NiOverride.ClearBodyMorph(akActor, MorphName, FHU_KEY)
-			endif
-
-			if MorphName == InflateMorph4 && config.FHUMorphSLIF4
+			elseif MorphName == InflateMorph4 && config.FHUMorphSLIF4
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
-			else
+			else;just in case
 				NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
 				NiOverride.ClearBodyMorph(akActor, MorphName, FHU_KEY)
 			endif
-
 		else
 			NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
 			NiOverride.ClearBodyMorph(akActor, MorphName, FHU_KEY)
 		endif
-	EndIf
+	EndIf	
 	NiOverride.UpdateModelWeight(akActor);Pregnancy Swapper
 	int eid = ModEvent.Create("PNSUpdateRequest")
 	ModEvent.PushForm(eid, akActor)
 	ModEvent.Send(eid)
 EndFunction
+
+
 
 Function SLIF_morph(Actor akActor, String MorphName, float value)
 	SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value, FHU_KEY)
@@ -2822,4 +3151,28 @@ EndFunction
 
 Function SLIF_unregisterMorph(Actor akActor, String MorphName)
 ;Null
+EndFunction
+
+bool Function isAnimating(Actor akActor) ; TODO too many dependency
+	If (akActor.IsOnMount() || akActor.GetCurrentScene() != none || akActor.GetSitState() != 0)
+		return true
+	EndIf
+	If (slAnimatingFaction && akActor.IsInFaction(slAnimatingFaction) ) 
+		return true
+	EndIf
+	If (config.zadAnimatingFaction && akActor.IsInFaction(config.zadAnimatingFaction) ) 
+		return true
+	EndIf
+	If (config.DefeatFaction && akActor.IsInFaction(config.DefeatFaction) ) 
+		return true
+	EndIf
+	If (config.UDMinigameFaction && akActor.IsInFaction(config.UDMinigameFaction) )
+		return true
+	EndIf
+	; TODO: Not a faction
+	;If (config.BathinginSkyrimFaction && akActor.IsInFaction(config.BathinginSkyrimFaction) )
+	;	return true
+	;EndIf
+
+	return false
 EndFunction

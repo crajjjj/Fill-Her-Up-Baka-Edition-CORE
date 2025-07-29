@@ -23,7 +23,7 @@ EndEvent
 
 Event OnUpdateGameTime()
 	inflater.log("OnUpdateGameTime() burst effect for " + t.GetLeveledActorBase().GetName())
-	If t.IsInFaction(slAnimatingFaction) || t.IsInCombat() || inflater.isPlugged(t) == 3
+	If inflater.isAnimating(t) || t.IsInCombat() || inflater.isPlugged(t) == 3
 		inflater.log(t.GetLeveledActorBase().GetName() + " stays bursting.")
 		If totalMultChange > -40.0
 			totalMultChange -= 5.0

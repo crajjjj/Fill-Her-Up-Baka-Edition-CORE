@@ -111,7 +111,16 @@ EndFunction
 
 Event OnUpdateGameTime()
 ;	inflater.log("Event OnUpdateGameTime(), stack top: " + top)
-	if inflater.GetInflation(inflater.player) > 0.0
+	if inflater.GetInflation(inflater.player) > 0.0;New
+		if config.eventsImpregnation
+			if inflater.GetVaginalCum(inflater.player) > 0.0
+				inflater.RemoveSpermFromActor(inflater.player, 1, "Chaurus", true)
+			endif
+			
+			if inflater.GetAnalCum(inflater.player) > 0.0
+				inflater.RemoveSpermFromActor(inflater.player, 2, "Chaurus", true)
+			endif
+		endif
 		; Only process events if player is inflated
 		If IsStackEmpty() ; Stack is empty, iterate through all events and see if any are queued
 			intervalSplit = QueueAll()
