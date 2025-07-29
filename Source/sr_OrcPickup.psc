@@ -410,7 +410,7 @@ Function StartTransfer(Actor c)
 	
 	RegisterForModEvent(cb, cbf)
 	inflater.QueueActor(pl, false, pool, plVag, vagTime, callback = cb, animate = -1)
-	inflater.QueueActor(courier, true, inflater.VAGINAL, (inflater.config.maxInflation - inflater.GetVaginalCum(courier)), (totalTime + 1))
+	inflater.QueueActor(courier, true, inflater.VAGINAL, (inflater.config.maxInflation - StorageUtil.GetFloatValue(courier, inflater.ORIGINAL_SCALE, 1.0)), (totalTime + 1))
 	
 	inflater.InflateQueued()
 EndFunction
