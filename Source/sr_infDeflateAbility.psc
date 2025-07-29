@@ -45,7 +45,6 @@ Function Maintenance()
 		RegisterForKey(config.defKey)
 	EndIf
 	config.CheckGamePad()
-	inflater.BaboAnimsSet()
 	(sr_inflateExternalEventManager as sr_inflateExternalEventController).RegisterModEvent()
 EndFunction
 

@@ -5,7 +5,7 @@ Quest Property srinflateQuest Auto
 Quest Property srinflateConfig Auto
 int property currentversion = 1 auto
 Event OnPlayerLoadGame()
-	inflater.maintenance()
+	;
 EndEvent
 
 Event OnCellLoad()

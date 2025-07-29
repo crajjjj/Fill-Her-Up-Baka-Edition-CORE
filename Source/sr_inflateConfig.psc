@@ -919,7 +919,6 @@ State settings
 			enabled = !enabled
 			SetToggleOptionValue(enabledOID, enabled)
 			If enabled
-				inflater.maintenance()
 				If bellyScale
 					StorageUtil.SetIntValue(Game.GetPlayer(), "CI_CumInflation_ON", 1)
 				Else
@@ -1766,6 +1765,7 @@ EndFunction
 Event OnConfigClose()
 	RegisterKeys()
 	inflater.defAlias.Maintenance()
+	inflater.maintenance()
 EndEvent
 
 Function DebugFill(bool isAnal)
