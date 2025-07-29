@@ -209,7 +209,7 @@ EndEvent
 
 Function SpermOutStop()
 	keydown = false
-	MfgConsoleFunc.ResetPhonemeModifier(GetActorReference())
+	MfgConsoleFuncExt.ResetMfg(GetActorReference())
 EndFunction
 
 Function doPushDeflate(String pool, Actor p, float currentInf)

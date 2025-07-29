@@ -616,7 +616,7 @@ EndEvent
 
 bool Function UpdateFHUmoan(ObjectReference aksource, int cumType, int spermtype)
 	Actor DeflateActor = aksource as Actor
-	MfgConsoleFunc.ResetPhonemeModifier(DeflateActor)
+	MfgConsoleFuncExt.ResetMfg(DeflateActor)
 	EmotionWhenLeakage(DeflateActor)
 	bool needUpdate = false
 	if DeflateActor.isinfaction(inflaterAnimatingFaction)
@@ -716,7 +716,7 @@ if sr_MoanSound.getvalue() == 1
 endif
 
 Utility.wait(6.0)
-MfgConsoleFunc.ResetPhonemeModifier(aksource as Actor)
+MfgConsoleFuncExt.ResetMfg(aksource as Actor)
 EndFunction
 
 Function UseSexlabVoice(actor ActorRef, int Strength, bool isvictim)
@@ -1323,7 +1323,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	;	StripActor(akActor)
 	;endif
 	;StripCover(akActor, isAnal)
-	MfgConsoleFunc.ResetPhonemeModifier(akActor)
+	MfgConsoleFuncExt.ResetMfg(akActor)
 	If Utility.RandomInt(0, 99) < 40 && sr_TongueEffect.getvalue() == 1
 		EquiprandomTongue(akactor, true)
 	EndIf
@@ -1637,7 +1637,7 @@ EndFunction
 
 Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int spermtype = 0)
 	bool btongueout = false
-	MfgConsoleFunc.ResetPhonemeModifier(akActor)
+	MfgConsoleFuncExt.ResetMfg(akActor)
 	EmotionWhenLeakage(akactor)
 	MouthOpen(akActor, 0)
 	if Utility.RandomInt(0, 99) < 40 && sr_TongueEffect.getvalue() == 1 && btongue
@@ -1707,7 +1707,7 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	TempActor = akActor
 	;RegisterForSingleUpdate(10.0)
 	Utility.wait(11.0)
-	MfgConsoleFunc.ResetPhonemeModifier(akActor)
+	MfgConsoleFuncExt.ResetMfg(akActor)
 	if btongueout
 		equiprandomtongue(akactor, false)
 	endif
@@ -1735,35 +1735,35 @@ elseif randomi < 4
 endif
 	if randomi == 1
 		if aTongue > 0
-			MfgConsoleFunc.SetPhoneme(akActor,1,70)
-			MfgConsoleFunc.SetPhoneme(akActor,14,30)
+			MfgConsoleFuncExt.SetPhoneme(akActor,1,70)
+			MfgConsoleFuncExt.SetPhoneme(akActor,14,30)
 		Else
-			MfgConsoleFunc.SetPhoneme(akActor,1,10)
-			MfgConsoleFunc.SetPhoneme(akActor,2,40)
-			MfgConsoleFunc.SetPhoneme(akActor,7,50)
+			MfgConsoleFuncExt.SetPhoneme(akActor,1,10)
+			MfgConsoleFuncExt.SetPhoneme(akActor,2,40)
+			MfgConsoleFuncExt.SetPhoneme(akActor,7,50)
 		Endif
 	elseif randomi == 2
 		if aTongue > 0
-			MfgConsoleFunc.SetPhoneme(akActor,1,70)
-			MfgConsoleFunc.SetPhoneme(akActor,14,30)
+			MfgConsoleFuncExt.SetPhoneme(akActor,1,70)
+			MfgConsoleFuncExt.SetPhoneme(akActor,14,30)
 		Else
-			MfgConsoleFunc.SetPhoneme(akActor,11,60)
-			MfgConsoleFunc.SetPhoneme(akActor,12,70)
+			MfgConsoleFuncExt.SetPhoneme(akActor,11,60)
+			MfgConsoleFuncExt.SetPhoneme(akActor,12,70)
 		Endif
 	elseif randomi == 3
 		if aTongue > 0
-			MfgConsoleFunc.SetPhoneme(akActor,0,40)
-			MfgConsoleFunc.SetPhoneme(akActor,0,50)
+			MfgConsoleFuncExt.SetPhoneme(akActor,0,40)
+			MfgConsoleFuncExt.SetPhoneme(akActor,0,50)
 		Else
-			MfgConsoleFunc.SetPhoneme(akActor,0,30)
-			MfgConsoleFunc.SetPhoneme(akActor,6,20)
+			MfgConsoleFuncExt.SetPhoneme(akActor,0,30)
+			MfgConsoleFuncExt.SetPhoneme(akActor,6,20)
 		Endif
 	elseif randomi == 4
-		MfgConsoleFunc.SetPhoneme(akActor,0,70)
-		MfgConsoleFunc.SetPhoneme(akActor,15,40)
+		MfgConsoleFuncExt.SetPhoneme(akActor,0,70)
+		MfgConsoleFuncExt.SetPhoneme(akActor,15,40)
 	elseif randomi == 5
-		MfgConsoleFunc.SetPhoneme(akActor,11,60)
-		MfgConsoleFunc.SetPhoneme(akActor,5,30)
+		MfgConsoleFuncExt.SetPhoneme(akActor,11,60)
+		MfgConsoleFuncExt.SetPhoneme(akActor,5,30)
 	endif
 EndFunction
 
@@ -1772,28 +1772,31 @@ Function EmotionWhenLeakage(actor akActor)
 
 	Int random = Utility.RandomInt(1, 3)
 	If random == 1
-		akActor.SetExpressionOverride(3,100)	; Sad!!!  "This is... Sad!"
-		MfgConsoleFunc.SetModifier(akActor,2,50)
-		MfgConsoleFunc.SetModifier(akActor,3,50)
-		MfgConsoleFunc.SetModifier(akActor,4,50)
-		MfgConsoleFunc.SetModifier(akActor,5,50)
-		MfgConsoleFunc.SetModifier(akActor,8,50)
-		MfgConsoleFunc.SetModifier(akActor,12,30)
-		MfgConsoleFunc.SetModifier(akActor,13,30)
+		;akActor.SetExpressionOverride(3,100)	; Sad!!!  "This is... Sad!"
+		MfgConsoleFuncExt.SetExpression(akActor,3,100)
+		MfgConsoleFuncExt.SetModifier(akActor,2,50)
+		MfgConsoleFuncExt.SetModifier(akActor,3,50)
+		MfgConsoleFuncExt.SetModifier(akActor,4,50)
+		MfgConsoleFuncExt.SetModifier(akActor,5,50)
+		MfgConsoleFuncExt.SetModifier(akActor,8,50)
+		MfgConsoleFuncExt.SetModifier(akActor,12,30)
+		MfgConsoleFuncExt.SetModifier(akActor,13,30)
 	ElseIf random == 2
-		akActor.SetExpressionOverride(1,100)	; "So much Orgasm!!"
-		MfgConsoleFunc.SetModifier(akActor,0,40)
-		MfgConsoleFunc.SetModifier(akActor,1,40)
-		MfgConsoleFunc.SetModifier(akActor,11,70)
-		MfgConsoleFunc.SetModifier(akActor,12,30)
-		MfgConsoleFunc.SetModifier(akActor,13,30)
+		MfgConsoleFuncExt.SetExpression(akActor,1,100)
+		;akActor.SetExpressionOverride(1,100)	; "So much Orgasm!!"
+		MfgConsoleFuncExt.SetModifier(akActor,0,40)
+		MfgConsoleFuncExt.SetModifier(akActor,1,40)
+		MfgConsoleFuncExt.SetModifier(akActor,11,70)
+		MfgConsoleFuncExt.SetModifier(akActor,12,30)
+		MfgConsoleFuncExt.SetModifier(akActor,13,30)
 	Else
-		akActor.SetExpressionOverride(3,100)	; "I cna't bear it any longer!!"
-		MfgConsoleFunc.SetModifier(akActor,0,20)
-		MfgConsoleFunc.SetModifier(akActor,1,20)
-		MfgConsoleFunc.SetModifier(akActor,11,70)
-		MfgConsoleFunc.SetModifier(akActor,12,30)
-		MfgConsoleFunc.SetModifier(akActor,13,30)
+		MfgConsoleFuncExt.SetExpression(akActor,3,100)
+		;akActor.SetExpressionOverride(3,100)	; "I cna't bear it any longer!!"
+		MfgConsoleFuncExt.SetModifier(akActor,0,20)
+		MfgConsoleFuncExt.SetModifier(akActor,1,20)
+		MfgConsoleFuncExt.SetModifier(akActor,11,70)
+		MfgConsoleFuncExt.SetModifier(akActor,12,30)
+		MfgConsoleFuncExt.SetModifier(akActor,13,30)
 	EndIf
 EndFunction
 
