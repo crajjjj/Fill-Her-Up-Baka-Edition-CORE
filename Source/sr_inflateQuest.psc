@@ -374,6 +374,7 @@ Function VersionUpdate()
 EndFunction
 
 Function maintenance()
+	log("maintenance()")
 	if config.enabled
 		;debug.notification("FHU Maintenance")
 		RegisterForModEvent("HookOrgasmStart", "Orgasm")

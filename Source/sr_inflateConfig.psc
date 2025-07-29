@@ -1764,7 +1764,6 @@ EndFunction
 
 Event OnConfigClose()
 	RegisterKeys()
-	inflater.defAlias.Maintenance()
 	inflater.maintenance()
 EndEvent
 

@@ -34,18 +34,14 @@ soulgem property SoulGemBlack auto
 formlist property sr_InjectorFormlist auto
 MagicEffect Property sr_ExpelCumMGEF Auto
 
-Event OnPlayerLoadGame()
-	Maintenance()
-EndEvent
-
 Function Maintenance()
+	log("Maintenance()")
 	UnregisterForAllKeys()
 	spermout = false
 	If config.defKey >= 0
 		RegisterForKey(config.defKey)
 	EndIf
 	config.CheckGamePad()
-	(sr_inflateExternalEventManager as sr_inflateExternalEventController).RegisterModEvent()
 EndFunction
 
 Event OnKeyDown(int kc)
