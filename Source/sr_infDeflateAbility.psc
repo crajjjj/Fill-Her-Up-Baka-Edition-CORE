@@ -208,11 +208,14 @@ Function SpermOutStop()
 EndFunction
 
 Function doPushDeflate(String pool, Actor p, float currentInf, float startVag, float startAn, float startOral)
-	If currentInf <= 0
-		currentInf = 0
-	EndIf
-	if config.BodyMorph 
-		if (pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL)
+        If !config.bellyScale
+                return
+        EndIf
+        If currentInf <= 0
+                currentInf = 0
+        EndIf
+        if config.BodyMorph
+                if (pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL)
 				; to cover same morph for oral and vag/anal
 			If (inflater.InflateMorph == inflater.InflateMorph4)
 				inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph)

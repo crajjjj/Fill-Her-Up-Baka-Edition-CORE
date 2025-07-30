@@ -2290,117 +2290,68 @@ int Function GetOralDeflateChance(Actor akActor)
 EndFunction
 
 Function ResetActors(bool force = false)
-	GoToState("")
-	int n = FormListCount(self, INFLATED_ACTORS) 
-	while n > 0
-		n -= 1
-		Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
-		log("Resetting " + a.GetLeveledActorBase().GetName() + "...")
-		if config.Bodymorph
-			;SetBellyMorphValue(a, 0.0, "PregnancyBelly")
-			SetBellyMorphValue(a, 0.0, InflateMorph)
-			if InflateMorph2 != ""
-				SetBellyMorphValue(a, 0.0, InflateMorph2)
-			endIf
-			if InflateMorph3 != ""
-				SetBellyMorphValue(a, 0.0, InflateMorph3)
-			endif
-			if InflateMorph4 != ""
-				SetBellyMorphValue(a, 0.0, InflateMorph4)
-			endif
-			SetFloatValue(a, INFLATION_AMOUNT, 0.0)
-			SetFloatValue(a, CUM_ORAL, 0.0)
-		Else
-			RemoveNodeScale(a, BELLY_NODE)
-		Endif
-		FormListClear(a, "sr.inflater.injector")
-		FormListClear(a, "sr.inflater.analinjector")
-		
-		UnsetFloatValue(a, INFLATION_AMOUNT)
-		UnsetFloatValue(a, CUM_ANAL)
-		UnsetFloatValue(a, CUM_VAGINAL)
-		UnsetFloatValue(a, CUM_ORAL)
-		UnsetFloatValue(a, LAST_TIME_ANAL)
-		UnsetFloatValue(a, LAST_TIME_VAG)
-		UnsetFormValue(a, CHEST_ARMOR)
-		a.RemoveSpell(sr_inflateBurstSpell)
-		UnencumberActor(a)
-		RemoveFaction(a)
-	EndWhile
-	FormListClear(self, INFLATED_ACTORS)
-	
-	; Make sure player is always reset
-	log("Resetting " + player.GetLeveledActorBase().GetName() + "...")
-	if config.Bodymorph
-		;SetBellyMorphValue(player, 0.0, "PregnancyBelly")
-		SetBellyMorphValue(player, 0.0, InflateMorph)
-		if InflateMorph2 != ""
-			SetBellyMorphValue(player, 0.0, InflateMorph2)
-		endIf
-		if InflateMorph3 != ""
-			SetBellyMorphValue(player, 0.0, InflateMorph3)
-		endif
-		if InflateMorph4 != ""
-			SetBellyMorphValue(player, 0.0, InflateMorph4)
-		endif
-		SetFloatValue(player, INFLATION_AMOUNT, 0.0)
-		SetFloatValue(player, CUM_ORAL, 0.0)
-	Else
-		RemoveNodeScale(player, BELLY_NODE)
-	Endif
-	UnsetFloatValue(player, INFLATION_AMOUNT)
-	UnsetFloatValue(player, CUM_ANAL)
-	UnsetFloatValue(player, CUM_VAGINAL)
-	UnsetFloatValue(player, LAST_TIME_ANAL)
-	UnsetFloatValue(player, LAST_TIME_VAG)
-	UnsetFormValue(player, CHEST_ARMOR)
-	player.RemoveSpell(sr_inflateBurstSpell)
-	UnencumberActor(player)
-	RemoveFaction(player)
-	SendPlayerCumUpdate(0.0, true)
-	SendPlayerCumUpdate(0.0, false)
-	sr_InjectorFormlist.revert()
-	
-	notify("$FHU_ACTORS_RESET")
+        GoToState("")
+        int n = FormListCount(self, INFLATED_ACTORS)
+        while n > 0
+                n -= 1
+                Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
+                ResetActorState(a)
+        EndWhile
+        FormListClear(self, INFLATED_ACTORS)
+
+        ; Make sure player is always reset
+        ResetActorState(player)
+        SendPlayerCumUpdate(0.0, true)
+        SendPlayerCumUpdate(0.0, false)
+        sr_InjectorFormlist.revert()
+
+        notify("$FHU_ACTORS_RESET")
+EndFunction
+
+Function ResetActorState(Actor a)
+        log("Resetting " + a.GetLeveledActorBase().GetName() + "...")
+        if config.bellyScale
+                if config.Bodymorph
+                        ;SetBellyMorphValue(a, 0.0, "PregnancyBelly")
+                        SetBellyMorphValue(a, 0.0, InflateMorph)
+                        if InflateMorph2 != ""
+                                SetBellyMorphValue(a, 0.0, InflateMorph2)
+                        endIf
+                        if InflateMorph3 != ""
+                                SetBellyMorphValue(a, 0.0, InflateMorph3)
+                        endif
+                        if InflateMorph4 != ""
+                                SetBellyMorphValue(a, 0.0, InflateMorph4)
+                        endif
+                        SetFloatValue(a, INFLATION_AMOUNT, 0.0)
+                        SetFloatValue(a, CUM_ORAL, 0.0)
+                Else
+                        RemoveNodeScale(a, BELLY_NODE)
+                Endif
+        EndIf
+        FormListClear(a, "sr.inflater.injector")
+        FormListClear(a, "sr.inflater.analinjector")
+
+        UnsetFloatValue(a, INFLATION_AMOUNT)
+        UnsetFloatValue(a, CUM_ANAL)
+        UnsetFloatValue(a, CUM_VAGINAL)
+        UnsetFloatValue(a, CUM_ORAL)
+        UnsetFloatValue(a, LAST_TIME_ANAL)
+        UnsetFloatValue(a, LAST_TIME_VAG)
+        UnsetFloatValue(a, LAST_TIME_ORAL)
+        UnsetFormValue(a, CHEST_ARMOR)
+        a.RemoveSpell(sr_inflateBurstSpell)
+        UnencumberActor(a)
+        RemoveFaction(a)
 EndFunction
 
 Function ResetActor(Actor a)
-	log("Resetting " + a.GetLeveledActorBase().GetName() + "...")
-	if config.Bodymorph
-		;SetBellyMorphValue(player, 0.0, "PregnancyBelly")
-		SetBellyMorphValue(player, 0.0, InflateMorph)
-		if InflateMorph2 != ""
-			SetBellyMorphValue(a, 0.0, InflateMorph2)
-		endIf
-		if InflateMorph3 != ""
-			SetBellyMorphValue(a, 0.0, InflateMorph3)
-		endif
-		if InflateMorph4 != ""
-			SetBellyMorphValue(a, 0.0, InflateMorph4)
-		endif
-		SetFloatValue(a, INFLATION_AMOUNT, 0.0)
-		SetFloatValue(a, CUM_ORAL, 0.0)
-	Else
-		RemoveNodeScale(a, BELLY_NODE)
-	Endif
-	UnsetFloatValue(a, INFLATION_AMOUNT)
-	UnsetFloatValue(a, CUM_ANAL)
-	UnsetFloatValue(a, CUM_VAGINAL)
-	UnsetFloatValue(a, CUM_ORAL)
-	UnsetFloatValue(a, LAST_TIME_ANAL)
-	UnsetFloatValue(a, LAST_TIME_VAG)
-	UnsetFloatValue(a, LAST_TIME_ORAL)
-	UnsetFormValue(a, CHEST_ARMOR)
-	a.RemoveSpell(sr_inflateBurstSpell)
-	UnencumberActor(a)
-	RemoveFaction(a)
-	FormListRemove(self, INFLATED_ACTORS, a, true)
-	FormListClear(a, "sr.inflater.injector")
-	FormListClear(a, "sr.inflater.analinjector")
-	If a == player
-		SendPlayerCumUpdate(0.0, true)
-		SendPlayerCumUpdate(0.0, false)
-	EndIf 
+        ResetActorState(a)
+        FormListRemove(self, INFLATED_ACTORS, a, true)
+        If a == player
+                SendPlayerCumUpdate(0.0, true)
+                SendPlayerCumUpdate(0.0, false)
+        EndIf
 EndFunction
 
 Function UpdateFaction(Actor a)
