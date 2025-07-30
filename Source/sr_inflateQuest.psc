@@ -1886,7 +1886,10 @@ Function RestoreActors()
 					SetBellyMorphValue(a, GetOralCum(a), InflateMorph4)
 				endif
 			Else
-				SetNodeScale(a, BELLY_NODE, GetInflation(a))
+				; ( change by 15, sent to SLIF sum of all pools
+				; SetNodeScale(a, BELLY_NODE, GetInflation(a))
+				SetNodeScale(a, BELLY_NODE, GetInflation(a) + GetOralCum(a))
+				; by 15 )
 			Endif
 			
 		endIf
