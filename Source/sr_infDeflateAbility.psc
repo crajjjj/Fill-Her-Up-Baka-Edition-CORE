@@ -213,24 +213,31 @@ Function doPush(int type)
 		if bAnimController;Prevents serious FPS drop due to heavy code stacks.
 			bAnimController = false
 			if config.BodyMorph && (pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL)
-				;inflater.SetBellyMorphValue(p, currentInf, "PregnancyBelly")
-				inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph)
+				; to cover same morph for oral and vag/anal
+				If (inflater.InflateMorph == inflater.InflateMorph4)
+					inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph)
+				else
+					;inflater.SetBellyMorphValue(p, currentInf, "PregnancyBelly")
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph)
+				endif
 				;log("deflate SetBellyMorphValue currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
 				if inflater.InflateMorph2 != ""
-					inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph2)
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph2)
 					;log("deflate SetBellyMorphValue2 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
 				endIf
 				if inflater.InflateMorph3 != ""
-					inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph3)
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph3)
 					;log("deflate SetBellyMorphValue3 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
 				endif
 			elseif config.BodyMorph && pool == inflater.CUM_ORAL
-				inflater.SetBellyMorphValue(p, currentInf + inflater.GetInflation(p), inflater.InflateMorph)
-				;log("deflate SetBellyMorphValue currentInf:" + currentInf + inflater.GetInflation(p) + ".Cum:" + cum )
-				if inflater.InflateMorph4 != ""
-					inflater.SetBellyMorphValue(p, currentInf + inflater.GetInflation(p), inflater.InflateMorph4)
+				; to cover same morph for oral and vag/anal
+				If (inflater.InflateMorph == inflater.InflateMorph4)
+					inflater.SetBellyMorphValue(p, currentInf + inflater.GetInflation(p), inflater.InflateMorph)
+				elseif inflater.InflateMorph4 != ""
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph4)
 					;log("deflate SetBellyMorphValue4 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
 				endif
+				
 			else
 				; ( change by 15, sent to SLIF sum of all pools
 				; inflater.SetNodeScale(p, "NPC Belly", currentInf)
