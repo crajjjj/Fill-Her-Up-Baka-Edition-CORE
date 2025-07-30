@@ -2751,6 +2751,7 @@ EndFunction
 String Property FHU_KEY = "sr_FillHerUp.esp" autoreadonly
 
 Function SetBellyMorphValue(Actor akActor, float value, string MorphName)
+	;log("SetBellyMorphValue currentInf:" + value/10 + ".MorphName:" + MorphName )
 	If value != 0.0
 		if sr_SLIF.getvalue() == 1
 			if MorphName == InflateMorph && config.FHUMorphSLIF
