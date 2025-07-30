@@ -751,223 +751,131 @@ float Function GetCumAmountForActor(Actor a, Actor[] all)
 EndFunction
 
 String Function GetCreatureRaceKey(Actor Target)
-	String RaceKey = sslCreatureAnimationSlots.GetRaceKey(Target.GetLeveledActorBase().GetRace())
-	if RaceKey
-		Return RaceKey
-	endif
+        String RaceKey = sslCreatureAnimationSlots.GetRaceKey(Target.GetLeveledActorBase().GetRace())
+        if RaceKey
+                Return RaceKey
+        endif
+EndFunction
+
+int Function GetRaceIndex(string RaceName)
+        if RaceName == "Ashhoppers"
+                return 0
+        elseIf RaceName == "Bears"
+                return 1
+        elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
+                return 2
+        elseIf RaceName == "Canines" || RaceName == "Wolf" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
+                return 3
+        elseIf RaceName == "Chaurus"
+                return 4
+        elseIf RaceName == "ChaurusHunters"
+                return 5
+        elseIf RaceName == "ChaurusReapers"
+                return 6
+        elseIf RaceName == "Chickens"
+                return 7
+        elseIf RaceName == "Cows"
+                return 8
+        elseIf RaceName == "Deers"
+                return 9
+        elseIf RaceName == "Dogs"
+                return 10
+        elseIf RaceName == "DragonPriests"
+                return 11
+        elseIf RaceName == "Dragons"
+                return 12
+        elseIf RaceName == "Draugrs"
+                return 13
+        elseIf RaceName == "DwarvenBallistas"
+                return 14
+        elseIf RaceName == "DwarvenCenturions"
+                return 15
+        elseIf RaceName == "DwarvenSpheres"
+                return 16
+        elseIf RaceName == "DwarvenSpiders"
+                return 17
+        elseIf RaceName == "Falmers"
+                return 18
+        elseIf RaceName == "FlameAtronach"
+                return 19
+        elseIf RaceName == "Foxes"
+                return 20
+        elseIf RaceName == "FrostAtronach"
+                return 21
+        elseIf RaceName == "Gargoyles"
+                return 22
+        elseIf RaceName == "Giants"
+                return 23
+        elseIf RaceName == "Goats"
+                return 24
+        elseIf RaceName == "Hagravens"
+                return 25
+        elseIf RaceName == "Horkers"
+                return 26
+        elseIf RaceName == "Horses"
+                return 27
+        elseIf RaceName == "IceWraiths"
+                return 28
+        elseIf RaceName == "Lurkers"
+                return 29
+        elseIf RaceName == "Mammoths"
+                return 30
+        elseIf RaceName == "Mudcrabs"
+                return 31
+        elseIf RaceName == "Netches"
+                return 32
+        elseIf RaceName == "Rabbits"
+                return 33
+        elseIf RaceName == "Rieklings"
+                return 34
+        elseIf RaceName == "SabreCats"
+                return 35
+        elseIf RaceName == "Seekers"
+                return 36
+        elseIf RaceName == "Skeevers"
+                return 37
+        elseIf RaceName == "Slaughterfishes"
+                return 38
+        elseIf RaceName == "StormAtronach"
+                return 39
+        elseIf RaceName == "Spiders"
+                return 40
+        elseIf RaceName == "LargeSpiders"
+                return 41
+        elseIf RaceName == "GiantSpiders"
+                return 42
+        elseIf RaceName == "Spriggans"
+                return 43
+        elseIf RaceName == "Trolls"
+                return 44
+        elseIf RaceName == "VampireLords"
+                return 45
+        elseIf RaceName == "Werewolves"
+                return 46
+        elseIf RaceName == "WispMothers" || RaceName == "Wisps"
+                return 47
+        endif
+        return -1
 EndFunction
 
 int Function GetCreatureRaceint(Actor Target)
-    ;humans don't have a RaceName string so it has to be checked first
-    If Target.haskeyword(ActorTypeNPC)
-        return -1
-    EndIf
-    
-	String RaceName = sslCreatureAnimationSlots.GetRaceKey(Target.GetLeveledActorBase().GetRace())
-	log(RaceName + " get registered in Fill Her Up")
-    If RaceName == "Ashhoppers"
-		return 0
-	elseIf RaceName == "Bears"
-		return 1
-	elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
-		return 2
-	elseIf RaceName == "Canines" || RaceName == "Wolf" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
-		return 3
-	elseIf RaceName == "Chaurus"
-		return 4
-	elseIf RaceName == "ChaurusHunters"
-		return 5
-	elseIf RaceName == "ChaurusReapers"
-		return 6
-	elseIf RaceName == "Chickens"
-		return 7
-	elseIf RaceName == "Cows"
-		return 8
-	elseIf RaceName == "Deers"
-		return 9
-	elseIf RaceName == "Dogs"
-		return 10
-	elseIf RaceName == "DragonPriests"
-		return 11
-	elseIf RaceName == "Dragons"
-		return 12
-	elseIf RaceName == "Draugrs"
-		return 13
-	elseIf RaceName == "DwarvenBallistas"
-		return 14
-	elseIf RaceName == "DwarvenCenturions"
-		return 15
-	elseIf RaceName == "DwarvenSpheres"
-		return 16
-	elseIf RaceName == "DwarvenSpiders"
-		return 17
-	elseIf RaceName == "Falmers"
-		return 18
-	elseIf RaceName == "FlameAtronach"
-		return 19
-	elseIf RaceName == "Foxes"
-		return 20
-	elseIf RaceName == "FrostAtronach"
-		return 21
-	elseIf RaceName == "Gargoyles"
-		return 22
-	elseIf RaceName == "Giants"
-		return 23
-	elseIf RaceName == "Goats"
-		return 24
-	elseIf RaceName == "Hagravens"
-		return 25
-	elseIf RaceName == "Horkers"
-		return 26
-	elseIf RaceName == "Horses"
-		return 27
-	elseIf RaceName == "IceWraiths"
-		return 28
-	elseIf RaceName == "Lurkers"
-		return 29
-	elseIf RaceName == "Mammoths"
-		return 30
-	elseIf RaceName == "Mudcrabs"
-		return 31
-	elseIf RaceName == "Netches"
-		return 32
-	elseIf RaceName == "Rabbits"
-		return 33
-	elseIf RaceName == "Rieklings"
-		return 34
-	elseIf RaceName == "SabreCats"
-		return 35
-	elseIf RaceName == "Seekers"
-		return 36
-	elseIf RaceName == "Skeevers"
-		return 37
-	elseIf RaceName == "Slaughterfishes"
-		return 38
-	elseIf RaceName == "StormAtronach"
-		return 39
-	elseIf RaceName == "Spiders"
-		return 40
-	elseIf RaceName == "LargeSpiders"
-		return 41
-	elseIf RaceName == "GiantSpiders"
-		return 42
-	elseIf RaceName == "Spriggans"
-		return 43
-	elseIf RaceName == "Trolls"
-		return 44
-	elseIf RaceName == "VampireLords"
-		return 45
-	elseIf RaceName == "Werewolves"
-		return 46
-	elseIf RaceName == "WispMothers" || RaceName == "Wisps"
-		return 47
-	;/ elseIf Targetrace == sr_DeathwormRace /;
-		;/ return 101 /;
-	;/ elseIf Targetrace == sr_MimicRace /;
-		;/ return 102 /;
-	Endif
+        ;humans don't have a RaceName string so it has to be checked first
+        if Target.HasKeyword(ActorTypeNPC)
+                return -1
+        endif
+
+        String RaceName = sslCreatureAnimationSlots.GetRaceKey(Target.GetLeveledActorBase().GetRace())
+        log(RaceName + " get registered in Fill Her Up")
+        return GetRaceIndex(RaceName)
 EndFunction
 
 Float Function VerifyRace(Actor CreatureActor)
 String RaceName = GetCreatureRaceKey(CreatureActor)
 float CreatureCumAmount = 0
-	If RaceName == "Ashhoppers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(0) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Bears"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(1) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(2) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Canines" || RaceName == "Wolf" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(3) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Chaurus"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(4) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "ChaurusHunters"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(5) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "ChaurusReapers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(6) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Chickens"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(7) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Cows"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(8) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Deers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(9) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Dogs"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(10) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "DragonPriests"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(11) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Dragons"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(12) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Draugrs"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(13) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "DwarvenBallistas"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(14) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "DwarvenCenturions"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(15) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "DwarvenSpheres"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(16) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "DwarvenSpiders"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(17) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Falmers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(18) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "FlameAtronach"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(19) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Foxes"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(20) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "FrostAtronach"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(21) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Gargoyles"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(22) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Giants"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(23) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Goats"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(24) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Hagravens"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(25) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Horkers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(26) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Horses"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(27) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "IceWraiths"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(28) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Lurkers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(29) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Mammoths"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(30) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Mudcrabs"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(31) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Netches"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(32) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Rabbits"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(33) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Rieklings"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(34) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "SabreCats"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(35) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Seekers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(36) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Skeevers"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(37) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Slaughterfishes"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(38) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "StormAtronach"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(39) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Spiders"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(40) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "LargeSpiders"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(41) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "GiantSpiders"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(42) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Spriggans"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(43) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Trolls"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(44) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "VampireLords"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(45) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "Werewolves"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(46) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	elseIf RaceName == "WispMothers" || RaceName == "Wisps"
-		CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(47) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
-	Endif
+        int idx = GetRaceIndex(RaceName)
+        if idx >= 0
+                CreatureCumAmount = GetFloatValue(sr_CreatureRaceList.getat(idx) as race, CREATURERACE_CUM_AMOUNT, 0.75) * cumMult
+        endif
 Return CreatureCumAmount
 EndFunction
 
