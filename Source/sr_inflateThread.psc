@@ -284,7 +284,10 @@ Function Inflate()
 						inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph3)
 					endif
 				Else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
+						; ( change by 15, sent to SLIF sum of all pools
+					; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation + startOral)
+					; by 15 )
 				Endif
 				tick = inflationTick
 				BodyMorphApplied = true
@@ -301,7 +304,10 @@ Function Inflate()
 					inflater.SetBellyMorphValue(akActor, inflationTarget, inflater.InflateMorph3)
 				endif
 			Else
-				inflater.SetNodeScale(akActor, inflater.BELLY_NODE, inflationTarget)
+					; ( change by 15, sent to SLIF sum of all pools
+			; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, inflationTarget)
+			inflater.SetNodeScale(akActor, inflater.BELLY_NODE, inflationTarget + startOral)
+			; by 15 )
 			Endif
 		Endif
 
@@ -316,8 +322,10 @@ Function Inflate()
 					if inflater.InflateMorph4 != ""
 						inflater.SetBellyMorphValue(akActor, currentOralInflation, inflater.InflateMorph4)
 					endIf
-				Else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentOralInflation)
+			; ( add by 15, sent to SLIF sum of all pools
+				else
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentOralInflation + startVag + startAn)
+				; by 15 )
 				Endif
 				tick = inflationTick
 				BodyMorphApplied = true
@@ -325,8 +333,14 @@ Function Inflate()
 			Utility.wait(0.2)
 		EndWhile
 
-		if !BodyMorphApplied && config.BodyMorph && inflater.InflateMorph4 != ""
-			inflater.SetBellyMorphValue(akActor, oralCum, inflater.InflateMorph4)
+		if !BodyMorphApplied && config.BodyMorph
+			if inflater.InflateMorph4 != ""
+				inflater.SetBellyMorphValue(akActor, oralCum, inflater.InflateMorph4)
+			endif			
+		; ( add by 15, sent to SLIF sum of all pools
+		elseif !BodyMorphApplied
+			inflater.SetNodeScale(akActor, inflater.BELLY_NODE, oralCum + startVag + startAn)
+		; by 15 )
 		endif
 	EndIf
 	
@@ -480,7 +494,14 @@ Function Deflate()
 								inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph4)
 							endif
 						Else
-							inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
+								; ( change by 15, sent to SLIF sum of all pools
+							; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
+							if isAnal || isVaginal
+								inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation + startOral)
+							else
+								inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation + startVag + startAn)
+							endif
+							; by 15 )
 						Endif
 						tick = deflationTick
 						BodyMorphApplied = true
@@ -602,6 +623,10 @@ Function Deflate()
 					if inflater.InflateMorph4 != ""
 						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph4)
 					endIf
+				; ( add by 15, sent to SLIF sum of all pools
+				else
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, startVag + startAn)
+				; by 15 )
 				endif
 			endif
 			;SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
@@ -763,7 +788,14 @@ Function Absorb()
 						inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph4)
 					endif
 				Else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget)
+						; ( change by 15, sent to SLIF sum of all pools
+				; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget)
+				if isAnal || isVaginal
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget + startOral)
+				else
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget + startVag + startAn)
+				endif
+				; by 15 )
 				Endif
 			Endif
 		Else
@@ -827,7 +859,10 @@ Function Absorb()
 						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph3)
 					endif
 				Else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, 0.0)
+					; ( change by 15, sent to SLIF sum of all pools
+					; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, 0.0)
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, startOral)
+					; by 15 )
 				Endif
 			EndIf
 			UnsetFloatValue(akActor, inflater.INFLATION_AMOUNT)
@@ -844,6 +879,10 @@ Function Absorb()
 					if inflater.InflateMorph4 != ""
 						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph4)
 					endIf
+				;		 ( add by 15, sent to SLIF sum of all pools
+				else
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, startVag + startAn)
+				; by 15 )
 				endif
 			endif
 		Else
