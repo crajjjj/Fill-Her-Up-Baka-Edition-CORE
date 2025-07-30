@@ -701,7 +701,7 @@ Function Absorb()
 					tick -= 0.2
 					BodyMorphApplied = false
 					if(tick <= 0)
-						doInflation(akActor, (isAnal || isVaginal), currentInflation)
+						doInflation(akActor, (isAnal || isVaginal), currentInflation, startVag, startAn, startOral)
 						tick = deflationTick
 						BodyMorphApplied = true
 					endif
