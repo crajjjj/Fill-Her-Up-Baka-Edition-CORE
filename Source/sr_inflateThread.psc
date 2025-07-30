@@ -136,6 +136,52 @@ Event StartAbsorption()
 	clear()
 EndEvent
 
+Function doInflation(Actor p, bool isVaginalOrAnal, float currentInf, float startVag, float startAn, float startOral)
+	If currentInf <= 0
+		currentInf = 0
+	EndIf
+	if config.BodyMorph 
+		if isVaginalOrAnal
+				; to cover same morph for oral and vag/anal
+			If (inflater.InflateMorph == inflater.InflateMorph4)
+				inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph)
+			else
+				;inflater.SetBellyMorphValue(p, currentInf, "PregnancyBelly")
+				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph)
+			endif
+			;log("deflate SetBellyMorphValue currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+			if inflater.InflateMorph2 != ""
+				;log("deflate SetBellyMorphValue2 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph2)
+			endIf
+			if inflater.InflateMorph3 != ""
+				;log("deflate SetBellyMorphValue3 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph3)
+			endif
+		else ; Oral
+			; to cover same morph for oral and vag/anal
+			If (inflater.InflateMorph == inflater.InflateMorph4)
+				inflater.SetBellyMorphValue(p, currentInf + inflater.GetInflation(p), inflater.InflateMorph)
+			elseif inflater.InflateMorph4 != ""
+				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph4)
+				;log("deflate SetBellyMorphValue4 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+			endif
+		endif
+	endif
+
+	if !config.BodyMorph ;SLIF: oralcum now inflates belly node also. Should be capped by cum condition in deflate function
+		; ( add by 15, sent to SLIF sum of all pools
+		if isVaginalOrAnal
+			;log(" deflate SetNodeScale currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+			inflater.SetNodeScale(p, "NPC Belly", currentInf + startOral)
+		else ; Oral
+			;log("deflate SetNodeScale currentInf:" + currentInf + inflater.GetInflation(p) + ".Cum:" + cum )
+			inflater.SetNodeScale(p, "NPC Belly", currentInf + startVag + startAn)
+		endif
+		; by 15 )
+	endif
+EndFunction
+
 Function Inflate()
 	If cumAmount == 0
 		return
@@ -275,40 +321,14 @@ Function Inflate()
 			BodyMorphApplied = false
 			tick -= 0.2
 			if(tick <= 0)
-				if config.BodyMorph
-					inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph)
-					if inflater.InflateMorph2 != ""
-						inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph2)
-					endIf
-					if inflater.InflateMorph3 != ""
-						inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph3)
-					endif
-				Else
-						; ( change by 15, sent to SLIF sum of all pools
-					; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation + startOral)
-					; by 15 )
-				Endif
+				doInflation(akActor, true, currentInflation, startVag, startAn, startOral)
 				tick = inflationTick
 				BodyMorphApplied = true
 			endif
 			Utility.wait(0.2)
 		EndWhile
 		if !BodyMorphApplied
-			if config.BodyMorph
-				inflater.SetBellyMorphValue(akActor, inflationTarget, inflater.InflateMorph)
-				if inflater.InflateMorph2 != ""
-					inflater.SetBellyMorphValue(akActor, inflationTarget, inflater.InflateMorph2)
-				endIf
-				if inflater.InflateMorph3 != ""
-					inflater.SetBellyMorphValue(akActor, inflationTarget, inflater.InflateMorph3)
-				endif
-			Else
-					; ( change by 15, sent to SLIF sum of all pools
-			; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, inflationTarget)
-			inflater.SetNodeScale(akActor, inflater.BELLY_NODE, inflationTarget + startOral)
-			; by 15 )
-			Endif
+			doInflation(akActor, true, inflationTarget, startVag, startAn, startOral)
 		Endif
 
 		tick = inflationTick
@@ -318,29 +338,15 @@ Function Inflate()
 			tick -= 0.2
 			BodyMorphApplied = false
 			if(tick <= 0)
-				if config.BodyMorph
-					if inflater.InflateMorph4 != ""
-						inflater.SetBellyMorphValue(akActor, currentOralInflation, inflater.InflateMorph4)
-					endIf
-			; ( add by 15, sent to SLIF sum of all pools
-				else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentOralInflation + startVag + startAn)
-				; by 15 )
-				Endif
+				doInflation(akActor, false, currentOralInflation, startVag, startAn, startOral)
 				tick = inflationTick
 				BodyMorphApplied = true
 			endif
 			Utility.wait(0.2)
 		EndWhile
 
-		if !BodyMorphApplied && config.BodyMorph
-			if inflater.InflateMorph4 != ""
-				inflater.SetBellyMorphValue(akActor, oralCum, inflater.InflateMorph4)
-			endif			
-		; ( add by 15, sent to SLIF sum of all pools
-		elseif !BodyMorphApplied
-			inflater.SetNodeScale(akActor, inflater.BELLY_NODE, oralCum + startVag + startAn)
-		; by 15 )
+		if !BodyMorphApplied
+			doInflation(akActor, false, oralCum, startVag, startAn, startOral)
 		endif
 	EndIf
 	
@@ -481,28 +487,7 @@ Function Deflate()
 					tick -= 0.2
 					BodyMorphApplied = false
 					if(tick <= 0)
-						if config.BodyMorph && (isAnal || isVaginal)
-							inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph)
-							if inflater.InflateMorph2 != ""
-								inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph2)
-							endIf
-							if inflater.InflateMorph3 != ""
-								inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph3)
-							endif
-						elseif config.BodyMorph && isOral
-							if inflater.InflateMorph4 != ""
-								inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph4)
-							endif
-						Else
-								; ( change by 15, sent to SLIF sum of all pools
-							; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
-							if isAnal || isVaginal
-								inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation + startOral)
-							else
-								inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation + startVag + startAn)
-							endif
-							; by 15 )
-						Endif
+						doInflation(akActor, (isAnal || isVaginal), currentInflation, startVag, startAn, startOral)
 						tick = deflationTick
 						BodyMorphApplied = true
 					endif
@@ -511,22 +496,7 @@ Function Deflate()
 			EndIf
 			
 			if !BodyMorphApplied
-				if config.BodyMorph && (isAnal || isVaginal)
-					;inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.PregnancyBelly)
-					inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph)
-					if inflater.InflateMorph2 != ""
-						inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph2)
-					endIf
-					if inflater.InflateMorph3 != ""
-						inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph3)
-					endif
-				elseif config.BodyMorph && isOral
-					if inflater.InflateMorph4 != ""
-						inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph4)
-					endif
-				Else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget)
-				Endif
+				doInflation(akActor, (isAnal || isVaginal), deflateTarget, startVag, startAn, startOral)
 			Endif
 		Else
 			Utility.wait(tme)
@@ -583,18 +553,7 @@ Function Deflate()
 	if Cumtype < 3
 		if ( analCum <= 0.0 && vagCum <= 0.0 )
 			If(inflater.config.bellyScale)
-				if config.BodyMorph
-					;inflater.SetBellyMorphValue(akActor, 0.0, inflater.PregnancyBelly)
-					inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph)
-					if inflater.InflateMorph2 != ""
-						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph2)
-					endIf
-					if inflater.InflateMorph3 != ""
-						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph3)
-					endif
-				Else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, 0.0)
-				Endif
+				doInflation(akActor, true, 0.0, startVag, startAn, startOral)
 			EndIf
 			UnsetFloatValue(akActor, inflater.INFLATION_AMOUNT)
 
@@ -619,15 +578,7 @@ Function Deflate()
 	elseif Cumtype == 3
 		if OralCum <= 0.0
 			If(inflater.config.bellyScale)
-				if config.BodyMorph
-					if inflater.InflateMorph4 != ""
-						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph4)
-					endIf
-				; ( add by 15, sent to SLIF sum of all pools
-				else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, startVag + startAn)
-				; by 15 )
-				endif
+				doInflation(akActor, false, 0.0, startVag, startAn, startOral)
 			endif
 			;SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
 		Else
@@ -750,22 +701,7 @@ Function Absorb()
 					tick -= 0.2
 					BodyMorphApplied = false
 					if(tick <= 0)
-						if config.BodyMorph && (isAnal || isVaginal)
-							;inflater.SetBellyMorphValue(akActor, currentInflation, inflater.PregnancyBelly)
-							inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph)
-							if inflater.InflateMorph2 != ""
-								inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph2)
-							endIf
-							if inflater.InflateMorph3 != ""
-								inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph3)
-							endif
-						elseif config.BodyMorph && isOral
-							if inflater.InflateMorph4 != ""
-								inflater.SetBellyMorphValue(akActor, currentInflation, inflater.InflateMorph4)
-							endif
-						Else
-							inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
-						Endif
+						doInflation(akActor, (isAnal || isVaginal), currentInflation, startVag, startAn, startOral)
 						tick = deflationTick
 						BodyMorphApplied = true
 					endif
@@ -774,29 +710,7 @@ Function Absorb()
 			EndIf
 			
 			If !BodyMorphApplied
-				if config.BodyMorph && (isAnal || isVaginal)
-					;inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.PregnancyBelly)
-					inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph)
-					if inflater.InflateMorph2 != ""
-						inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph2)
-					endIf
-					if inflater.InflateMorph3 != ""
-						inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph3)
-					endif
-				elseif config.BodyMorph && isOral
-					if inflater.InflateMorph4 != ""
-						inflater.SetBellyMorphValue(akActor, deflateTarget, inflater.InflateMorph4)
-					endif
-				Else
-						; ( change by 15, sent to SLIF sum of all pools
-				; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget)
-				if isAnal || isVaginal
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget + startOral)
-				else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, deflateTarget + startVag + startAn)
-				endif
-				; by 15 )
-				Endif
+				doInflation(akActor, (isAnal || isVaginal), deflateTarget, startVag, startAn, startOral)
 			Endif
 		Else
 			Utility.wait(tme)
@@ -849,21 +763,7 @@ Function Absorb()
 	if Cumtype < 3
 		if ( analCum <= 0.0 && vagCum <= 0.0 )
 			If(inflater.config.bellyScale)
-				if config.BodyMorph
-					;inflater.SetBellyMorphValue(akActor, 0.0, inflater.PregnancyBelly)
-					inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph)
-					if inflater.InflateMorph2 != ""
-						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph2)
-					endIf
-					if inflater.InflateMorph3 != ""
-						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph3)
-					endif
-				Else
-					; ( change by 15, sent to SLIF sum of all pools
-					; inflater.SetNodeScale(akActor, inflater.BELLY_NODE, 0.0)
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, startOral)
-					; by 15 )
-				Endif
+				doInflation(akActor, true, 0.0, startVag, startAn, startOral)
 			EndIf
 			UnsetFloatValue(akActor, inflater.INFLATION_AMOUNT)
 		else
@@ -875,15 +775,7 @@ Function Absorb()
 	elseif Cumtype == 3
 		if OralCum <= 0.0
 			If(inflater.config.bellyScale)
-				if config.BodyMorph
-					if inflater.InflateMorph4 != ""
-						inflater.SetBellyMorphValue(akActor, 0.0, inflater.InflateMorph4)
-					endIf
-				;		 ( add by 15, sent to SLIF sum of all pools
-				else
-					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, startVag + startAn)
-				; by 15 )
-				endif
+				doInflation(akActor, false, 0.0, startVag, startAn, startOral)
 			endif
 		Else
 			inflater.UpdateOralFaction(akActor)

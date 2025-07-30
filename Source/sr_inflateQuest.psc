@@ -1875,15 +1875,24 @@ Function RestoreActors()
 		If config.bellyScale
 			if config.Bodymorph
 				;SetBellyMorphValue(a, GetInflation(a), "PregnancyBelly")
-				SetBellyMorphValue(a, GetInflation(a), InflateMorph)
+				
 				if InflateMorph2 != ""
 					SetBellyMorphValue(a, GetInflation(a), InflateMorph2)
 				endIf
+				
 				if InflateMorph3 != ""
 					SetBellyMorphValue(a, GetInflation(a), InflateMorph3)
 				endif
+
 				if InflateMorph4 != ""
-					SetBellyMorphValue(a, GetOralCum(a), InflateMorph4)
+					If InflateMorph == InflateMorph4
+						SetBellyMorphValue(a, GetInflation(a) + GetOralCum(a), InflateMorph)
+					Else
+						SetBellyMorphValue(a, GetInflation(a), InflateMorph)
+						SetBellyMorphValue(a, GetOralCum(a), InflateMorph4)
+					EndIf
+				Else
+					SetBellyMorphValue(a, GetInflation(a), InflateMorph)
 				endif
 			Else
 				; ( change by 15, sent to SLIF sum of all pools
