@@ -265,8 +265,8 @@ Function Inflate()
 	int steps =  Math.Ceiling(tme / 0.2)
 	float step = inflationAmount / steps
 	float oralstep = inflationOralAmount / steps
-	float deflationTick = inflater.config.BodyMorphApplyPeriod
-	float tick = deflationTick
+	float inflationTick = inflater.config.BodyMorphApplyPeriod
+	float tick = inflationTick
 	bool BodyMorphApplied = true
 	
 	if(inflater.config.bellyScale)
@@ -286,7 +286,7 @@ Function Inflate()
 				Else
 					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentInflation)
 				Endif
-				tick = deflationTick
+				tick = inflationTick
 				BodyMorphApplied = true
 			endif
 			Utility.wait(0.2)
@@ -305,7 +305,7 @@ Function Inflate()
 			Endif
 		Endif
 
-		tick = deflationTick
+		tick = inflationTick
 		BodyMorphApplied = true
 		while(currentOralInflation < oralCum)
 			currentOralInflation += oralstep
@@ -316,8 +316,10 @@ Function Inflate()
 					if inflater.InflateMorph4 != ""
 						inflater.SetBellyMorphValue(akActor, currentOralInflation, inflater.InflateMorph4)
 					endIf
+				Else
+					inflater.SetNodeScale(akActor, inflater.BELLY_NODE, currentOralInflation)
 				Endif
-				tick = deflationTick
+				tick = inflationTick
 				BodyMorphApplied = true
 			endif
 			Utility.wait(0.2)
@@ -326,7 +328,7 @@ Function Inflate()
 		if !BodyMorphApplied && config.BodyMorph && inflater.InflateMorph4 != ""
 			inflater.SetBellyMorphValue(akActor, oralCum, inflater.InflateMorph4)
 		endif
-	EndIf	
+	EndIf
 	
 	If bursting
 		if akActor == inflater.Player
