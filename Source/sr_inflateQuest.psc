@@ -84,9 +84,6 @@ Spell Property encumber25 Auto
 Spell Property sr_expelcumspell Auto
 SexLabFramework Property sexlab auto
 Faction Property slAnimatingFaction auto
-Faction Property zadAnimatingFaction auto 
-Faction Property DefeatFaction auto 
-Faction Property UDMinigameFaction auto 
 
 Package Property stayStillPackage auto
 
@@ -360,29 +357,25 @@ Function VersionUpdate()
 		zad_DeviousBelt			= Game.GetFormFromFile(0x00003330, "Devious Devices - Assets.esm") as Keyword
 		zad_PermitAnal			= Game.GetFormFromFile(0x0000FACA, "Devious Devices - Assets.esm") as Keyword
 	EndIf
-	If Game.GetModByName("Devious Devices - Integration.esm") != 255
-		zadAnimatingFaction		= Game.GetFormFromFile(0x00029567, "Devious Devices - Integration.esm") as Faction
-	EndIf
-	If Game.GetModByName("SexLabDefeat.esp") != 255
-		DefeatFaction			= Game.GetFormFromFile(0x00001D92, "SexLabDefeat.esp") as Faction
-	EndIf
-	If Game.GetModByName("UnforgivingDevices.esp") != 255
-		UDMinigameFaction		= Game.GetFormFromFile(0x00150DA3, "UnforgivingDevices.esp") as Faction
-	EndIf
 	SetIntValue(Player, "CI_CumInflation_ON", 1)
 	eventManager.StartEvents()
 EndFunction
 
 Function maintenance()
 	log("maintenance()")
+
+	RegisterForModEvent("dhlp-Suspend", "OnDhlpSuspend" )
+	RegisterForModEvent("dhlp-Resume", "OnDhlpResume" )
 	if config.enabled
 		;debug.notification("FHU Maintenance")
 		RegisterForModEvent("HookOrgasmStart", "Orgasm")
 		RegisterForModEvent("HookAnimationEnd", "FHUSexlabEnd")
 		RegisterForModEvent("SexLabOrgasmSeparate", "OrgasmSeparate")
-		RegisterForModEvent("dhlp-Suspend", "OnDhlpSuspend" )
-		RegisterForModEvent("dhlp-Resume", "OnDhlpResume" )
 		RestoreActors()
+	else
+		UnregisterForModEvent("HookOrgasmStart")
+		UnregisterForModEvent("HookAnimationEnd")
+		UnregisterForModEvent("SexLabOrgasmSeparate")
 	endif
 	BaboAnimsSet()
 	eventManager.Maintenance()
@@ -525,6 +518,10 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
+
+		If currentPool == 0
+			return
+		EndIf
 		
 		String callback = ""
 		int i = actors.length
@@ -626,6 +623,9 @@ EndEvent
 
 bool Function UpdateFHUmoan(ObjectReference aksource, int cumType, int spermtype)
 	Actor DeflateActor = aksource as Actor
+	If !DeflateActor
+		return false
+	EndIf
 	MfgConsoleFuncExt.ResetMfg(DeflateActor)
 	EmotionWhenLeakage(DeflateActor)
 	bool needUpdate = false
@@ -1033,7 +1033,7 @@ int i
 	while i > 0
 		i -= 1
 		If akactor == player
-			Male = sr_InjectorFormlist.getat(i)
+			Male = sr_InjectorFormlist.getat(i) as Actor
 		Else
 			Male = FormListGet(akactor, stringinjector, i) as Actor
 		EndIf
@@ -2200,15 +2200,22 @@ EndFunction
 Function ResetActors(bool force = false)
         GoToState("")
         int n = FormListCount(self, INFLATED_ACTORS)
+		bool resetPlayerState = true
         while n > 0
-                n -= 1
-                Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
-                ResetActorState(a)
+			n -= 1
+			Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
+			ResetActorState(a)
+			if a == player
+				resetPlayerState = false
+			EndIf
         EndWhile
         FormListClear(self, INFLATED_ACTORS)
 
         ; Make sure player is always reset
-        ResetActorState(player)
+		log("Resetting Player...")
+		If resetPlayerState
+			ResetActorState(player)
+		EndIf
         SendPlayerCumUpdate(0.0, true)
         SendPlayerCumUpdate(0.0, false)
         sr_InjectorFormlist.revert()
@@ -2219,23 +2226,21 @@ EndFunction
 Function ResetActorState(Actor a)
         log("Resetting " + a.GetLeveledActorBase().GetName() + "...")
         if config.bellyScale
-                if config.Bodymorph
-                        ;SetBellyMorphValue(a, 0.0, "PregnancyBelly")
-                        SetBellyMorphValue(a, 0.0, InflateMorph)
-                        if InflateMorph2 != ""
-                                SetBellyMorphValue(a, 0.0, InflateMorph2)
-                        endIf
-                        if InflateMorph3 != ""
-                                SetBellyMorphValue(a, 0.0, InflateMorph3)
-                        endif
-                        if InflateMorph4 != ""
-                                SetBellyMorphValue(a, 0.0, InflateMorph4)
-                        endif
-                        SetFloatValue(a, INFLATION_AMOUNT, 0.0)
-                        SetFloatValue(a, CUM_ORAL, 0.0)
-                Else
-                        RemoveNodeScale(a, BELLY_NODE)
-                Endif
+			if config.Bodymorph
+				;SetBellyMorphValue(a, 0.0, "PregnancyBelly")
+				SetBellyMorphValue(a, 0.0, InflateMorph)
+				if InflateMorph2 != ""
+						SetBellyMorphValue(a, 0.0, InflateMorph2)
+				endIf
+				if InflateMorph3 != ""
+						SetBellyMorphValue(a, 0.0, InflateMorph3)
+				endif
+				if InflateMorph4 != ""
+						SetBellyMorphValue(a, 0.0, InflateMorph4)
+				endif
+			Else
+				RemoveNodeScale(a, BELLY_NODE)
+			Endif
         EndIf
         FormListClear(a, "sr.inflater.injector")
         FormListClear(a, "sr.inflater.analinjector")
@@ -2247,7 +2252,7 @@ Function ResetActorState(Actor a)
         UnsetFloatValue(a, LAST_TIME_ANAL)
         UnsetFloatValue(a, LAST_TIME_VAG)
         UnsetFloatValue(a, LAST_TIME_ORAL)
-        UnsetFormValue(a, CHEST_ARMOR)
+;        UnsetFormValue(a, CHEST_ARMOR) ; obsolete
         a.RemoveSpell(sr_inflateBurstSpell)
         UnencumberActor(a)
         RemoveFaction(a)
@@ -2257,8 +2262,9 @@ Function ResetActor(Actor a)
         ResetActorState(a)
         FormListRemove(self, INFLATED_ACTORS, a, true)
         If a == player
-                SendPlayerCumUpdate(0.0, true)
-                SendPlayerCumUpdate(0.0, false)
+			SendPlayerCumUpdate(0.0, true)
+			SendPlayerCumUpdate(0.0, false)
+			sr_InjectorFormlist.revert()
         EndIf
 EndFunction
 
@@ -2464,18 +2470,18 @@ Function StripActor(Actor akActor)
 EndFunction
 
 ; Unused
-Function StripCover(Actor akActor, bool isAnal)
-	If config.strip
-		int slot = 0x1000000
-		If isAnal
-			slot = 0x40000
-		EndIf
-		Form current = SexLab.StripSlot(akActor, slot)
-		If current
-			SetFormValue(akActor, COVER_PIECE, current)
-		EndIf
-	EndIf
-EndFunction
+;Function StripCover(Actor akActor, bool isAnal)
+;	If config.strip
+;		int slot = 0x1000000
+;		If isAnal
+;			slot = 0x40000
+;		EndIf
+;		Form current = SexLab.StripSlot(akActor, slot)
+;		If current
+;			SetFormValue(akActor, COVER_PIECE, current)
+;		EndIf
+;	EndIf
+;EndFunction
 
 Function UnstripActor(Actor akActor)
 	log("UnstripActor " + akActor)
@@ -2574,7 +2580,7 @@ Function StopExpelSpell(Actor a)
 EndFunction
 
 Function EncumberActor(Actor a)
-	If !config.encumber
+	If !config.encumber || a == None
 		return
 	EndIf
 	UnencumberActor(a)
@@ -2594,6 +2600,9 @@ Function EncumberActor(Actor a)
 EndFunction
 
 Function UnencumberActor(Actor a)
+	If a == None
+		return
+	EndIf
 	a.RemoveSpell(encumber05)
 	a.RemoveSpell(encumber10)
 	a.RemoveSpell(encumber15)

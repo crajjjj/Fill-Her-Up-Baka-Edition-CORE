@@ -166,9 +166,19 @@ bool BeeingFemale
 int FHUSLIFOID
 int FHUSLIFNullOID
 
+float Property debugAmount auto hidden
+bool Property debugVaginalPool auto hidden
+bool Property debugAnalPool auto hidden
+bool Property debugOralPool auto hidden
+
 int debugResetOID
-int debugFillVagOID
-int debugFillAnOID
+int debugAmountOID
+int debugVaginalPoolOID
+int debugAnalPoolOID
+int debugOralPoolOID
+int debugFillOID
+int debugDeflateOID
+
 int FHUMorphDisabledOID
 int FHUMorphStringOID
 int FHUMorphString2OID
@@ -379,6 +389,7 @@ Function SetDefaults()
 	SpermRemovalAmountVag = SpermRemovalAmountVagDefault
 	SpermRemovalAmountAnal = SpermRemovalAmountAnalDefault
 	SpermRemovalAmountOral = SpermRemovalAmountOralDefault
+	
 EndFunction
 
 Event OnGameReload()
@@ -405,6 +416,13 @@ Function CheckGamePad()
 	bgamepad = Game.UsingGamepad()
 EndFunction
 
+;https://forums.nexusmods.com/index.php?/topic/4795300-starting-quests-from-mcm-quest-script-best-method/
+Function closeMCM()
+    UI.Invoke("Journal Menu", "_root.QuestJournalFader.Menu_mc.ConfigPanelClose")
+    UI.Invoke("Journal Menu", "_root.QuestJournalFader.Menu_mc.CloseMenu")
+EndFunction
+
+
 Event OnConfigInit()
 	parent.OnConfigInit()
 	PageReset()
@@ -427,7 +445,10 @@ Event OnVersionUpdate(int newVersion)
 	If newVersion != currentVersion
 		VerifyMods()
 		ModName = "Fill her up"
-		bool monitoring = inflater.GetState() == "MonitoringInflation"
+		bool monitoring = false
+		If inflater.IsRunning()
+			monitoring = inflater.GetState() == "MonitoringInflation"
+		EndIf
 		inflater.stop()
 		eventManager.stop()
 		dialogue.stop()
@@ -435,13 +456,28 @@ Event OnVersionUpdate(int newVersion)
 		dialogue.start()
 		eventManager.start()
 		inflater.start()
+
+		int tick = 0
+		while (inflater.IsStarting() || dialogue.IsStarting() || eventManager.IsStarting()) && tick < 20
+			Utility.wait(0.1)
+			tick += 1
+		endwhile
+
 		if monitoring
 			inflater.GoToState("MonitoringInflation")
 			dialogue.doregister()
 		endIf
 		SetDefaults()
+
+		; inflater reset
 		inflater.versionUpdate()
+		inflater.RubAnimation = eventAnimation
+		inflater.InflateMorph = FHUMorphString
+		inflater.InflateMorph2 = FHUMorphString2
+		inflater.InflateMorph3 = FHUMorphString3
+		inflater.InflateMorph4 = FHUMorphString4
 		inflater.maintenance()
+
 		raceOID = new int[63] ; 128 items per config page if I'm not mistaken, would leave 64 per side and -1 for header
 		CreatureRaceOID = new int[48]
 		RegisterKeys()
@@ -506,17 +542,17 @@ Event OnPageReset(String page)
 		npcCommentsOID = AddToggleOption("$FHU_NPC_COMMENTS", npcComments)
 		followerCommentsOID = AddToggleOption("$FHU_FOLLOWER_COMMENTS", followerComments)
 		SetCursorPosition(1)
-		int i = StorageUtil.FormListCount(inflater, inflater.INFLATED_ACTORS)
-		if i > 0
+		int inflatedActors = StorageUtil.FormListCount(inflater, inflater.INFLATED_ACTORS)
+		if inflatedActors > 0
 			FHUMorphDisabledOID = AddTextOption("$FHU_MORPH_DISABLED", "")
 			FHUMorphStringOID = AddInputOption("$FHU_MORPHSTRING", FHUMorphString, OPTION_FLAG_DISABLED)
-			FHUMorphSLIFOID = AddToggleOption("$FHU_MORPHSLIF", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIFOID = AddToggleOption("$FHU_MORPHSLIF", FHUMorphSLIF, OPTION_FLAG_DISABLED)
 			FHUMorphString2OID = AddInputOption("$FHU_MORPHSTRING2", FHUMorphString2, OPTION_FLAG_DISABLED)
-			FHUMorphSLIF2OID = AddToggleOption("$FHU_MORPHSLIF2", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIF2OID = AddToggleOption("$FHU_MORPHSLIF2", FHUMorphSLIF2, OPTION_FLAG_DISABLED)
 			FHUMorphString3OID = AddInputOption("$FHU_MORPHSTRING3", FHUMorphString3, OPTION_FLAG_DISABLED)
-			FHUMorphSLIF3OID = AddToggleOption("$FHU_MORPHSLIF3", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIF3OID = AddToggleOption("$FHU_MORPHSLIF3", FHUMorphSLIF3, OPTION_FLAG_DISABLED)
 			FHUMorphString4OID = AddInputOption("$FHU_MORPHSTRING4", FHUMorphString4, OPTION_FLAG_DISABLED)
-			FHUMorphSLIF4OID = AddToggleOption("$FHU_MORPHSLIF4", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIF4OID = AddToggleOption("$FHU_MORPHSLIF4", FHUMorphSLIF4, OPTION_FLAG_DISABLED)
 		else
 			FHUMorphStringOID = AddInputOption("$FHU_MORPHSTRING", FHUMorphString)
 			if SLIF_Installed
@@ -544,7 +580,11 @@ Event OnPageReset(String page)
 			endif
 		endif
 		if SLIF_Installed
-			FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF)
+			if inflatedActors > 0
+				FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF, OPTION_FLAG_DISABLED)
+			Else
+				FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF)
+			EndIf
 		else
 			FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF, OPTION_FLAG_DISABLED)
 		endif
@@ -556,12 +596,20 @@ Event OnPageReset(String page)
 		resetOID = AddTextOption("$FHU_RESET_ACTORS", "$FHU_RESET")
 		resetquestOID = AddTextOption("$FHU_RESET_QUEST", "$FHU_RESETQUEST")
 		AddEmptyOption()
-		if inflater.sr_debug.GetValueInt() > 0
-			AddEmptyOption()
-			debugResetOID = AddTextOption("Reset player", "reset")
-			debugFillVagOID = AddTextOption("Fill player vaginal pool", "fill")
-			debugFillAnOID = AddTextOption("Fill player anal pool", "fill")
-		EndIf
+
+		
+		AddTextOption("Debug Actions", "", OPTION_FLAG_DISABLED)
+		debugAmount = 1
+		debugVaginalPool = false
+		debugAnalPool = false
+		debugOralPool = false
+		debugAmountOID = AddSliderOption("Fill amount", debugAmount, "{2}")
+		debugVaginalPoolOID = AddToggleOption("Vaginal pool", debugVaginalPool)
+		debugAnalPoolOID = AddToggleOption("Anal pool", debugAnalPool)
+		debugOralPoolOID = AddToggleOption("Oral pool", debugOralPool)
+		debugFillOID = AddTextOption("Inflate player", "start")
+		debugDeflateOID = AddTextOption("Deflate player", "start")
+		debugResetOID = AddTextOption("Reset player", "reset")
 
 	ElseIf page == pages[1]; Events
 		GoToState("events")
@@ -792,6 +840,11 @@ State settings
 			SetSliderDialogDefaultValue(DeflatechanceDefault)
 			SetSliderDialogRange(0, 100)
 			SetSliderDialogInterval(1.0)
+		ElseIf opt == debugAmountOID
+			SetSliderDialogStartValue(1)
+			SetSliderDialogDefaultValue(1)
+			SetSliderDialogRange(0.1, 20.0)
+			SetSliderDialogInterval(0.05)
 		EndIf
 	EndEvent
 
@@ -815,7 +868,7 @@ State settings
 		ElseIf opt == BodyMorphApplyPeriodOID
 			BodyMorphApplyPeriod = val
 			SetSliderOptionValue(opt, BodyMorphApplyPeriod, "{1}")
-			inflater.log("BodyMorph Apply Period set to: " + animMult)
+			inflater.log("BodyMorph Apply Period set to: " + BodyMorphApplyPeriod)
 		ElseIf opt == cumMultOID
 			inflater.cumMult = val
 			SetSliderOptionValue(opt, val, "{2}")
@@ -828,6 +881,9 @@ State settings
 			Deflatechance = val
 			sr_ExpelFaliure.setvalue(Deflatechance)
 			SetSliderOptionValue(opt, Deflatechance as int, "{0}%")
+		ElseIf opt == debugAmountOID
+			debugAmount = val
+			SetSliderOptionValue(opt, debugAmount, "{2}")
 		EndIf
 	EndEvent
 	
@@ -904,16 +960,18 @@ State settings
 				resetting = true
 				SetTextOptionValue(resetOID, "$FHU_SURE")
 			Else
-				SetTextOptionValue(resetOID, "$FHU_DONE")
+				SetTextOptionValue(resetOID, "...")
 				inflater.ResetActors()
+				SetTextOptionValue(resetOID, "$FHU_DONE")
 			EndIf
 		ElseIf opt == resetquestOID
 			if !resettingquest
 				resettingquest = true
 				SetTextOptionValue(resetquestOID, "$FHU_SURE")
 			Else
-				SetTextOptionValue(resetquestOID, "$FHU_DONE")
+				SetTextOptionValue(resetquestOID, "...")
 				infplayer.ResetQuests()
+				SetTextOptionValue(resetquestOID, "$FHU_DONE")
 			EndIf
 		ElseIf opt == enabledOID
 			enabled = !enabled
@@ -1046,14 +1104,26 @@ State settings
 			consolePrint = !consolePrint
 			SetToggleOptionValue(consolePrintOID, consolePrint)
 		ElseIf opt == debugResetOID
+			SetTextOptionValue(debugResetOID, "...")
 			inflater.ResetActor(inflater.player)
 			SetTextOptionValue(debugResetOID, "done")
-		ElseIf opt == debugFillAnOID
-			DebugFill(true)
-			SetTextOptionValue(debugFillAnOID, "done")
-		ElseIf opt == debugFillVagOID
-			DebugFill(false)
-			SetTextOptionValue(debugFillVagOID, "done")
+		ElseIf opt == debugVaginalPoolOID
+			debugVaginalPool = !debugVaginalPool
+			SetToggleOptionValue(debugVaginalPoolOID, debugVaginalPool)
+		ElseIf opt == debugAnalPoolOID
+			debugAnalPool = !debugAnalPool
+			SetToggleOptionValue(debugAnalPoolOID, debugAnalPool)
+		ElseIf opt == debugOralPoolOID
+			debugOralPool = !debugOralPool
+			SetToggleOptionValue(debugOralPoolOID, debugOralPool)
+		ElseIf opt == debugFillOID
+			CloseMCM()
+			Utility.Wait(1)
+			DebugInflate()
+		ElseIf opt == debugDeflateOID
+			CloseMCM()
+			Utility.Wait(1)
+			DebugDeflate()
 		Endif
 	EndEvent
 
@@ -1138,6 +1208,8 @@ State settings
 			SetInfoText("$FHU_CUM_EFFECTS_HELP")
 		ElseIf opt == FHUSLIFOID
 			SetInfoText("$FHU_SLIF_HELP")
+		Else
+			SetInfoText("")
 		endif
 	EndEvent
 EndState
@@ -1517,6 +1589,18 @@ Event OnOptionDefault(int opt)
 	ElseIf opt == BodyMorphOID
 		BodyMorph = true
 		SetToggleOptionValue(BodyMorphOID, BodyMorph)
+	ElseIf opt == debugAmountOID
+        debugAmount = 1
+        SetSliderOptionValue(opt, debugAmount, "{2}")
+	ElseIf opt == debugVaginalPoolOID
+		debugVaginalPool = false
+		SetToggleOptionValue(debugVaginalPoolOID, debugVaginalPool)
+	ElseIf opt == debugAnalPoolOID
+		debugAnalPool = false
+		SetToggleOptionValue(debugAnalPoolOID, debugAnalPool)
+	ElseIf opt == debugOralPoolOID
+		debugOralPool = false
+		SetToggleOptionValue(debugOralPoolOID, debugOralPool)
 	else
 		int idx = ToggleSlotID.Find(opt)
 		if (idx >= 0)
@@ -1767,34 +1851,59 @@ Event OnConfigClose()
 	inflater.maintenance()
 EndEvent
 
-Function DebugFill(bool isAnal)
-	String pool = inflater.CUM_VAGINAL
-	If isAnal
-		pool = inflater.CUM_ANAL
-		StorageUtil.SetFloatValue(inflater.player, inflater.LAST_TIME_ANAL, inflater.GameDaysPassed.GetValue())
-	Else
-		StorageUtil.SetFloatValue(inflater.player, inflater.LAST_TIME_VAG, inflater.GameDaysPassed.GetValue())
+
+Function DebugDeflate()
+	float amount = debugAmount
+	int pool = 0
+	If debugVaginalPool
+		pool = inflater.VAGINAL
 	EndIf
-	StorageUtil.SetFloatValue(inflater.player, pool, (maxInflation))
-	float inf = maxInflation
-	If inflater.GetVaginalCum(inflater.player) > 0 && inflater.getAnalCum(inflater.player) > 0
-		inf *= 1.2
+	If debugAnalPool
+		pool = inflater.ANAL
 	EndIf
-	StorageUtil.SetFloatValue(inflater.player, inflater.INFLATION_AMOUNT, inf)
-	if BodyMorph
-		;inflater.SetBellyMorphValue(inflater.player, inf, "PregnancyBelly")
-		inflater.SetBellyMorphValue(inflater.player, inf, inflater.InflateMorph)
-	Else
-		inflater.SetNodeScale(inflater.player, "NPC Belly", inf)
-	Endif
-	If inflater.GetVaginalCum(inflater.player) + inflater.getAnalCum(inflater.player) > maxInflation * 1.2
-		If !inflater.player.HasMagicEffectWithKeyword(inflater.sr_WhyWontYouDispel)
-			inflater.player.AddSpell(inflater.sr_inflateBurstSpell, false)
-		EndIf
+	If debugOralPool
+		pool = inflater.ORAL
 	EndIf
-	StorageUtil.FormListAdd(inflater, inflater.INFLATED_ACTORS, inflater.player, false)
-	inflater.UpdateFaction(inflater.player)
-	inflater.EncumberActor(inflater.player)
+
+	inflater.log("DebugDeflate amount: " + amount + "; pool: " + pool)
+
+	If pool == 0 || amount <= 0
+		return
+	EndIf
+
+	String callback = ""
+
+	int tid = inflater.QueueActor(inflater.player, false, pool, amount, 5.0, callback)
+	If tid >= 0
+		inflater.InflateQueued()
+	EndIf
+EndFunction
+
+Function DebugInflate()
+	float amount = debugAmount
+	int pool = 0
+	If debugVaginalPool
+		pool = Math.LogicalOr(pool, inflater.VAGINAL)
+	EndIf
+	If debugAnalPool
+		pool = Math.LogicalOr(pool, inflater.ANAL)
+	EndIf
+	If debugOralPool
+		pool = Math.LogicalOr(pool, inflater.ORAL)
+	EndIf
+
+	inflater.log("DebugInflate amount: " + amount + "; pool: " + pool)
+
+	If pool == 0 || amount <= 0
+		return
+	EndIf
+
+	String callback = ""
+
+	int tid = inflater.QueueActor(inflater.player, true, pool, amount, 5.0, callback)
+	If tid >= 0
+		inflater.InflateQueued()
+	EndIf
 EndFunction
 
 Bool[] Function GetUnignoredArmorSlots(GlobalVariable IgnoredArmorSlotsMask, GlobalVariable IgnoredArmorSlotsMaskB)

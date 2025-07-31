@@ -35,7 +35,6 @@ formlist property sr_InjectorFormlist auto
 MagicEffect Property sr_ExpelCumMGEF Auto
 
 Function Maintenance()
-	log("Maintenance()")
 	UnregisterForAllKeys()
 	spermout = false
 	If config.defKey >= 0
