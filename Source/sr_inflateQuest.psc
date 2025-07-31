@@ -1557,12 +1557,12 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	bool btongueout = false
 	MfgConsoleFuncExt.ResetMfg(akActor)
 	EmotionWhenLeakage(akactor)
-	MouthOpen(akActor, 0)
 	if Utility.RandomInt(0, 99) < 40 && sr_TongueEffect.getvalue() == 1 && btongue
 		EquiprandomTongue(akactor, true)
 		btongueout = true
 	endif
-	
+	MouthOpen(akActor, 0);checks tongue
+
 	if Cumtype < 3 && spermtype > 2;Nostrip when oral
 		StripActor(akActor)
 	endif
@@ -1625,10 +1625,10 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	TempActor = akActor
 	;RegisterForSingleUpdate(10.0)
 	Utility.wait(11.0)
-	MfgConsoleFuncExt.ResetMfg(akActor)
 	if btongueout
 		equiprandomtongue(akactor, false)
 	endif
+	MfgConsoleFuncExt.ResetMfg(akActor)
 	EquipArmor(akactor)
 	;infplayer.RegisterForSingleUpdate(15.0); Just in case when the actor is interrupted and the animation stops 
 	;if akActor.WaitForAnimationEvent("IdleForceDefaultState") || EmergencySwitch || bDeflateAnimation ; WaitForAnimationEvent is wonky
