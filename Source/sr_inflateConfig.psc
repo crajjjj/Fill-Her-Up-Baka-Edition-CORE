@@ -379,6 +379,7 @@ Function SetDefaults()
 	SpermRemovalAmountVag = SpermRemovalAmountVagDefault
 	SpermRemovalAmountAnal = SpermRemovalAmountAnalDefault
 	SpermRemovalAmountOral = SpermRemovalAmountOralDefault
+	
 EndFunction
 
 Event OnGameReload()
@@ -427,7 +428,10 @@ Event OnVersionUpdate(int newVersion)
 	If newVersion != currentVersion
 		VerifyMods()
 		ModName = "Fill her up"
-		bool monitoring = inflater.GetState() == "MonitoringInflation"
+		bool monitoring = false
+		If inflater.IsRunning()
+			monitoring = inflater.GetState() == "MonitoringInflation"
+		EndIf
 		inflater.stop()
 		eventManager.stop()
 		dialogue.stop()
@@ -435,13 +439,28 @@ Event OnVersionUpdate(int newVersion)
 		dialogue.start()
 		eventManager.start()
 		inflater.start()
+
+		int tick = 0
+		while (inflater.IsStarting() || dialogue.IsStarting() || eventManager.IsStarting()) && tick < 20
+			Utility.wait(0.1)
+			tick += 1
+		endwhile
+
 		if monitoring
 			inflater.GoToState("MonitoringInflation")
 			dialogue.doregister()
 		endIf
 		SetDefaults()
+
+		; inflater reset
 		inflater.versionUpdate()
+		inflater.RubAnimation = eventAnimation
+		inflater.InflateMorph = FHUMorphString
+		inflater.InflateMorph2 = FHUMorphString2
+		inflater.InflateMorph3 = FHUMorphString3
+		inflater.InflateMorph4 = FHUMorphString4
 		inflater.maintenance()
+
 		raceOID = new int[63] ; 128 items per config page if I'm not mistaken, would leave 64 per side and -1 for header
 		CreatureRaceOID = new int[48]
 		RegisterKeys()
@@ -506,17 +525,17 @@ Event OnPageReset(String page)
 		npcCommentsOID = AddToggleOption("$FHU_NPC_COMMENTS", npcComments)
 		followerCommentsOID = AddToggleOption("$FHU_FOLLOWER_COMMENTS", followerComments)
 		SetCursorPosition(1)
-		int i = StorageUtil.FormListCount(inflater, inflater.INFLATED_ACTORS)
-		if i > 0
+		int inflatedActors = StorageUtil.FormListCount(inflater, inflater.INFLATED_ACTORS)
+		if inflatedActors > 0
 			FHUMorphDisabledOID = AddTextOption("$FHU_MORPH_DISABLED", "")
 			FHUMorphStringOID = AddInputOption("$FHU_MORPHSTRING", FHUMorphString, OPTION_FLAG_DISABLED)
-			FHUMorphSLIFOID = AddToggleOption("$FHU_MORPHSLIF", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIFOID = AddToggleOption("$FHU_MORPHSLIF", FHUMorphSLIF, OPTION_FLAG_DISABLED)
 			FHUMorphString2OID = AddInputOption("$FHU_MORPHSTRING2", FHUMorphString2, OPTION_FLAG_DISABLED)
-			FHUMorphSLIF2OID = AddToggleOption("$FHU_MORPHSLIF2", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIF2OID = AddToggleOption("$FHU_MORPHSLIF2", FHUMorphSLIF2, OPTION_FLAG_DISABLED)
 			FHUMorphString3OID = AddInputOption("$FHU_MORPHSTRING3", FHUMorphString3, OPTION_FLAG_DISABLED)
-			FHUMorphSLIF3OID = AddToggleOption("$FHU_MORPHSLIF3", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIF3OID = AddToggleOption("$FHU_MORPHSLIF3", FHUMorphSLIF3, OPTION_FLAG_DISABLED)
 			FHUMorphString4OID = AddInputOption("$FHU_MORPHSTRING4", FHUMorphString4, OPTION_FLAG_DISABLED)
-			FHUMorphSLIF4OID = AddToggleOption("$FHU_MORPHSLIF4", false, OPTION_FLAG_DISABLED)
+			FHUMorphSLIF4OID = AddToggleOption("$FHU_MORPHSLIF4", FHUMorphSLIF4, OPTION_FLAG_DISABLED)
 		else
 			FHUMorphStringOID = AddInputOption("$FHU_MORPHSTRING", FHUMorphString)
 			if SLIF_Installed
@@ -544,7 +563,11 @@ Event OnPageReset(String page)
 			endif
 		endif
 		if SLIF_Installed
-			FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF)
+			if inflatedActors > 0
+				FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF, OPTION_FLAG_DISABLED)
+			Else
+				FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF)
+			EndIf
 		else
 			FHUSLIFOID = AddToggleOption("$FHU_SLIF", FHUSLIF, OPTION_FLAG_DISABLED)
 		endif
@@ -904,16 +927,18 @@ State settings
 				resetting = true
 				SetTextOptionValue(resetOID, "$FHU_SURE")
 			Else
-				SetTextOptionValue(resetOID, "$FHU_DONE")
+				SetTextOptionValue(resetOID, "...")
 				inflater.ResetActors()
+				SetTextOptionValue(resetOID, "$FHU_DONE")
 			EndIf
 		ElseIf opt == resetquestOID
 			if !resettingquest
 				resettingquest = true
 				SetTextOptionValue(resetquestOID, "$FHU_SURE")
 			Else
-				SetTextOptionValue(resetquestOID, "$FHU_DONE")
+				SetTextOptionValue(resetquestOID, "...")
 				infplayer.ResetQuests()
+				SetTextOptionValue(resetquestOID, "$FHU_DONE")
 			EndIf
 		ElseIf opt == enabledOID
 			enabled = !enabled
