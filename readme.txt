@@ -1,11 +1,20 @@
-V2.0.3.2
+V1.96.2 & 2.0.3.2
 - Hard Dependency: MfgFix NG
 
-V2.0.3.1 (vs 2.03)
+V1.96.1 & V2.0.3.1 (vs 2.03)
 - Soft dependency: Hentairim
 - Various typo fixes
 
+Note on morphs:
+Generally there are 4 variants:
+1. Bodymorph ENABLED    + SLIF DISABLED        - Racemenu bodymorph
+2. Bodymorph ENABLED    + SLIF ENABLED         - SLIF morph  
+3. Bodymorph DISABLED   + SLIF NOT Installed   - Racemenu NodeTransform
+4. Bodymorph DISABLED   + SLIF Installed       - SLIF mod event for scale Node
+
 -------------------------
+(Some features dropped whem moving to 2.0.3.1)
+
 V1.1
 1. Changed the inflate value is sent to SLIF for the amount of two pools "oral" and "anal+vag". 
 
