@@ -205,9 +205,7 @@ Function Inflate()
 ;	else
 ;		debug.notification("!IsOral")
 ;	endif
-	float maxInflation = inflater.GetPoolSize(akActor)
-	float OralmaxInflation = inflater.config.OralmaxInflation
-	
+	float maxInflation = inflater.GetPoolSize(akActor)	
 
 	If ( (vagCum > 0.0 || inflater.sexlab.GetGender(akActor) == 0) && (analCum > 0.0 || isAnal) ) || ( isVaginal && analCum > 0.0 ) || ( isAnal && isVaginal )
 		; Allow a bit extra inflation with both holes filled
@@ -432,7 +430,7 @@ Function Deflate()
 		totalInf = vagCum + analCum
 		Cumtype = 2
 		maxInflation = inflater.config.maxInflation
-		log("deflateTarget Anal = "+analCum+" + "+analCum+" - "+cumAmount)
+		log("deflateTarget Anal = "+vagCum+" + "+analCum+" - "+cumAmount)
 	elseif isOral
 		currentInflation = oralCum
 		totalInf = oralCum
@@ -441,8 +439,10 @@ Function Deflate()
 		log("deflateTarget Oral = "+oralCum+" - "+cumAmount)
 	endif
 	
-	If (isAnal && analCum - cumAmount > 0.0 && vagCum > 0.0) || (!isAnal && vagCum - cumAmount > 0.0 && analCum > 0.0) || (isAnal && analCum - cumAmount > 0.0 && inflater.sexlab.GetGender(akActor)==0)
-		maxInflation *= inflater.BURST_MULT
+	if isVaginal || isAnal
+		If (isAnal && analCum - cumAmount > 0.0 && vagCum > 0.0) || (!isAnal && vagCum - cumAmount > 0.0 && analCum > 0.0) || (isAnal && analCum - cumAmount > 0.0 && inflater.sexlab.GetGender(akActor)==0)
+			maxInflation *= inflater.BURST_MULT
+		EndIf
 	EndIf
 
 	float deflateTarget = totalInf - cumAmount
@@ -478,7 +478,7 @@ Function Deflate()
 	If akActor.Is3DLoaded()
 		inflater.Moan(akActor)
 	EndIf
-	if deflateTarget < maxInflation
+	if isOral || deflateTarget < maxInflation
 		; Only actually deflate if total cum is less than max belly size
 		If inflater.config.bellyScale
 			If akActor.Is3DLoaded()
@@ -506,48 +506,50 @@ Function Deflate()
 			akActor.RemoveSpell(inflater.sr_inflateBurstSpell)
 			;SetFloatValue(akActor, inflater.INFLATION_AMOUNT, deflateTarget)
 		endif
+		
+		log("Deflated to: " + deflateTarget +" (" +currentInflation + ")")
+		if isAnal
+			analCum -= cumAmount
+			if analCum < 0.1
+				analCum = 0.0
+				UnsetFloatValue(akActor, inflater.LAST_TIME_ANAL)
+				UnsetFloatValue(akActor, inflater.CUM_ANAL)
+				FormListClear(akActor, "sr.inflater.analinjector")
+			Else
+				SetFloatValue(akActor, inflater.CUM_ANAL, analCum)
+			EndIf
+		Elseif isVaginal
+			vagCum -= cumAmount
+			if vagCum < 0.1
+				vagCum = 0.0
+				UnsetFloatValue(akActor, inflater.LAST_TIME_VAG)
+				UnsetFloatValue(akActor, inflater.CUM_VAGINAL)
+				if akActor == inflater.player
+					inflater.sr_InjectorFormlist.revert()
+				else
+					FormListClear(akActor, "sr.inflater.injector")
+				EndIf
+			Else
+				SetFloatValue(akActor, inflater.CUM_VAGINAL, vagCum)
+			EndIf
+		else
+			oralCum -= cumAmount
+			if oralCum < 0.1
+				oralCum = 0.0
+				UnsetFloatValue(akActor, inflater.LAST_TIME_ORAL)
+				UnsetFloatValue(akActor, inflater.CUM_ORAL)
+			Else
+				SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
+			EndIf
+			;SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
+		EndIf
 	Else
+		log("Deflate blocked by bursting")
 		Utility.wait(tme)
 	endIf
 
 	inflater.StopLeakage(akActor, Cumtype, spermtype)
-		
-	log("Deflated to: " + deflateTarget +" (" +currentInflation + ")")
-	if isAnal
-		analCum -= cumAmount
-		if analCum < 0.1
-			analCum = 0.0
-			UnsetFloatValue(akActor, inflater.LAST_TIME_ANAL)
-			UnsetFloatValue(akActor, inflater.CUM_ANAL)
-			FormListClear(akActor, "sr.inflater.analinjector")
-		Else
-			SetFloatValue(akActor, inflater.CUM_ANAL, analCum)
-		EndIf
-	Elseif isVaginal
-		vagCum -= cumAmount
-		if vagCum < 0.1
-			vagCum = 0.0
-			UnsetFloatValue(akActor, inflater.LAST_TIME_VAG)
-			UnsetFloatValue(akActor, inflater.CUM_VAGINAL)
-			if akActor == inflater.player
-				inflater.sr_InjectorFormlist.revert()
-			else
-				FormListClear(akActor, "sr.inflater.injector")
-			EndIf
-		Else
-			SetFloatValue(akActor, inflater.CUM_VAGINAL, vagCum)
-		EndIf
-	else
-		oralCum -= cumAmount
-		if oralCum < 0.1
-			oralCum = 0.0
-			UnsetFloatValue(akActor, inflater.LAST_TIME_ORAL)
-			UnsetFloatValue(akActor, inflater.CUM_ORAL)
-		Else
-			SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
-		EndIf
-		;SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
-	EndIf
+
 	log("Cum amounts after deflation, v: "+ vagCum +", a: "+ analCum +", t: "+ (analCum+vagCum) + ", o: " + oralCum)
 	
 	if Cumtype < 3
@@ -636,7 +638,7 @@ Function Absorb()
 	float startAn = analCum
 	float startOral = oralCum
 	float totalInf
-	float maxInflation = inflater.config.maxInflation
+	float maxInflation
 	
 	;if isAnal || isVaginal
 	;	currentInflation = GetFloatValue(akActor, inflater.INFLATION_AMOUNT)
@@ -650,22 +652,27 @@ Function Absorb()
 		currentInflation = GetFloatValue(akActor, inflater.INFLATION_AMOUNT)
 		totalInf = vagCum + analCum
 		Cumtype = 1
+		maxInflation = inflater.config.maxInflation
 	elseif isAnal
 		currentInflation = GetFloatValue(akActor, inflater.INFLATION_AMOUNT)
 		totalInf = vagCum + analCum
 		Cumtype = 2
+		maxInflation = inflater.config.maxInflation
 	elseif isOral
 		currentInflation = oralCum
 		totalInf = oralCum
 		Cumtype = 3
+		maxInflation = inflater.config.OralmaxInflation
 	endif
 
-	If (isAnal && analCum - cumAmount > 0.0 && vagCum > 0.0) || (!isAnal && vagCum - cumAmount > 0.0 && analCum > 0.0) || (isAnal && analCum - cumAmount > 0.0 && inflater.sexlab.GetGender(akActor)==0)
-		maxInflation *= inflater.BURST_MULT
-	EndIf
+	if isVaginal || isAnal
+		If (isAnal && analCum - cumAmount > 0.0 && vagCum > 0.0) || (!isAnal && vagCum - cumAmount > 0.0 && analCum > 0.0) || (isAnal && analCum - cumAmount > 0.0 && inflater.sexlab.GetGender(akActor)==0)
+			maxInflation *= inflater.BURST_MULT
+		EndIf
+	endif
 
 	float deflateTarget = totalInf - cumAmount
-	log("deflateTarget = "+vagCum+" + "+analCum+" - "+cumAmount)
+	log("AbsorbTarget = "+vagCum+" + "+analCum+" - "+cumAmount)
 	if deflateTarget < 0.0
 		deflateTarget = 0.0
 	endif
@@ -686,14 +693,15 @@ Function Absorb()
 
 	;akActor.setfactionrank(sla_Arousal, akActor.getfactionrank(sla_Arousal) + 10) ; It doesn't work
 	log("cumAmount: " + cumAmount)
-	log("DefAmount: " + deflationAmount + ", total time: " + tme + ", steps: " + steps + ", step: " + step)
+	log("AbsorbAmount: " + deflationAmount + ", total time: " + tme + ", steps: " + steps + ", step: " + step)
 	
 	;inflater.StartLeakage(akActor, isAnal, animate)
 	If akActor.Is3DLoaded()
 		inflater.Moan(akActor)
 	EndIf
-	if deflateTarget < maxInflation
-		; Only actually deflate if total cum is less than max belly size
+	; do we need block absorb on bursting effect?
+	if isOral || deflateTarget < maxInflation
+		; Only actually deflate if total cum is less than max belly size - loo
 		If inflater.config.bellyScale
 			If akActor.Is3DLoaded()
 				while currentInflation > deflateTarget
@@ -720,45 +728,47 @@ Function Absorb()
 			akActor.RemoveSpell(inflater.sr_inflateBurstSpell)
 			;SetFloatValue(akActor, inflater.INFLATION_AMOUNT, deflateTarget)
 		endif
+
+		log("Absorb to: " + deflateTarget +" (" +currentInflation + ")")
+		if isAnal
+			analCum -= cumAmount
+			if analCum < 0.1
+				analCum = 0.0
+				UnsetFloatValue(akActor, inflater.LAST_TIME_ANAL)
+				UnsetFloatValue(akActor, inflater.CUM_ANAL)
+				FormListClear(akActor, "sr.inflater.analinjector")
+			else
+				SetFloatValue(akActor, inflater.CUM_ANAL, analCum)
+			EndIf
+		Elseif isVaginal
+			vagCum -= cumAmount
+			if vagCum < 0.1
+				vagCum = 0.0
+				UnsetFloatValue(akActor, inflater.LAST_TIME_VAG)
+				UnsetFloatValue(akActor, inflater.CUM_VAGINAL)
+				if akActor == inflater.player
+					inflater.sr_InjectorFormlist.revert()
+				else
+					FormListClear(akActor, "sr.inflater.injector")
+				EndIf
+			else
+				SetFloatValue(akActor, inflater.CUM_VAGINAL, vagCum)
+			EndIf
+		else
+			oralCum -= cumAmount
+			if oralCum < 0.1
+				oralCum = 0.0
+				UnsetFloatValue(akActor, inflater.LAST_TIME_ORAL)
+				UnsetFloatValue(akActor, inflater.CUM_ORAL)
+			Else
+				SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
+			EndIf
+		EndIf
 	Else
+		log("Absorb blocked by bursting")
 		Utility.wait(tme)
 	endIf
 		
-	log("Deflated to: " + deflateTarget +" (" +currentInflation + ")")
-	if isAnal
-		analCum -= cumAmount
-		if analCum < 0.1
-			analCum = 0.0
-			UnsetFloatValue(akActor, inflater.LAST_TIME_ANAL)
-			UnsetFloatValue(akActor, inflater.CUM_ANAL)
-			FormListClear(akActor, "sr.inflater.analinjector")
-		else
-			SetFloatValue(akActor, inflater.CUM_ANAL, analCum)
-		EndIf
-	Elseif isVaginal
-		vagCum -= cumAmount
-		if vagCum < 0.1
-			vagCum = 0.0
-			UnsetFloatValue(akActor, inflater.LAST_TIME_VAG)
-			UnsetFloatValue(akActor, inflater.CUM_VAGINAL)
-			if akActor == inflater.player
-				inflater.sr_InjectorFormlist.revert()
-			else
-				FormListClear(akActor, "sr.inflater.injector")
-			EndIf
-		else
-			SetFloatValue(akActor, inflater.CUM_VAGINAL, vagCum)
-		EndIf
-	else
-		oralCum -= cumAmount
-		if oralCum < 0.1
-			oralCum = 0.0
-			UnsetFloatValue(akActor, inflater.LAST_TIME_ORAL)
-			UnsetFloatValue(akActor, inflater.CUM_ORAL)
-		Else
-			SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
-		EndIf
-	EndIf
 	log("Cum amounts after absorb, v: "+ vagCum +", a: "+ analCum +", t: "+ (analCum+vagCum) + ", o: " + oralCum)
 	if Cumtype < 3
 		if ( analCum <= 0.0 && vagCum <= 0.0 )
