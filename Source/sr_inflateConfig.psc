@@ -868,7 +868,7 @@ State settings
 		ElseIf opt == BodyMorphApplyPeriodOID
 			BodyMorphApplyPeriod = val
 			SetSliderOptionValue(opt, BodyMorphApplyPeriod, "{1}")
-			inflater.log("BodyMorph Apply Period set to: " + animMult)
+			inflater.log("BodyMorph Apply Period set to: " + BodyMorphApplyPeriod)
 		ElseIf opt == cumMultOID
 			inflater.cumMult = val
 			SetSliderOptionValue(opt, val, "{2}")
