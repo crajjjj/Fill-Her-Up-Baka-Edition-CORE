@@ -1770,12 +1770,9 @@ Function StopLeakage(Actor akActor, int cumType)
 			akActor.EvaluatePackage()
 			akActor.SetRestrained(False)
 			akActor.SetDontMove(False)
+			(akActor as ObjectReference).SetAnimationVariableInt("IsNPC", 1)
 			;Debug.SendAnimationEvent(akActor as ObjectReference,"IdleForceDefaultState")
 		EndIf
-	EndIf
-
-	If anim > 0
-		(akActor as ObjectReference).SetAnimationVariableInt("IsNPC", 1)
 	EndIf
 	
 	EquiprandomTongue(akactor, false)
