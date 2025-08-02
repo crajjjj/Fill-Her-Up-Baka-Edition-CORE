@@ -19,7 +19,6 @@ bool running = false
 
 bool updateFHU = false
 int updateCumType = 0
-int updateSpermType = 0
 
 Function SetUp(bool inflate, int poolMask, float amount, float time = 3.0, String callback = "", int DoAnimate = 0 )
 	inf = inflate
@@ -389,16 +388,15 @@ Function Inflate()
 	EndIf
 EndFunction
 
-Function RegisterFHUUpdate(int CumType, int SpermType)
+Function RegisterFHUUpdate(int CumType)
 	updateCumType = CumType
-	updateSpermType = SpermType
 	updateFHU = true
 	RegisterForSingleUpdate(10.0)
 EndFunction
 
 Function Deflate()
 	Actor akActor = GetActorReference()
-	log("Deflating")
+	;log("Deflating")
 	int Cumtype
 	If !isOral
 		isAnal = !isVaginal ; A bit of hack to have the same parameter on both inflate and deflate despite different usage
@@ -469,11 +467,9 @@ Function Deflate()
 	
 	
 	log("DefAmount: " + deflationAmount + ", total time: " + tme + ", steps: " + steps + ", step: " + step)
-
-	int spermtype = inflater.GetSpermLastActor(akActor, Cumtype)
 	
-	inflater.StartLeakage(akActor, Cumtype, animate, spermtype)
-	RegisterFHUUpdate(Cumtype, spermtype)
+	inflater.StartLeakage(akActor, Cumtype, animate)
+	RegisterFHUUpdate(Cumtype)
 
 	If akActor.Is3DLoaded()
 		inflater.Moan(akActor)
@@ -548,7 +544,7 @@ Function Deflate()
 		Utility.wait(tme)
 	endIf
 
-	inflater.StopLeakage(akActor, Cumtype, spermtype)
+	inflater.StopLeakage(akActor, Cumtype)
 
 	log("Cum amounts after deflation, v: "+ vagCum +", a: "+ analCum +", t: "+ (analCum+vagCum) + ", o: " + oralCum)
 	
@@ -830,11 +826,10 @@ Event OnUpdate()
 		log("Thread timed out, clearing.")
 		clear()
 	ElseIf updateFHU
-		if inflater.UpdateFHUmoan(GetReference(), updateCumType, updateSpermType)
+		if inflater.UpdateFHUmoan(GetReference(), updateCumType)
 			RegisterForSingleUpdate(10.0)
 		Else
 			updateCumType = 0
-			updateSpermType = 0
 			updateFHU = false
 		EndIf
 	EndIf

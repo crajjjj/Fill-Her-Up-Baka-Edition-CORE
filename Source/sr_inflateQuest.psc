@@ -159,6 +159,7 @@ String property PregnancyBelly = "PregnancyBelly" AutoReadOnly hidden
 String Property BELLY_NODE = "NPC Belly" autoreadonly hidden
 String Property ANIMATING = "sr.inflater.animating" autoreadonly hidden
 String Property ANIMATE_NUM = "sr.inflater.animate.num" autoreadonly hidden
+String Property ANIMATING_SPERMTYPE = "sr.inflater.animating.spermtype" autoreadonly hidden
 String Property CHEST_ARMOR = "sr.inflater.armor.chest" autoreadonly hidden
 String Property COVER_PIECE = "sr.inflater.armor.cover" autoreadonly hidden
 
@@ -613,7 +614,7 @@ Event Orgasm(int thread, bool hasPlayer)
 	EndIf
 EndEvent
 
-bool Function UpdateFHUmoan(ObjectReference aksource, int cumType, int spermtype)
+bool Function UpdateFHUmoan(ObjectReference aksource, int cumType)
 	Actor DeflateActor = aksource as Actor
 	If !DeflateActor
 		return false
@@ -988,28 +989,27 @@ int i
 EndFunction
 
 Int Function GetSpermLastActor(actor akactor, int type = 1)
-;type == 1 vaginal type == 2 anal 
-form MaleForm
-Actor Male
-race malerace
-float chaurusnum = 0
-float spidernum = 0
-float humannum = 0
-float ashHoppernum = 0
-float Draugrnum = 0
-float Spriggannum = 0
-float StoneAtronachnum = 0
-float FlameAtronachnum = 0
-float FrostAtronachnum = 0
-float sr_Deathwormnum = 0
-float sr_Mimicnum = 0
-float beastcumnum = 0
-float RaceAmount
-;int i = sr_InjectorFormlist.getsize()
-int actori = -1
-int spermtype = 0
-string stringinjector
-int i
+	;type == 1 vaginal type == 2 anal 
+	form MaleForm
+	Actor Male
+	race malerace
+	float chaurusnum = 0
+	float spidernum = 0
+	float humannum = 0
+	float ashHoppernum = 0
+	float Draugrnum = 0
+	float Spriggannum = 0
+	float StoneAtronachnum = 0
+	float FlameAtronachnum = 0
+	float FrostAtronachnum = 0
+	float sr_Deathwormnum = 0
+	float sr_Mimicnum = 0
+	float beastcumnum = 0
+	float RaceAmount
+	int actori = -1
+	int spermtype = 0
+	string stringinjector
+	int i
 
 	if type == 1
 		stringinjector = "sr.inflater.injector"
@@ -1025,7 +1025,7 @@ int i
 	
 	while i > 0
 		i -= 1
-		If akactor == player
+		If akactor == player && type == 1
 			MaleForm = sr_InjectorFormlist.getat(i)
 		Else
 			MaleForm = FormListGet(akactor, stringinjector, i)
@@ -1068,14 +1068,14 @@ int i
 				beastcumnum += 1
 			endif
 		else
-			If akactor == player
+			If akactor == player && type == 1
 				sr_InjectorFormlist.RemoveAddedForm(MaleForm)
 			EndIf
 		endif
 	endwhile
 
-RaceAmount = chaurusnum + Draugrnum + spidernum + humannum + ashHoppernum + beastcumnum + Spriggannum + StoneAtronachnum + FlameAtronachnum + FrostAtronachnum
-float RandomSperm = Utility.randomfloat(0, RaceAmount)
+	RaceAmount = chaurusnum + Draugrnum + spidernum + humannum + ashHoppernum + beastcumnum + Spriggannum + StoneAtronachnum + FlameAtronachnum + FrostAtronachnum
+	float RandomSperm = Utility.randomfloat(0, RaceAmount)
 
 	if RandomSperm > 0
 		if RandomSperm <= humannum
@@ -1102,7 +1102,6 @@ float RandomSperm = Utility.randomfloat(0, RaceAmount)
 	else
 		spermtype = 0
 	endif
-	
 	akactor.setfactionrank(sr_DARAnimatingType, spermtype)
 	return spermtype
 EndFunction
@@ -1244,7 +1243,7 @@ EndFunction
 ; ANIMATING = -1 -> NoAnim + NoTongue + NoEmotion
 ; ANIMATING = 0 -> NoAnim + Tongue + Emotion
 ; ANIMATING = 1 -> NoAnim + Tongue + Emotion
-Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
+Function StartLeakage(Actor akActor, int CumType, int animate)
 	bool isAnal
 	if Cumtype == 2
 		isAnal = true
@@ -1252,11 +1251,10 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 		isAnal = false
 	endif
 
-	;cumtypei = cumtype
-
 	If !akActor.Is3DLoaded()
 	;	log("Skipping animation for " + akActor.GetLeveledActorBase().GetName())
 		SetIntValue(akActor, ANIMATING, -1)
+		SetIntValue(akActor, ANIMATING_SPERMTYPE, GetSpermLastActor(akActor, CumType))
 		return
 	EndIf
 ;	log("Starting animation for " + akActor.GetLeveledActorBase().GetName())
@@ -1264,6 +1262,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	If !config.animDeflate
 		StartLeakageSoundEffect(akActor, CumType)
 		SetIntValue(akActor, ANIMATING, -1)
+		SetIntValue(akActor, ANIMATING_SPERMTYPE, GetSpermLastActor(akActor, CumType))
 		return
 	EndIf
 	
@@ -1272,6 +1271,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 		StartLeakageEmotionAndTongue(akActor, CumType)
 		StartLeakageAddCum(akActor, CumType)
 		SetIntValue(akActor, ANIMATING, 0)
+		SetIntValue(akActor, ANIMATING_SPERMTYPE, GetSpermLastActor(akActor, CumType))
 		return
 	endIf
 
@@ -1281,6 +1281,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 		StartLeakageAddCum(akActor, CumType)
 		StartLeakageApplyPuddle(akActor, CumType)
 		SetIntValue(akActor, ANIMATING, 0)
+		SetIntValue(akActor, ANIMATING_SPERMTYPE, GetSpermLastActor(akActor, CumType))
 		log("StartLeakage Animation blocked for " + akActor.GetLeveledActorBase().GetName())
 		return
 	EndIf
@@ -1291,6 +1292,8 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	Armor leak1ForEquip = None
 	Armor leak2ForEquip = None
 	int animnum = 0
+	int spermtype = GetSpermLastActor(akActor, CumType)
+	SetIntValue(akActor, ANIMATING_SPERMTYPE, spermtype)
 
 	If animate == 2
 		; Burst deflate 
@@ -1729,9 +1732,9 @@ Function EmotionWhenLeakage(actor akActor)
 	EndIf
 EndFunction
 
-Function StopLeakage(Actor akActor, int cumType, int spermtype)
-	int anim = GetIntValue(akActor, ANIMATING,0)
-	int animnum = GetIntValue(akActor, ANIMATE_NUM,0)
+Function StopLeakage(Actor akActor, int cumType)
+	int anim = GetIntValue(akActor, ANIMATING, 0)
+	int animnum = GetIntValue(akActor, ANIMATE_NUM, 0)
 	If anim > 0
 		If anim == 1
 			;if AnalDeflation
