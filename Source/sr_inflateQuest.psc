@@ -1290,7 +1290,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	FormListClear(akActor, "sr.inflater.unequipped")
 	FormListClear(akActor, "sr.inflater.equipped_leak")
 
-log("StartLeakage for " + akActor.GetLeveledActorBase().GetName() + "; animate:" + animate + "; CumType: " + CumType + "; spermtype: " + spermtype)
+	log("StartLeakage for " + akActor.GetLeveledActorBase().GetName() + "; animate:" + animate + "; CumType: " + CumType + "; spermtype: " + spermtype)
 	If animate == 2
 		; Burst deflate 
 	;	log("	burst deflate")
@@ -1587,10 +1587,12 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 		;		EquipLeak(akActor, sr_ThickCum)
 		;	endif
 		;endif
+	FHUmoanSoundEffect(akactor as objectreference, 3, CumType)
 
 	if spermtype == 3;Spider
 		if sr_Cumvariation.getvalue() == 1 && CumType < 3
 			EquipLeak(akActor, sr_SpiderEggs)
+			Utility.wait(10.0)
 		endif
 	elseif spermtype == 4;Chaurus
 		if sr_Cumvariation.getvalue() == 1
@@ -1600,31 +1602,35 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 				else
 					EquipLeak(akActor, sr_ChaurusEggs)
 				endif
+				Utility.wait(10.0)
 			elseif CumType == 2
 				if akActor.getfactionrank(sr_Impregnatedanal) == 1
 					EquipLeak(akActor, sr_ChaurusLarvaeEggs)
 				else
 					EquipLeak(akActor, sr_ChaurusEggs)
 				endif
+				Utility.wait(10.0)
 			elseif CumType == 3
 				EquipLeak(akActor, sr_ChaurusEggs)
+				Utility.wait(10.0)
 			endif
 		endif
 	;elseif spermtype == 5;Spriggan WIP
 	elseif spermtype == 6;StoneAtronach
 		if sr_Cumvariation.getvalue() == 1
 			EquipLeak(akActor, sr_AtronachStones)
+			Utility.wait(10.0)
 		endif
 	elseif spermtype == 7;AshHopper
 		if sr_Cumvariation.getvalue() == 1
 			EquipLeak(akActor, sr_AshHopperEggs)
+			Utility.wait(10.0)
 		endif
+	Else
+		Utility.wait(5)
 	endif
-	
-	FHUmoanSoundEffect(akactor as objectreference, 3, CumType)
-	TempActor = akActor
+	;TempActor = akActor
 	;RegisterForSingleUpdate(10.0)
-	Utility.wait(11.0)
 	if btongueout
 		equiprandomtongue(akactor, false)
 	endif

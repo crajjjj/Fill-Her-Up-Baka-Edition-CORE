@@ -7,7 +7,7 @@ sr_inflateQuest Property inflater auto
 Quest Property sr_inflateExternalEventManager Auto
 bool keydown = false
 bool spermout = false
-bool bAnimController
+bool bAnimController = true
 
 Globalvariable Property sr_OnEventNoDeflation Auto
 Globalvariable Property sr_ExpelFaliure Auto
@@ -54,6 +54,7 @@ keydown = true
 Actor p = GetActorReference()
 If p.IsInFaction(inflater.inflaterAnimatingFaction)
 	log("Already animating!")
+	inflater.notify("$FHU_DEF_FAIL")
 	keydown = false
 	return
 EndIf
@@ -152,47 +153,61 @@ If keydown && !spermout
 		If err == 0
 		;	log("Pushing: " + type)
 			doPush(type, spermtype)
-		ElseIf err == 1
-			inflater.notify("$FHU_DEF_BLOCK_V"); animation wip
-			inflater.DeflateFailMotion(p, 1, true, 0)
-		ElseIf err == 2
-			inflater.notify("$FHU_DEF_BLOCK_A"); animation wip
-			inflater.DeflateFailMotion(p, 1, true, 0)
-		ElseIf err == 3
-			inflater.notify("$FHU_DEF_BLOCK"); animation wip
-			inflater.DeflateFailMotion(p, 1, true, 0)
-		ElseIf err == 4
-			inflater.notify("$FHU_DEF_FAIL")
-			inflater.DeflateFailMotion(p, type, true, spermtype);Vaginal or Anal
-		ElseIf err == 5
-			inflater.notify("$FHU_DEF_BURST_FAIL")
-			inflater.DeflateFailMotion(p, 1, true, spermtype)
-		ElseIf err == 6
-			inflater.notify("$FHU_DEF_ORAL_FAIL");Anal to Oral WIP
-			inflater.DeflateFailMotion(p, 3, true, spermtype)
-		ElseIf err == 7
-			inflater.notify("$FHU_EXPELFAILGAGGED_MESSAGES");Oral Gag WIP
-			inflater.DeflateFailMotion(p, 3, true, 0)
-		ElseIf err == 8;Stamina Out
-			inflater.notify("$FHU_DEF_FIZZLE")
-			inflater.DeflateFailMotion(p, 4, false, 0)
-		ElseIf err == 9;expel fail vaginal wip - scanner
-			inflater.notify("$FHU_DEF_REFUSE")
-			inflater.DeflateFailMotion(p, 5, false, 0)
-		ElseIf err == 10 ; no cum
-			; maybe not need
-			inflater.notify("$FHU_DEF_NOCUM")
-			inflater.DeflateFailMotion(p, 4, false)
-		Else ; other
-			;
+		else
+			If err == 1
+				inflater.notify("$FHU_DEF_BLOCK_V"); animation wip
+				DeflateFailMotion(p, 1, true, 0)
+			ElseIf err == 2
+				inflater.notify("$FHU_DEF_BLOCK_A"); animation wip
+				DeflateFailMotion(p, 1, true, 0)
+			ElseIf err == 3
+				inflater.notify("$FHU_DEF_BLOCK"); animation wip
+				DeflateFailMotion(p, 1, true, 0)
+			ElseIf err == 4
+				inflater.notify("$FHU_DEF_FAIL")
+				DeflateFailMotion(p, type, true, spermtype);Vaginal or Anal
+			ElseIf err == 5
+				inflater.notify("$FHU_DEF_BURST_FAIL")
+				DeflateFailMotion(p, 1, true, spermtype)
+			ElseIf err == 6
+				inflater.notify("$FHU_DEF_ORAL_FAIL");Anal to Oral WIP
+				DeflateFailMotion(p, 3, true, spermtype)
+			ElseIf err == 7
+				inflater.notify("$FHU_EXPELFAILGAGGED_MESSAGES");Oral Gag WIP
+				DeflateFailMotion(p, 3, true, 0)
+			ElseIf err == 8;Stamina Out
+				inflater.notify("$FHU_DEF_FIZZLE")
+				DeflateFailMotion(p, 4, false, 0)
+			ElseIf err == 9;expel fail vaginal wip - scanner
+				inflater.notify("$FHU_DEF_REFUSE")
+				DeflateFailMotion(p, 5, false, 0)
+			ElseIf err == 10 ; no cum
+				; maybe not need
+				inflater.notify("$FHU_DEF_NOCUM")
+				DeflateFailMotion(p, 4, false)
+			Else ; other
+				;
+			EndIf
 		EndIf
 		SendModEvent("dhlp-Resume")
 	Else
 		inflater.notify("$FHU_DEF_FIZZLE")
-		inflater.DeflateFailMotion(p, 4, false)
+		DeflateFailMotion(p, 4, false)
 	EndIf
 	spermout = false
 endIf
+EndFunction
+
+Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int spermtype = 0)
+	If  (akactor.IsInFaction(inflater.inflaterAnimatingFaction))
+		return
+	EndIf
+	akactor.AddToFaction(inflater.inflaterAnimatingFaction)
+	akactor.SetFactionRank(inflater.inflaterAnimatingFaction, 1)
+
+	inflater.DeflateFailMotion(akactor, CumType, false)
+
+	akactor.RemoveFromFaction(inflater.inflaterAnimatingFaction)
 EndFunction
 
 Event OnKeyUp(int kc, float time)
@@ -207,52 +222,59 @@ Function SpermOutStop()
 EndFunction
 
 Function doPushDeflate(String pool, Actor p, float currentInf, float startVag, float startAn, float startOral)
-        If !config.bellyScale
-                return
-        EndIf
-        If currentInf <= 0
-                currentInf = 0
-        EndIf
-        if config.BodyMorph
-                if (pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL)
-				; to cover same morph for oral and vag/anal
-			If (inflater.InflateMorph == inflater.InflateMorph4)
-				inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph)
-			else
-				;inflater.SetBellyMorphValue(p, currentInf, "PregnancyBelly")
-				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph)
-			endif
-			;log("deflate SetBellyMorphValue currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
-			if inflater.InflateMorph2 != ""
-				;log("deflate SetBellyMorphValue2 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
-				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph2)
-			endIf
-			if inflater.InflateMorph3 != ""
-				;log("deflate SetBellyMorphValue3 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
-				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph3)
-			endif
-		elseif (pool == inflater.CUM_ORAL)
-			; to cover same morph for oral and vag/anal
-			If (inflater.InflateMorph == inflater.InflateMorph4)
-				inflater.SetBellyMorphValue(p, currentInf + inflater.GetInflation(p), inflater.InflateMorph)
-			elseif inflater.InflateMorph4 != ""
-				inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph4)
-				;log("deflate SetBellyMorphValue4 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
-			endif
-		endif
-	endif
+       If !config.bellyScale
+               return
+       EndIf
+       If currentInf <= 0
+               currentInf = 0
+       EndIf
 
-	if !config.BodyMorph ;SLIF: oralcum now inflates belly node also. Should be capped by cum condition in deflate function
-		; ( add by 15, sent to SLIF sum of all pools
-		if pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL
-			;log(" deflate SetNodeScale currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
-			inflater.SetNodeScale(p, "NPC Belly", currentInf + startOral)
-		elseif pool == inflater.CUM_ORAL
-			;log("deflate SetNodeScale currentInf:" + currentInf + inflater.GetInflation(p) + ".Cum:" + cum )
-			inflater.SetNodeScale(p, "NPC Belly", currentInf + startVag + startAn)
+	if bAnimController ;Prevents serious FPS drop due to heavy code stacks.
+		bAnimController = false
+		if config.BodyMorph
+            if (pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL)
+					; to cover same morph for oral and vag/anal
+				If (inflater.InflateMorph == inflater.InflateMorph4)
+					inflater.SetBellyMorphValue(p, currentInf + inflater.GetOralCum(p), inflater.InflateMorph)
+				else
+					;inflater.SetBellyMorphValue(p, currentInf, "PregnancyBelly")
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph)
+				endif
+				;log("deflate SetBellyMorphValue currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+				if inflater.InflateMorph2 != ""
+					;log("deflate SetBellyMorphValue2 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph2)
+				endIf
+				if inflater.InflateMorph3 != ""
+					;log("deflate SetBellyMorphValue3 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph3)
+				endif
+			elseif (pool == inflater.CUM_ORAL)
+			; to cover same morph for oral and vag/anal
+				If (inflater.InflateMorph == inflater.InflateMorph4)
+					inflater.SetBellyMorphValue(p, currentInf + inflater.GetInflation(p), inflater.InflateMorph)
+				elseif inflater.InflateMorph4 != ""
+					inflater.SetBellyMorphValue(p, currentInf, inflater.InflateMorph4)
+					;log("deflate SetBellyMorphValue4 currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+				endif
+			endif
 		endif
-		; by 15 )
+
+		if !config.BodyMorph ;SLIF: oralcum now inflates belly node also. Should be capped by cum condition in deflate function
+			; ( add by 15, sent to SLIF sum of all pools
+			if pool == inflater.CUM_VAGINAL || pool == inflater.CUM_ANAL
+				;log(" deflate SetNodeScale currentInf:" + currentInf + inflater.GetOralCum(p) + ".Cum:" + cum )
+				inflater.SetNodeScale(p, "NPC Belly", currentInf + startOral)
+			elseif pool == inflater.CUM_ORAL
+				;log("deflate SetNodeScale currentInf:" + currentInf + inflater.GetInflation(p) + ".Cum:" + cum )
+				inflater.SetNodeScale(p, "NPC Belly", currentInf + startVag + startAn)
+			endif
+			; by 15 )
+		endif
+	else
+		bAnimController = true
 	endif
+       
 EndFunction
 
 bool updateFHU = false
@@ -277,12 +299,14 @@ EndFunction
 
 Function doPush(int type, int spermtype)
 	log("doPush")
+	If p.IsInFaction(inflater.inflaterAnimatingFaction)
+		return
+	endif
 	Actor p = GetActorReference()
-	Game.DisablePlayerControls()
-	Game.ForceThirdPerson()
-	
 	p.AddToFaction(inflater.inflaterAnimatingFaction)
 	p.SetFactionRank(inflater.inflaterAnimatingFaction, 1)
+	Game.DisablePlayerControls()
+	Game.ForceThirdPerson()
 	;int spermtype = inflater.GetSpermLastActor(p)
 	String pool = ""
 	If type == 1
@@ -294,7 +318,9 @@ Function doPush(int type, int spermtype)
 	EndIf
 	inflater.StartLeakage(p, type, 1, spermtype)
 	RegisterFHUUpdate(type, spermtype)
-	float dps = ((p.GetActorValue("Stamina") / p.GetActorValuePercentage("Stamina")) * 0.01)
+	float baseStamina = p.GetBaseActorValue("Stamina")
+	float dps = baseStamina * 0.01
+	;float dps = ((p.GetActorValue("Stamina") / p.GetActorValuePercentage("Stamina")) * 0.01)
 	float currentInf
 	float cum
 
@@ -323,22 +349,24 @@ Function doPush(int type, int spermtype)
 	float originalCum = cum
 	float originalInf = currentInf
 	float deflationTick = inflater.config.BodyMorphApplyPeriod
-	float tick = deflationTick
+	float elapsed = deflationTick + 1.0 ; Ensure first run triggers deflation	
 ;	log("Starting: inf: " + currentInf +", cum: " +cum + ", pool: " + pool)
-
+	float delta = 0.05 * (1.0 / inflater.config.animMult)
 	;Cumout(actor p, currentInf);While Script
 	While (keydown || p.HasMagicEffect(sr_ExpelCumMGEF)) && p.GetActorValuePercentage("Stamina") > 0.02 && cum > 0.02
-		currentInf -= 0.05*(1.0/inflater.config.animMult)
-		cum -= 0.05*(1.0/inflater.config.animMult)
-		tick -= 0.3
-		if(tick <= 0) ;Prevents serious FPS drop due to heavy code stacks.
+		currentInf -= delta
+		cum -= delta
+
+		; Run deflation immediately on first tick, then after intervals
+		if elapsed >= deflationTick
 			doPushDeflate(pool, p, currentInf, startVag, startAn, startOral)
-			tick = deflationTick
-		EndIf
-	;	log("current: inf: " + currentInf +", cum: " +cum)
+			elapsed = 0.0
+		endif
+
 		p.DamageActorValue("Stamina", dps)
-		Utility.wait(0.3)
-	endWhile
+		Utility.Wait(0.3)
+		elapsed += 0.3
+	EndWhile
 
 	If cum <= 0.02
 		cum = 0.0
@@ -403,6 +431,7 @@ Function doPush(int type, int spermtype)
 	p.RemoveFromFaction(inflater.inflaterAnimatingFaction)
 	inflater.EncumberActor(p) ; Has a 2s wait in it, do it after returning controls to keep it responsive
 	int cumcompare = Math.Ceiling(diff)
+
 	
 	if sr_Cumvariationingredients.getvalue() == 1 && cumcompare > 0
 		if type < 3
