@@ -1346,8 +1346,8 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 			akActor.SetRestrained(true)
 			akActor.SetDontMove(true)
 			akActor.StopTranslation()
+			(akActor as ObjectReference).SetAnimationVariableInt("IsNPC", 0)
 		EndIf
-		(akActor as ObjectReference).SetAnimationVariableInt("IsNPC", 0)
 
 		If akActor.IsWeaponDrawn()
 			akActor.SheatheWeapon()
@@ -1741,11 +1741,6 @@ Function StopLeakage(Actor akActor, int cumType)
 	int animnum = GetIntValue(akActor, ANIMATE_NUM, 0)
 	If anim > 0
 		If anim == 1
-			;if AnalDeflation
-			;	akActor.PlayIdle(BaboAnimsAnusEnd[animnum])
-			;else
-			;	akActor.PlayIdle(BaboAnimsEnd[animnum])
-			;endif
 			if cumType == 1
 				akActor.PlayIdle(BaboAnimsEnd[animnum])
 			elseif cumType == 2
@@ -1765,7 +1760,7 @@ Function StopLeakage(Actor akActor, int cumType)
 	if akActor == player
 		If anim > 0
 			Game.EnablePlayerControls()
-			Debug.SendAnimationEvent(akActor as ObjectReference,"IdleForceDefaultState")
+			;Debug.SendAnimationEvent(akActor as ObjectReference,"IdleForceDefaultState")
 		EndIf
 	Else
 		MfgConsoleFunc.ResetPhonemeModifier(akActor);Player expression is controlled here(OnKeyUp)
@@ -1775,7 +1770,7 @@ Function StopLeakage(Actor akActor, int cumType)
 			akActor.EvaluatePackage()
 			akActor.SetRestrained(False)
 			akActor.SetDontMove(False)
-			Debug.SendAnimationEvent(akActor as ObjectReference,"IdleForceDefaultState")
+			;Debug.SendAnimationEvent(akActor as ObjectReference,"IdleForceDefaultState")
 		EndIf
 	EndIf
 
@@ -1783,11 +1778,8 @@ Function StopLeakage(Actor akActor, int cumType)
 		(akActor as ObjectReference).SetAnimationVariableInt("IsNPC", 1)
 	EndIf
 	
-	;akActor.unequipItem(TongueA, abSilent=true)
 	EquiprandomTongue(akactor, false)
-	;akActor.removeItem(TongueA, 99, true)
 	StopExpelSpell(akActor)
-	;MfgConsoleFunc.ResetPhonemeModifier(akActor) ; Remove any previous modifiers and phenomes
 	
 	If anim > 0
 		UnstripActor(akActor)

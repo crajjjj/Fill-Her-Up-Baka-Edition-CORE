@@ -422,12 +422,14 @@ Function doPush(int type)
 	inflater.StopLeakage(p, type)
 	inflater.UpdateFaction(p)
 	inflater.UpdateOralFaction(p)
-	inflater.SendPlayerCumUpdate(cum, type == 2)
-	Game.EnablePlayerControls()
+	if type == 1
+		inflater.SendPlayerCumUpdate(cum, false)
+	elseif type == 2
+		inflater.SendPlayerCumUpdate(cum, true)
+	endif
 	p.RemoveFromFaction(inflater.inflaterAnimatingFaction)
 	inflater.EncumberActor(p) ; Has a 2s wait in it, do it after returning controls to keep it responsive
 	int cumcompare = Math.Ceiling(diff)
-
 	
 	if sr_Cumvariationingredients.getvalue() == 1 && cumcompare > 0
 		int spermtype = GetIntValue(p, inflater.ANIMATING_SPERMTYPE, -1)
@@ -493,8 +495,6 @@ Function doPush(int type)
 			endif
 		endif
 	endif
-	
-
 	
 EndFunction
 
