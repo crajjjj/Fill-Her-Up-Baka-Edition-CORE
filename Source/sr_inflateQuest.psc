@@ -1595,6 +1595,7 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	if spermtype == 3;Spider
 		if sr_Cumvariation.getvalue() == 1 && CumType < 3
 			EquipLeak(akActor, sr_SpiderEggs)
+			StripActor(akActor)
 			Utility.wait(10.0)
 		endif
 	elseif spermtype == 4;Chaurus
@@ -1605,6 +1606,7 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 				else
 					EquipLeak(akActor, sr_ChaurusEggs)
 				endif
+				StripActor(akActor)
 				Utility.wait(10.0)
 			elseif CumType == 2
 				if akActor.getfactionrank(sr_Impregnatedanal) == 1
@@ -1612,6 +1614,7 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 				else
 					EquipLeak(akActor, sr_ChaurusEggs)
 				endif
+				StripActor(akActor)
 				Utility.wait(10.0)
 			elseif CumType == 3
 				EquipLeak(akActor, sr_ChaurusEggs)
@@ -1622,22 +1625,23 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	elseif spermtype == 6;StoneAtronach
 		if sr_Cumvariation.getvalue() == 1
 			EquipLeak(akActor, sr_AtronachStones)
+			if Cumtype < 3
+				StripActor(akActor)
+			endif
 			Utility.wait(10.0)
 		endif
 	elseif spermtype == 7;AshHopper
 		if sr_Cumvariation.getvalue() == 1
 			EquipLeak(akActor, sr_AshHopperEggs)
+			if Cumtype < 3
+				StripActor(akActor)
+			endif
 			Utility.wait(10.0)
 		endif
 	Else
 		Utility.wait(5)
 	endif
-	
-	FHUmoanSoundEffect(akactor as objectreference, 3, CumType)
 
-	if Cumtype < 3 && spermtype > 2;Nostrip when oral
-		StripActor(akActor)
-	endif
 	;RegisterForSingleUpdate(10.0)
 	if btongueout
 		equiprandomtongue(akactor, false)
