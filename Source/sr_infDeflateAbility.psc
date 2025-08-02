@@ -203,7 +203,7 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	akactor.AddToFaction(inflater.inflaterAnimatingFaction)
 	akactor.SetFactionRank(inflater.inflaterAnimatingFaction, 1)
 
-	inflater.DeflateFailMotion(akactor, CumType, false)
+	inflater.DeflateFailMotion(akactor, CumType, btongue, spermtype)
 
 	akactor.RemoveFromFaction(inflater.inflaterAnimatingFaction)
 EndFunction
