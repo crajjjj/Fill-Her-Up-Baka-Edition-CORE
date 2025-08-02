@@ -1202,6 +1202,7 @@ Function EquipLeak(Actor akActor, Armor leak)
 EndFunction
 
 Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
+	log("StartLeakage")
 	bool isAnal
 	if Cumtype == 2
 		isAnal = true
@@ -1229,7 +1230,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 			FHUmoanSoundEffect(akActor as ObjectReference, 2, CumType)
 		endif
 	endif
-
+	log("Moan done")
 	If !config.animDeflate
 		SetIntValue(akActor, ANIMATING, -1)
 		return
@@ -1247,7 +1248,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	EndIf
 	EmotionWhenLeakage(akActor)
 	MouthOpen(akActor, 0)
-
+	log("Emotions done")
 ;		If Utility.RandomInt(0, 99) < 33
 ;			sexlab.ApplyCum(akActor, 5)
 ;		ElseIf isAnal
@@ -1265,7 +1266,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	else
 		sexlab.AddCum(akActor)
 	endif
-
+	log("Add cum done")
 	if animate < 0
 		SetIntValue(akActor, ANIMATING, -1)
 		return
@@ -1293,7 +1294,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate, int spermtype)
 	log("StartLeakage for " + akActor.GetLeveledActorBase().GetName() + "; animate:" + animate + "; CumType: " + CumType + "; spermtype: " + spermtype)
 	If animate == 2
 		; Burst deflate 
-	;	log("	burst deflate")
+		;	log("	burst deflate")
 		if CumType == 1
 			EquipLeak(akActor, sr_VagLeak)
 		elseif CumType == 2

@@ -305,8 +305,9 @@ Function doPush(int type, int spermtype)
 	Actor p = GetActorReference()
 	p.AddToFaction(inflater.inflaterAnimatingFaction)
 	p.SetFactionRank(inflater.inflaterAnimatingFaction, 1)
-	Game.DisablePlayerControls()
-	Game.ForceThirdPerson()
+	;Done during leakage call
+	;Game.DisablePlayerControls()
+	;Game.ForceThirdPerson()
 	;int spermtype = inflater.GetSpermLastActor(p)
 	String pool = ""
 	If type == 1
