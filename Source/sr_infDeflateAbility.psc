@@ -294,10 +294,10 @@ EndFunction
 
 Function doPush(int type)
 	log("doPush")
+	Actor p = GetActorReference()
 	If p.IsInFaction(inflater.inflaterAnimatingFaction)
 		return
 	endif
-	Actor p = GetActorReference()
 	p.AddToFaction(inflater.inflaterAnimatingFaction)
 	p.SetFactionRank(inflater.inflaterAnimatingFaction, 1)
 	;Done during leakage call.This is slow
