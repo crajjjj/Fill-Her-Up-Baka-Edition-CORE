@@ -1354,7 +1354,7 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 			int attempts = 10
 			While attempts > 0 && akActor.IsWeaponDrawn()
 				attempts -= 1
-				Utility.Wait(0.2)
+				Utility.Wait(0.1)
 			EndWhile
 		EndIf
 
@@ -1558,6 +1558,15 @@ EndFunction
 
 Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int spermtype = 0)
 	
+	If akActor.IsWeaponDrawn()
+		akActor.SheatheWeapon()
+		int attempts = 10
+		While attempts > 0 && akActor.IsWeaponDrawn()
+			attempts -= 1
+			Utility.Wait(0.1)
+		EndWhile
+	EndIf
+
 	if CumType == 1
 		akActor.PlayIdle(BaboSpermExpel)
 	elseif CumType == 2
