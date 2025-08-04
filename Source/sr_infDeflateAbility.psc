@@ -43,10 +43,19 @@ Function Maintenance()
 	config.CheckGamePad()
 EndFunction
 
+float lastDeflationTime = 0.0
+float deflationCooldownSecs = 5.0
+
 Event OnKeyDown(int kc)
-	If kc == config.defKey
-		SpermOutStart()
-	endIf
+	if kc == config.defKey
+		float now = Utility.GetCurrentRealTime()
+		if now - lastDeflationTime >= deflationCooldownSecs
+			lastDeflationTime = now
+			SpermOutStart()
+		else
+			log("Deflation attempt blocked — cooldown active.")
+		endif
+	endif
 EndEvent
 
 Function SpermOutStart()
