@@ -53,7 +53,7 @@ Event OnKeyDown(int kc)
 			lastDeflationTime = now
 			SpermOutStart()
 		else
-			log("Deflation attempt blocked. Cooldown active.")
+			log("Deflation attempt blocked. Cooldown active. now: " + now + "; lastDeflationTime: " + lastDeflationTime)
 		endif
 	endif
 EndEvent
@@ -62,6 +62,7 @@ Function SpermOutStart()
 	keydown = true
 	Actor p = GetActorReference()
 		If (!p)
+			log("Deflation attempt failed. GetActorReference is " + p)
 			return
 		EndIf
 	If p.IsInFaction(inflater.inflaterAnimatingFaction)
@@ -73,7 +74,8 @@ Function SpermOutStart()
 	Utility.Wait(0.1)
 	If keydown && !spermout
 		spermout = true;To prevent trigger from continual press
-		If p.GetActorValuePercentage("Stamina") >= 0.3
+		float stamina = p.GetActorValuePercentage("Stamina")
+		If stamina >= 0.3
 			SendModEvent("dhlp-Suspend") ; do not forgot about `dhlp-Resume` before exit this `If` and function
 			int type = inflater.GetMostRecentInflationType(p);Important
 			int err = 0
@@ -159,6 +161,7 @@ Function SpermOutStart()
 				endif
 			;	log("RandomErrorNotEnoughRandom")
 			EndIf
+			log("Deflation attempt err: " + err)
 		
 			If err == 0
 			;	log("Pushing: " + type)
@@ -201,15 +204,19 @@ Function SpermOutStart()
 			EndIf
 			SendModEvent("dhlp-Resume")
 		Else
+			log("Deflation attempt failed. not enough stamina: " + stamina)
 			inflater.notify("$FHU_DEF_FIZZLE")
 			DeflateFailMotion(p, 4, false)
 		EndIf
 		spermout = false
+	else
+		log("Deflation attempt failed. keydown: " + keydown + "; spermout: " + spermout)
 	endIf
 EndFunction
 
 Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int spermtype = 0)
 	If  (akactor.IsInFaction(inflater.inflaterAnimatingFaction))
+		log("DeflateFailMotion failed. akactor.IsInFaction: " + inflater.inflaterAnimatingFaction)
 		return
 	EndIf
 	akactor.AddToFaction(inflater.inflaterAnimatingFaction)

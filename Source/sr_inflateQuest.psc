@@ -1567,6 +1567,7 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	;		Utility.Wait(0.2)
 	;	EndWhile
 	;EndIf
+	log("DeflateFailMotion started for " + akActor + ". CumType: " + CumType)
 
 	if CumType == 1
 		TryPlayIdle(akactor, BaboSpermExpel)
@@ -1658,6 +1659,7 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	endif
 	MfgConsoleFuncExt.ResetMfg(akActor)
 	EquipArmor(akactor)
+	log("DeflateFailMotion ended for " + akActor)
 	;infplayer.RegisterForSingleUpdate(15.0); Just in case when the actor is interrupted and the animation stops 
 	;if akActor.WaitForAnimationEvent("IdleForceDefaultState") || EmergencySwitch || bDeflateAnimation ; WaitForAnimationEvent is wonky
 	;/ if EmergencySwitch || bDeflateAnimation /;
