@@ -48,8 +48,9 @@ float deflationCooldownSecs = 5.0
 
 Event OnKeyDown(int kc)
 	if kc == config.defKey
-		float now = Utility.GetCurrentRealTime()
-		if now - lastDeflationTime >= deflationCooldownSecs
+		float now = Utility.GetCurrentGameTime()
+		; (lastDeflationTime > now) - only for fix old saves
+		if (lastDeflationTime > now) || ((now - lastDeflationTime)*24*60*60 >= deflationCooldownSecs)
 			lastDeflationTime = now
 			SpermOutStart()
 		else
