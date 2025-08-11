@@ -43,6 +43,10 @@ Function Maintenance()
 	config.CheckGamePad()
 EndFunction
 
+Event OnPlayerLoadGame()
+	lastDeflationTime = 0.0
+EndEvent
+
 float lastDeflationTime = 0.0
 float deflationCooldownSecs = 5.0
 
