@@ -114,11 +114,15 @@ Event OnUpdateGameTime()
 	if inflater.GetInflation(inflater.player) > 0.0;New
 		if config.eventsImpregnation
 			if inflater.GetVaginalCum(inflater.player) > 0.0
-				inflater.RemoveSpermFromActor(inflater.player, 1, "Chaurus", true)
+				if inflater.player.GetFactionRank(inflater.sr_Impregnated) == 1
+					inflater.RemoveSpermFromActor(inflater.player, 1, "Chaurus", true)
+				endif
 			endif
 			
 			if inflater.GetAnalCum(inflater.player) > 0.0
-				inflater.RemoveSpermFromActor(inflater.player, 2, "Chaurus", true)
+				if inflater.player.GetFactionRank(inflater.sr_Impregnatedanal) == 1
+					inflater.RemoveSpermFromActor(inflater.player, 2, "Chaurus", true)
+				endif
 			endif
 		endif
 		; Only process events if player is inflated
