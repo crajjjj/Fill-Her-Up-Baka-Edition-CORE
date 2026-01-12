@@ -370,7 +370,7 @@ Function UpdateFhuTullItems(Actor act, string animationEvent) global
 	if !cfg
 		cfg = Game.GetFormFromFile(0x00001D8C, "sr_FillHerUp.esp") as sr_inflateConfig
 	endif
-	if !cfg
+	if !cfg || !cfg.TullAnimatedCreampieEnabled
 		return
 	endif
 
