@@ -2725,6 +2725,81 @@ float Function GetOralPercentage(Actor a)
 	return GetOralCum(a) / GetOralPoolSize(a)
 EndFunction
 
+String Property TULL_ANIMATED_CREAMP = "TullAnimatedCreampie.esp" autoreadonly hidden
+
+bool Function IsTullAnimatedCreampieReady()
+	if !config.TullAnimatedCreampieEnabled
+		return false
+	endif
+	return Game.GetModByName(TULL_ANIMATED_CREAMP) != 255
+EndFunction
+
+Form Function GetTullAnimatedCreampieForm(int formId)
+	Form f = Game.GetFormFromFile(formId, TULL_ANIMATED_CREAMP)
+	return f
+EndFunction
+
+Function EquipTullAnimatedCreampieItem(Actor akActor, int formId)
+	if !akActor
+		return
+	endif
+	Armor a = GetTullAnimatedCreampieForm(formId) as Armor
+	if a && !akActor.IsEquipped(a)
+		akActor.AddItem(a, 1, true)
+		akActor.EquipItem(a, abSilent=true)
+	endif
+EndFunction
+
+Function UnequipTullAnimatedCreampieItem(Actor akActor, int formId)
+	if !akActor
+		return
+	endif
+	Armor a = GetTullAnimatedCreampieForm(formId) as Armor
+	if a && akActor.IsEquipped(a)
+		akActor.UnequipItem(a, abSilent=true)
+		akActor.RemoveItem(a, 99, true)
+	endif
+EndFunction
+
+Function UpdateTullAnimatedCreampieCumItem(Actor akActor, int cumType)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return
+	endif
+	float threshold = config.TullAnimatedCreampieThreshold / 100.0
+	if cumType == 1
+		if GetVaginalPercentage(akActor) >= threshold
+			EquipTullAnimatedCreampieItem(akActor, 0x00000807)
+		else
+			UnequipTullAnimatedCreampieItem(akActor, 0x00000807)
+		endif
+	elseif cumType == 2
+		if GetAnalPercentage(akActor) >= threshold
+			EquipTullAnimatedCreampieItem(akActor, 0x00000809)
+		else
+			UnequipTullAnimatedCreampieItem(akActor, 0x00000809)
+		endif
+	elseif cumType == 3
+		if GetOralPercentage(akActor) >= threshold
+			EquipTullAnimatedCreampieItem(akActor, 0x00000803)
+		else
+			UnequipTullAnimatedCreampieItem(akActor, 0x00000803)
+		endif
+	endif
+EndFunction
+
+Function UnequipTullAnimatedCreampieCumItem(Actor akActor, int cumType)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return
+	endif
+	if cumType == 1
+		UnequipTullAnimatedCreampieItem(akActor, 0x00000807)
+	elseif cumType == 2
+		UnequipTullAnimatedCreampieItem(akActor, 0x00000809)
+	elseif cumType == 3
+		UnequipTullAnimatedCreampieItem(akActor, 0x00000803)
+	endif
+EndFunction
+
 
 float Function GetTotalCum(Actor a)
 	return GetAnalCum(a) + GetVaginalCum(a)

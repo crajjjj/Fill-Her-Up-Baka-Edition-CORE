@@ -40,6 +40,12 @@ float Property maxInflation auto hidden
 float property maxInflationDefault = 6.0 autoreadonly hidden
 int maxInflationOID
 int OralmaxInflationOID
+float Property TullAnimatedCreampieThreshold auto hidden
+float Property TullAnimatedCreampieThresholdDefault = 0.0 autoreadonly hidden
+int TullAnimatedCreampieThresholdOID
+bool Property TullAnimatedCreampieEnabled auto hidden
+bool Property TullAnimatedCreampieEnabledDefault = true autoreadonly hidden
+int TullAnimatedCreampieEnabledOID
 
 bool property logging auto hidden
 bool property loggingDefault = true autoreadonly hidden
@@ -351,6 +357,8 @@ Function SetDefaults()
 	minInflationTime = minInflationTimeDefault
 	maxInflation = maxInflationDefault
 	OralmaxInflation = OralmaxInflationDefault
+	TullAnimatedCreampieThreshold = TullAnimatedCreampieThresholdDefault
+	TullAnimatedCreampieEnabled = TullAnimatedCreampieEnabledDefault
 	logging = loggingDefault
 	addRaceKey = addRaceKeyDefault
 	animDeflate = animDeflateDefault
@@ -524,6 +532,16 @@ Event OnPageReset(String page)
 		minInflationTimeOID = AddSliderOption("$FHU_MIN_TIME", minInflationTime, "$FHU_HOURS")
 		maxInflationOID = AddSliderOption("$FHU_MAX_AMOUNT", maxInflation, "{2}")
 		OralmaxInflationOID = AddSliderOption("$FHU_ORALMAX_AMOUNT", OralmaxInflation, "{2}")
+		if inflater.IsTullAnimatedCreampieReady()
+			TullAnimatedCreampieEnabledOID = AddToggleOption("$FHU_TULL_CREAMPIE_ITEMS", TullAnimatedCreampieEnabled)
+		else
+			TullAnimatedCreampieEnabledOID = AddToggleOption("$FHU_TULL_CREAMPIE_ITEMS", false, OPTION_FLAG_DISABLED)
+		endif
+		if inflater.IsTullAnimatedCreampieReady() && TullAnimatedCreampieEnabled
+			TullAnimatedCreampieThresholdOID = AddSliderOption("$FHU_TULL_CREAMPIE_THRESHOLD", TullAnimatedCreampieThreshold, "{0}%")
+		else
+			TullAnimatedCreampieThresholdOID = AddSliderOption("$FHU_TULL_CREAMPIE_THRESHOLD", TullAnimatedCreampieThreshold, "{0}%", OPTION_FLAG_DISABLED)
+		endif
 		stripOID = AddToggleOption("$FHU_STRIP", strip)
 		VariousCumOID = AddToggleOption("$FHU_VARIOUSCUM", sr_Cumvariation.getvalue())
 		VariousCumIngredientsOID = AddToggleOption("$FHU_VARIOUSCUMINGREDIENTS", sr_Cumvariationingredients.getvalue())
@@ -815,11 +833,16 @@ State settings
 			SetSliderDialogDefaultValue(OralmaxInflationDefault)
 			SetSliderDialogRange(0.1, 5.0)
 			SetSliderDialogInterval(0.05)
+		ElseIf opt == TullAnimatedCreampieThresholdOID
+			SetSliderDialogStartValue(TullAnimatedCreampieThreshold)
+			SetSliderDialogDefaultValue(TullAnimatedCreampieThresholdDefault)
+			SetSliderDialogRange(0, 100)
+			SetSliderDialogInterval(1.0)
 		ElseIf opt == animMultOID
 			SetSliderDialogStartValue(animMult)
 			SetSliderDialogDefaultValue(animMultDefault)
-			SetSliderDialogRange(1.0, 20.0)
-			SetSliderDialogInterval(1.0)
+			SetSliderDialogRange(0.1, 20.0)
+			SetSliderDialogInterval(0.1)
 		ElseIf opt == BodyMorphApplyPeriodOID
 			SetSliderDialogStartValue(BodyMorphApplyPeriod)
 			SetSliderDialogDefaultValue(BodyMorphApplyPeriodDefault)
@@ -861,6 +884,10 @@ State settings
 			OralmaxInflation = val
 			SetSliderOptionValue(opt, OralmaxInflation, "{2}")
 			inflater.log("Maximum oral inflation amount set to: " + OralmaxInflation)
+		ElseIf opt == TullAnimatedCreampieThresholdOID
+			TullAnimatedCreampieThreshold = val
+			SetSliderOptionValue(opt, TullAnimatedCreampieThreshold, "{0}%")
+			inflater.log("Animated creampie threshold set to: " + TullAnimatedCreampieThreshold + "%")
 		ElseIf opt == animMultOID
 			animMult = val
 			SetSliderOptionValue(opt, animMult, "{1}")
@@ -1018,6 +1045,14 @@ State settings
 			Else
 				inflater.UnencumberAllActors()
 			EndIf
+		ElseIf opt == TullAnimatedCreampieEnabledOID
+			TullAnimatedCreampieEnabled = !TullAnimatedCreampieEnabled
+			SetToggleOptionValue(TullAnimatedCreampieEnabledOID, TullAnimatedCreampieEnabled)
+			if TullAnimatedCreampieEnabled && inflater.IsTullAnimatedCreampieReady()
+				SetOptionFlags(TullAnimatedCreampieThresholdOID, OPTION_FLAG_NONE)
+			else
+				SetOptionFlags(TullAnimatedCreampieThresholdOID, OPTION_FLAG_DISABLED)
+			endif
 		ElseIf opt == SFU_PlacePuddlesOID
 			SFU_PlacePuddles = !SFU_PlacePuddles
 			SetToggleOptionValue(SFU_PlacePuddlesOID, SFU_PlacePuddles)
@@ -1134,6 +1169,10 @@ State settings
 			SetInfoText("$FHU_MAX_AMOUNT_HELP")
 		ElseIf opt == OralmaxInflationOID
 			SetInfoText("$FHU_ORALMAX_AMOUNT_HELP")
+		ElseIf opt == TullAnimatedCreampieThresholdOID
+			SetInfoText("$FHU_TULL_CREAMPIE_THRESHOLD_HELP")
+		ElseIf opt == TullAnimatedCreampieEnabledOID
+			SetInfoText("$FHU_TULL_CREAMPIE_ITEMS_HELP")
 		ElseIf opt == femaleEnabledOID
 			SetInfoText("$FHU_FEMALE_ENABLED_HELP")
 		ElseIf opt == maleEnabledOID
@@ -1496,6 +1535,17 @@ Event OnOptionDefault(int opt)
 	ElseIf opt == OralmaxInflationOID
         OralmaxInflation = OralmaxInflationDefault
         SetSliderOptionValue(opt, OralmaxInflation, "{2}")
+	ElseIf opt == TullAnimatedCreampieThresholdOID
+		TullAnimatedCreampieThreshold = TullAnimatedCreampieThresholdDefault
+		SetSliderOptionValue(opt, TullAnimatedCreampieThreshold, "{0}%")
+	ElseIf opt == TullAnimatedCreampieEnabledOID
+		TullAnimatedCreampieEnabled = TullAnimatedCreampieEnabledDefault
+		SetToggleOptionValue(TullAnimatedCreampieEnabledOID, TullAnimatedCreampieEnabled)
+		if TullAnimatedCreampieEnabled && inflater.IsTullAnimatedCreampieReady()
+			SetOptionFlags(TullAnimatedCreampieThresholdOID, OPTION_FLAG_NONE)
+		else
+			SetOptionFlags(TullAnimatedCreampieThresholdOID, OPTION_FLAG_DISABLED)
+		endif
 	ElseIf opt == loggingOID
 		logging = loggingDefault
 		SetToggleOptionValue(loggingOID, logging)
