@@ -412,7 +412,7 @@ Function ScheduleTullAnimatedCreampieUnequip()
 		return
 	endif
 	pendingTullUnequip = true
-	float delay = Utility.RandomFloat(15.0, 30.0)
+	float delay = config.TullAnimatedCreampieCleanDelay
 	tullUnequipAt = Utility.GetCurrentGameTime() + (delay / 86400.0)
 	RegisterForSingleUpdate(10.0)
 EndFunction

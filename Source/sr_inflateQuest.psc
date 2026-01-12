@@ -170,6 +170,8 @@ String property CREATURERACE_CUM_EFFECTS = "sr.inflater.Creaturerace.cum.effects
 
 String Property START_INFLATION = "sr.inflater.start" autoreadonly hidden
 String Property START_ABSORPTION = "sr.inflater.absorb" autoreadonly hidden
+String Property TULL_UNEQUIP_LIST = "sr.inflater.tull.unequip.list" autoreadonly hidden
+String Property TULL_UNEQUIP_AT = "sr.inflater.tull.unequip.at" autoreadonly hidden
 
 int property VAGINAL		= 0x01 autoreadonly hidden
 int property ANAL		= 0x02 autoreadonly hidden
@@ -461,6 +463,60 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 		endif
 	else
 		log("No vaginal or anal fail")
+	endif
+
+	if IsTullAnimatedCreampieReady()
+		bool legacyCondition = anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
+		if legacyCondition
+			SslThreadController threadContr = SexLab.GetController(tid)
+			int stage = threadContr.Stage
+			int i = actors.length
+			while i > 0
+				i -= 1
+				Actor a = actors[i]
+				if a
+					int pos = GetActorPositionFromList(actors, a)
+					String penetrationLabel = sr_HentairimUtils.PenetrationLabel(anim, stage, pos)
+					String oralLabel = sr_HentairimUtils.OralLabel(anim, stage, pos)
+					String stimulationLabel = sr_HentairimUtils.StimulationLabel(anim, stage, pos)
+					String penisActionLabel = sr_HentairimUtils.PenisActionLabel(anim, stage, pos)
+					String endingLabel = sr_HentairimUtils.EndingLabel(anim, stage, pos)
+
+					Bool useTagged = isAnimationHentairimTaggedStrings(penetrationLabel, oralLabel, stimulationLabel, endingLabel, penisActionLabel)
+					Bool isVaginalInside = true
+					Bool isAnalInside = true
+					Bool isOralInside = true
+					if useTagged
+						isVaginalInside = IsGivingVaginalPenetration(penisActionLabel)
+						isAnalInside = IsGivingAnalPenetration(penisActionLabel)
+						isOralInside = IsGettingSuckedoff(penisActionLabel)
+					endif
+
+					bool hasVaginal = anim.hasTag("Vaginal") && (!useTagged || isVaginalInside)
+					bool hasAnal = anim.hasTag("Anal") && (!useTagged || isAnalInside)
+					bool hasOral = (anim.hasTag("Oral") || anim.hasTag("Blowjob")) && (!useTagged || isOralInside)
+
+					if hasVaginal
+						UpdateTullAnimatedCreampieCumItem(a, 1)
+						if ShouldEquipTullAnimatedCreampie(a, 1)
+							ScheduleTullAnimatedCreampieUnequip(a)
+						endif
+					endif
+					if hasAnal
+						UpdateTullAnimatedCreampieCumItem(a, 2)
+						if ShouldEquipTullAnimatedCreampie(a, 2)
+							ScheduleTullAnimatedCreampieUnequip(a)
+						endif
+					endif
+					if hasOral
+						UpdateTullAnimatedCreampieCumItem(a, 3)
+						if ShouldEquipTullAnimatedCreampie(a, 3)
+							ScheduleTullAnimatedCreampieUnequip(a)
+						endif
+					endif
+				endif
+			endWhile
+		endif
 	endif
 endevent
 
@@ -2799,6 +2855,72 @@ Function UnequipTullAnimatedCreampieCumItem(Actor akActor, int cumType)
 		UnequipTullAnimatedCreampieItem(akActor, 0x00000803)
 	endif
 EndFunction
+
+bool Function ShouldEquipTullAnimatedCreampie(Actor akActor, int cumType)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return false
+	endif
+	float threshold = config.TullAnimatedCreampieThreshold / 100.0
+	if cumType == 1
+		return GetVaginalPercentage(akActor) >= threshold
+	elseif cumType == 2
+		return GetAnalPercentage(akActor) >= threshold
+	elseif cumType == 3
+		return GetOralPercentage(akActor) >= threshold
+	endif
+	return false
+EndFunction
+
+Function ScheduleTullAnimatedCreampieUnequip(Actor akActor)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return
+	endif
+	float delay = config.TullAnimatedCreampieCleanDelay
+	SetFloatValue(akActor, TULL_UNEQUIP_AT, Utility.GetCurrentGameTime() + (delay / 86400.0))
+	FormListAdd(self, TULL_UNEQUIP_LIST, akActor, false)
+	RegisterForSingleUpdate(1.0)
+EndFunction
+
+Event OnUpdate()
+	int n = FormListCount(self, TULL_UNEQUIP_LIST)
+	if n <= 0
+		return
+	endif
+
+	float now = Utility.GetCurrentGameTime()
+	float nextWait = 0.0
+	bool hasPending = false
+
+	while n > 0
+		n -= 1
+		Actor a = FormListGet(self, TULL_UNEQUIP_LIST, n) as Actor
+		if !a
+			FormListRemoveAt(self, TULL_UNEQUIP_LIST, n)
+		else
+			float due = GetFloatValue(a, TULL_UNEQUIP_AT)
+			if due <= 0.0 || now >= due
+				UnequipTullAnimatedCreampieItem(a, 0x00000807)
+				UnequipTullAnimatedCreampieItem(a, 0x00000809)
+				UnequipTullAnimatedCreampieItem(a, 0x00000803)
+				UnsetFloatValue(a, TULL_UNEQUIP_AT)
+				FormListRemoveAt(self, TULL_UNEQUIP_LIST, n)
+			else
+				float remaining = (due - now) * 86400.0
+				if !hasPending || remaining < nextWait
+					nextWait = remaining
+					hasPending = true
+				endif
+			endif
+		endif
+	endWhile
+
+	if hasPending
+		if nextWait < 1.0
+			nextWait = 1.0
+		endif
+		RegisterForSingleUpdate(nextWait)
+	endif
+EndEvent
 
 
 float Function GetTotalCum(Actor a)

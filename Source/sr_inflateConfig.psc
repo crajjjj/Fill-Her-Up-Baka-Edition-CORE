@@ -46,6 +46,9 @@ int TullAnimatedCreampieThresholdOID
 bool Property TullAnimatedCreampieEnabled auto hidden
 bool Property TullAnimatedCreampieEnabledDefault = true autoreadonly hidden
 int TullAnimatedCreampieEnabledOID
+float Property TullAnimatedCreampieCleanDelay auto hidden
+float Property TullAnimatedCreampieCleanDelayDefault = 20.0 autoreadonly hidden
+int TullAnimatedCreampieCleanDelayOID
 
 bool property logging auto hidden
 bool property loggingDefault = true autoreadonly hidden
@@ -359,6 +362,7 @@ Function SetDefaults()
 	OralmaxInflation = OralmaxInflationDefault
 	TullAnimatedCreampieThreshold = TullAnimatedCreampieThresholdDefault
 	TullAnimatedCreampieEnabled = TullAnimatedCreampieEnabledDefault
+	TullAnimatedCreampieCleanDelay = TullAnimatedCreampieCleanDelayDefault
 	logging = loggingDefault
 	addRaceKey = addRaceKeyDefault
 	animDeflate = animDeflateDefault
@@ -537,6 +541,7 @@ Event OnPageReset(String page)
 		else
 			TullAnimatedCreampieEnabledOID = AddToggleOption("$FHU_TULL_CREAMPIE_ITEMS", false, OPTION_FLAG_DISABLED)
 		endif
+		TullAnimatedCreampieCleanDelayOID = AddSliderOption("$FHU_TULL_CREAMPIE_CLEAN_DELAY", TullAnimatedCreampieCleanDelay, "{0} sec")
 		if inflater.IsTullAnimatedCreampieReady() && TullAnimatedCreampieEnabled
 			TullAnimatedCreampieThresholdOID = AddSliderOption("$FHU_TULL_CREAMPIE_THRESHOLD", TullAnimatedCreampieThreshold, "{0}%")
 		else
@@ -838,6 +843,11 @@ State settings
 			SetSliderDialogDefaultValue(TullAnimatedCreampieThresholdDefault)
 			SetSliderDialogRange(0, 100)
 			SetSliderDialogInterval(1.0)
+		ElseIf opt == TullAnimatedCreampieCleanDelayOID
+			SetSliderDialogStartValue(TullAnimatedCreampieCleanDelay)
+			SetSliderDialogDefaultValue(TullAnimatedCreampieCleanDelayDefault)
+			SetSliderDialogRange(5.0, 120.0)
+			SetSliderDialogInterval(1.0)
 		ElseIf opt == animMultOID
 			SetSliderDialogStartValue(animMult)
 			SetSliderDialogDefaultValue(animMultDefault)
@@ -888,6 +898,10 @@ State settings
 			TullAnimatedCreampieThreshold = val
 			SetSliderOptionValue(opt, TullAnimatedCreampieThreshold, "{0}%")
 			inflater.log("Animated creampie threshold set to: " + TullAnimatedCreampieThreshold + "%")
+		ElseIf opt == TullAnimatedCreampieCleanDelayOID
+			TullAnimatedCreampieCleanDelay = val
+			SetSliderOptionValue(opt, TullAnimatedCreampieCleanDelay, "{0} sec")
+			inflater.log("Animated creampie clean delay set to: " + TullAnimatedCreampieCleanDelay + " sec")
 		ElseIf opt == animMultOID
 			animMult = val
 			SetSliderOptionValue(opt, animMult, "{1}")
@@ -1173,6 +1187,8 @@ State settings
 			SetInfoText("$FHU_TULL_CREAMPIE_THRESHOLD_HELP")
 		ElseIf opt == TullAnimatedCreampieEnabledOID
 			SetInfoText("$FHU_TULL_CREAMPIE_ITEMS_HELP")
+		ElseIf opt == TullAnimatedCreampieCleanDelayOID
+			SetInfoText("$FHU_TULL_CREAMPIE_CLEAN_DELAY_HELP")
 		ElseIf opt == femaleEnabledOID
 			SetInfoText("$FHU_FEMALE_ENABLED_HELP")
 		ElseIf opt == maleEnabledOID
@@ -1546,6 +1562,9 @@ Event OnOptionDefault(int opt)
 		else
 			SetOptionFlags(TullAnimatedCreampieThresholdOID, OPTION_FLAG_DISABLED)
 		endif
+	ElseIf opt == TullAnimatedCreampieCleanDelayOID
+		TullAnimatedCreampieCleanDelay = TullAnimatedCreampieCleanDelayDefault
+		SetSliderOptionValue(opt, TullAnimatedCreampieCleanDelay, "{0} sec")
 	ElseIf opt == loggingOID
 		logging = loggingDefault
 		SetToggleOptionValue(loggingOID, logging)
