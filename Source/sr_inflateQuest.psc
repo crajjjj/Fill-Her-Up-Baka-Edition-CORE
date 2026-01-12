@@ -440,7 +440,6 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 					endif
 				endif
 			endwhile
-;			debug.notification(tid)
 		else
 			Actor[] injectorArray = new Actor[4]
 			int i = 0
@@ -466,57 +465,31 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 	endif
 
 	if IsTullAnimatedCreampieReady()
-		bool legacyCondition = anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
-		if legacyCondition
-			SslThreadController threadContr = SexLab.GetController(tid)
-			int stage = threadContr.Stage
-			int i = actors.length
-			while i > 0
-				i -= 1
-				Actor a = actors[i]
-				if a
-					int pos = GetActorPositionFromList(actors, a)
-					String penetrationLabel = sr_HentairimUtils.PenetrationLabel(anim, stage, pos)
-					String oralLabel = sr_HentairimUtils.OralLabel(anim, stage, pos)
-					String stimulationLabel = sr_HentairimUtils.StimulationLabel(anim, stage, pos)
-					String penisActionLabel = sr_HentairimUtils.PenisActionLabel(anim, stage, pos)
-					String endingLabel = sr_HentairimUtils.EndingLabel(anim, stage, pos)
-
-					Bool useTagged = isAnimationHentairimTaggedStrings(penetrationLabel, oralLabel, stimulationLabel, endingLabel, penisActionLabel)
-					Bool isVaginalInside = true
-					Bool isAnalInside = true
-					Bool isOralInside = true
-					if useTagged
-						isVaginalInside = IsGivingVaginalPenetration(penisActionLabel)
-						isAnalInside = IsGivingAnalPenetration(penisActionLabel)
-						isOralInside = IsGettingSuckedoff(penisActionLabel)
-					endif
-
-					bool hasVaginal = anim.hasTag("Vaginal") && (!useTagged || isVaginalInside)
-					bool hasAnal = anim.hasTag("Anal") && (!useTagged || isAnalInside)
-					bool hasOral = (anim.hasTag("Oral") || anim.hasTag("Blowjob")) && (!useTagged || isOralInside)
-
-					if hasVaginal
-						UpdateTullAnimatedCreampieCumItem(a, 1)
-						if ShouldEquipTullAnimatedCreampie(a, 1)
-							ScheduleTullAnimatedCreampieUnequip(a)
-						endif
-					endif
-					if hasAnal
-						UpdateTullAnimatedCreampieCumItem(a, 2)
-						if ShouldEquipTullAnimatedCreampie(a, 2)
-							ScheduleTullAnimatedCreampieUnequip(a)
-						endif
-					endif
-					if hasOral
-						UpdateTullAnimatedCreampieCumItem(a, 3)
-						if ShouldEquipTullAnimatedCreampie(a, 3)
-							ScheduleTullAnimatedCreampieUnequip(a)
-						endif
-					endif
-				endif
-			endWhile
+		GlobalVariable SLTTTMTiredTime = Game.GetFormFromFile(0x000804, "SLTooTiredToMove.esp") as GlobalVariable
+		if SLTTTMTiredTime
+			Utility.Wait(SLTTTMTiredTime.GetValue() + 2.0)
+		else
+			Utility.Wait(2.0)
 		endif
+		int i = actors.length
+		while i > 0
+			i -= 1
+			Actor a = actors[i]
+			if a && a.GetLeveledActorBase().GetSex() == 1
+				UpdateTullAnimatedCreampieCumItem(a, 1)
+				if ShouldEquipTullAnimatedCreampie(a, 1)
+					ScheduleTullAnimatedCreampieUnequip(a)
+				endif
+				UpdateTullAnimatedCreampieCumItem(a, 2)
+				if ShouldEquipTullAnimatedCreampie(a, 2)
+					ScheduleTullAnimatedCreampieUnequip(a)
+				endif
+				UpdateTullAnimatedCreampieCumItem(a, 3)
+				if ShouldEquipTullAnimatedCreampie(a, 3)
+					ScheduleTullAnimatedCreampieUnequip(a)
+				endif
+			endif
+		endWhile
 	endif
 endevent
 
@@ -2194,6 +2167,7 @@ State MonitoringInflation
 									;endif
 									tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
 									queued += 1
+									UnequipTullAnimatedCreampieCumItem(a, 1)
 								else
 									if sr_OnEventAbsorbSperm.getvalue() == 1
 										tid = QueueAbsorbActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
@@ -2214,6 +2188,7 @@ State MonitoringInflation
 								if sr_OnEventNoDeflation.getvalue() == 0
 									tid = QueueActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
 									queued += 1
+									UnequipTullAnimatedCreampieCumItem(a, 2)
 								else
 									if sr_OnEventAbsorbSperm.getvalue() == 1
 										tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
@@ -2227,6 +2202,7 @@ State MonitoringInflation
 							if sr_OnEventNoDeflation.getvalue() == 0
 								tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
 								queued += 1
+								UnequipTullAnimatedCreampieCumItem(a, 3)
 							else
 								if sr_OnEventAbsorbSperm.getvalue() == 1 && sr_OnEventAbsorbSpermOral.getvalue() == 1
 									tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
