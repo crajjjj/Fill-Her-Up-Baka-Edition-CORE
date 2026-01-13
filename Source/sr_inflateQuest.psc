@@ -481,9 +481,10 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 				Armor analItem = GetTullAnimatedCreampieForm(0x00000809) as Armor
 				Armor oralItem = GetTullAnimatedCreampieForm(0x00000803) as Armor
 				if !((vagItem1 && a.IsEquipped(vagItem1)) || (vagItem2 && a.IsEquipped(vagItem2)) || (analItem && a.IsEquipped(analItem)) || (oralItem && a.IsEquipped(oralItem)))
-					UpdateTullAnimatedCreampieCumItem(a, 1)
-					UpdateTullAnimatedCreampieCumItem(a, 2)
-					UpdateTullAnimatedCreampieCumItem(a, 3)
+					if UpdateTullAnimatedCreampieCumItem(a, 1)
+					else 
+						UpdateTullAnimatedCreampieCumItem(a, 3)
+					endif
 				endif
 				
 			endif
@@ -2797,33 +2798,31 @@ Function UnequipTullAnimatedCreampieItem(Actor akActor, int formId)
 	endif
 EndFunction
 
-Function UpdateTullAnimatedCreampieCumItem(Actor akActor, int cumType)
+bool Function UpdateTullAnimatedCreampieCumItem(Actor akActor, int cumType)
 	if !IsTullAnimatedCreampieReady() || !akActor
-		return
+		return false
 	endif
 	float threshold = config.TullAnimatedCreampieThreshold / 100.0
 	if cumType == 1
 		if GetVaginalPercentage(akActor) >= threshold
 			EquipTullAnimatedCreampieItem(akActor, 0x00000807)
 			ScheduleTullAnimatedCreampieUnequip(akActor)
+			return true
 		else
 			UnequipTullAnimatedCreampieItem(akActor, 0x00000807)
-		endif
-	elseif cumType == 2
-		if GetAnalPercentage(akActor) >= threshold
-			EquipTullAnimatedCreampieItem(akActor, 0x00000809)
-			ScheduleTullAnimatedCreampieUnequip(akActor)
-		else
-			UnequipTullAnimatedCreampieItem(akActor, 0x00000809)
+			return false
 		endif
 	elseif cumType == 3
 		if GetOralPercentage(akActor) >= threshold
 			EquipTullAnimatedCreampieItem(akActor, 0x00000803)
 			ScheduleTullAnimatedCreampieUnequip(akActor)
+			return true
 		else
 			UnequipTullAnimatedCreampieItem(akActor, 0x00000803)
+			return false
 		endif
 	endif
+	return false
 EndFunction
 
 Function UnequipTullAnimatedCreampieCumItem(Actor akActor, int cumType)
