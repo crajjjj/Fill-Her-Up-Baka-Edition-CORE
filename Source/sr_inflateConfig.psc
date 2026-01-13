@@ -40,13 +40,13 @@ float Property maxInflation auto hidden
 float property maxInflationDefault = 6.0 autoreadonly hidden
 int maxInflationOID
 int OralmaxInflationOID
-float Property TullAnimatedCreampieThreshold auto hidden
+float Property TullAnimatedCreampieThreshold = 0.0 auto hidden
 float Property TullAnimatedCreampieThresholdDefault = 0.0 autoreadonly hidden
 int TullAnimatedCreampieThresholdOID
-bool Property TullAnimatedCreampieEnabled auto hidden
-bool Property TullAnimatedCreampieEnabledDefault = true autoreadonly hidden
+bool Property TullAnimatedCreampieEnabled = false auto hidden
+bool Property TullAnimatedCreampieEnabledDefault = false autoreadonly hidden
 int TullAnimatedCreampieEnabledOID
-float Property TullAnimatedCreampieCleanDelay auto hidden
+float Property TullAnimatedCreampieCleanDelay = 20.0 auto hidden
 float Property TullAnimatedCreampieCleanDelayDefault = 20.0 autoreadonly hidden
 int TullAnimatedCreampieCleanDelayOID
 
@@ -536,15 +536,13 @@ Event OnPageReset(String page)
 		minInflationTimeOID = AddSliderOption("$FHU_MIN_TIME", minInflationTime, "$FHU_HOURS")
 		maxInflationOID = AddSliderOption("$FHU_MAX_AMOUNT", maxInflation, "{2}")
 		OralmaxInflationOID = AddSliderOption("$FHU_ORALMAX_AMOUNT", OralmaxInflation, "{2}")
-		if inflater.IsTullAnimatedCreampieReady()
+		if Game.GetModByName("TullAnimatedCreampie.esp") != 255
 			TullAnimatedCreampieEnabledOID = AddToggleOption("$FHU_TULL_CREAMPIE_ITEMS", TullAnimatedCreampieEnabled)
-		else
-			TullAnimatedCreampieEnabledOID = AddToggleOption("$FHU_TULL_CREAMPIE_ITEMS", false, OPTION_FLAG_DISABLED)
-		endif
-		TullAnimatedCreampieCleanDelayOID = AddSliderOption("$FHU_TULL_CREAMPIE_CLEAN_DELAY", TullAnimatedCreampieCleanDelay, "{0} sec")
-		if inflater.IsTullAnimatedCreampieReady() && TullAnimatedCreampieEnabled
+			TullAnimatedCreampieCleanDelayOID = AddSliderOption("$FHU_TULL_CREAMPIE_CLEAN_DELAY", TullAnimatedCreampieCleanDelay, "{0} sec")
 			TullAnimatedCreampieThresholdOID = AddSliderOption("$FHU_TULL_CREAMPIE_THRESHOLD", TullAnimatedCreampieThreshold, "{0}%")
 		else
+			TullAnimatedCreampieEnabledOID = AddToggleOption("$FHU_TULL_CREAMPIE_ITEMS", false, OPTION_FLAG_DISABLED)
+			TullAnimatedCreampieCleanDelayOID = AddSliderOption("$FHU_TULL_CREAMPIE_CLEAN_DELAY", TullAnimatedCreampieCleanDelay, "{0} sec", OPTION_FLAG_DISABLED)
 			TullAnimatedCreampieThresholdOID = AddSliderOption("$FHU_TULL_CREAMPIE_THRESHOLD", TullAnimatedCreampieThreshold, "{0}%", OPTION_FLAG_DISABLED)
 		endif
 		stripOID = AddToggleOption("$FHU_STRIP", strip)

@@ -2168,6 +2168,8 @@ State MonitoringInflation
 									tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
 									queued += 1
 									UnequipTullAnimatedCreampieCumItem(a, 1)
+									UnsetFloatValue(a, TULL_UNEQUIP_AT)
+									FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
 								else
 									if sr_OnEventAbsorbSperm.getvalue() == 1
 										tid = QueueAbsorbActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
@@ -2189,6 +2191,8 @@ State MonitoringInflation
 									tid = QueueActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
 									queued += 1
 									UnequipTullAnimatedCreampieCumItem(a, 2)
+									UnsetFloatValue(a, TULL_UNEQUIP_AT)
+									FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
 								else
 									if sr_OnEventAbsorbSperm.getvalue() == 1
 										tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
@@ -2203,6 +2207,8 @@ State MonitoringInflation
 								tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
 								queued += 1
 								UnequipTullAnimatedCreampieCumItem(a, 3)
+								UnsetFloatValue(a, TULL_UNEQUIP_AT)
+								FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
 							else
 								if sr_OnEventAbsorbSperm.getvalue() == 1 && sr_OnEventAbsorbSpermOral.getvalue() == 1
 									tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
