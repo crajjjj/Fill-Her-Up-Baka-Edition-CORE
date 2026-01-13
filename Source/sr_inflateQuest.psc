@@ -2970,7 +2970,7 @@ EndFunction
 bool Function IsFilledAndPluggedType(Actor akActor, int type)
 	int plugged = isPlugged(akActor)
 	If plugged > 0 && akActor.GetFactionRank(inflateFaction) > 0
-		return plugged == 3 == type || ( plugged == 1 == type && GetVaginalCum(akActor) > 0.0 ) || ( plugged == 2 == type && GetAnalCum(akActor) > 0.0 )
+		return (plugged == 3 && type == 3) || (plugged == 1 && type == 1 && GetVaginalCum(akActor) > 0.0) || (plugged == 2 && type == 2 && GetAnalCum(akActor) > 0.0)
 	EndIf
 	return false
 EndFunction
