@@ -476,18 +476,16 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 			i -= 1
 			Actor a = actors[i]
 			if a && a.GetLeveledActorBase().GetSex() == 1
-				UpdateTullAnimatedCreampieCumItem(a, 1)
-				if ShouldEquipTullAnimatedCreampie(a, 1)
-					ScheduleTullAnimatedCreampieUnequip(a)
+				Armor vagItem1 = GetTullAnimatedCreampieForm(0x00000801) as Armor
+				Armor vagItem2 = GetTullAnimatedCreampieForm(0x00000807) as Armor
+				Armor analItem = GetTullAnimatedCreampieForm(0x00000809) as Armor
+				Armor oralItem = GetTullAnimatedCreampieForm(0x00000803) as Armor
+				if !((vagItem1 && a.IsEquipped(vagItem1)) || (vagItem2 && a.IsEquipped(vagItem2)) || (analItem && a.IsEquipped(analItem)) || (oralItem && a.IsEquipped(oralItem)))
+					UpdateTullAnimatedCreampieCumItem(a, 1)
+					UpdateTullAnimatedCreampieCumItem(a, 2)
+					UpdateTullAnimatedCreampieCumItem(a, 3)
 				endif
-				UpdateTullAnimatedCreampieCumItem(a, 2)
-				if ShouldEquipTullAnimatedCreampie(a, 2)
-					ScheduleTullAnimatedCreampieUnequip(a)
-				endif
-				UpdateTullAnimatedCreampieCumItem(a, 3)
-				if ShouldEquipTullAnimatedCreampie(a, 3)
-					ScheduleTullAnimatedCreampieUnequip(a)
-				endif
+				
 			endif
 		endWhile
 	endif
@@ -2779,13 +2777,13 @@ EndFunction
 
 Function EquipTullAnimatedCreampieItem(Actor akActor, int formId)
 	if !akActor
-		return
+		return 
 	endif
 	Armor a = GetTullAnimatedCreampieForm(formId) as Armor
 	if a && !akActor.IsEquipped(a)
 		akActor.AddItem(a, 1, true)
 		akActor.EquipItem(a, abSilent=true)
-	endif
+	endif 
 EndFunction
 
 Function UnequipTullAnimatedCreampieItem(Actor akActor, int formId)
@@ -2807,18 +2805,21 @@ Function UpdateTullAnimatedCreampieCumItem(Actor akActor, int cumType)
 	if cumType == 1
 		if GetVaginalPercentage(akActor) >= threshold
 			EquipTullAnimatedCreampieItem(akActor, 0x00000807)
+			ScheduleTullAnimatedCreampieUnequip(akActor)
 		else
 			UnequipTullAnimatedCreampieItem(akActor, 0x00000807)
 		endif
 	elseif cumType == 2
 		if GetAnalPercentage(akActor) >= threshold
 			EquipTullAnimatedCreampieItem(akActor, 0x00000809)
+			ScheduleTullAnimatedCreampieUnequip(akActor)
 		else
 			UnequipTullAnimatedCreampieItem(akActor, 0x00000809)
 		endif
 	elseif cumType == 3
 		if GetOralPercentage(akActor) >= threshold
 			EquipTullAnimatedCreampieItem(akActor, 0x00000803)
+			ScheduleTullAnimatedCreampieUnequip(akActor)
 		else
 			UnequipTullAnimatedCreampieItem(akActor, 0x00000803)
 		endif

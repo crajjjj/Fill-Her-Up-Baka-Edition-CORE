@@ -370,29 +370,17 @@ Function UpdateFhuTullItems(Actor act, string animationEvent) global
 	if !cfg
 		cfg = Game.GetFormFromFile(0x00001D8C, "sr_FillHerUp.esp") as sr_inflateConfig
 	endif
-	if !cfg || !cfg.TullAnimatedCreampieEnabled
+	if !cfg
 		return
 	endif
 
 	float threshold = cfg.TullAnimatedCreampieThreshold / 100.0
 
 	if fhu.GetVaginalPercentage(act) >= threshold
-		int vagFormId = GetTullVaginalFormIdUpOrDown(animationEvent)
-		EquipTullAnimatedCreampieItem(act, vagFormId)
-	endif
-	if fhu.GetOralPercentage(act) >= threshold
+		EquipTullAnimatedCreampieItem(act,0x00000801)
+	elseif fhu.GetOralPercentage(act) >= threshold
 		EquipTullAnimatedCreampieItem(act, 0x00000803)
 	endif
-EndFunction
-
-int Function GetTullVaginalFormIdUpOrDown(string animationEvent) global
-	if animationEvent == "SLTTTMAnimF1" || animationEvent == "SLTTTMAnimF3" || animationEvent == "SLTTTMAnimF4" || animationEvent == "SLTTTMAnimF5" || animationEvent == "SLTTTMAnimF7" || animationEvent == "SLTTTMAnimF8" || animationEvent == "SLTTTMAnimF9"
-		return 0x00000801
-	endif
-	if animationEvent == "SLTTTMAnimF10" || animationEvent == "SLTTTMAnimF2" || animationEvent == "SLTTTMAnimF6"
-		return 0x00000804
-	endif
-	return 0x00000801
 EndFunction
 
 Function RemoveFhuTullItems(Actor act) global
@@ -400,7 +388,7 @@ Function RemoveFhuTullItems(Actor act) global
 		return
 	endif
 	RemoveTullAnimatedCreampieItem(act, 0x00000801)
-	RemoveTullAnimatedCreampieItem(act, 0x00000804)
+	RemoveTullAnimatedCreampieItem(act, 0x00000809)
 	RemoveTullAnimatedCreampieItem(act, 0x00000803)
 EndFunction
 

@@ -248,7 +248,6 @@ Function Inflate()
 			EndIf
 			SetFloatValue(akActor, inflater.LAST_TIME_ANAL, inflater.GameDaysPassed.GetValue())
 			SetFloatValue(akActor, inflater.CUM_ANAL, analCum)
-			inflater.UpdateTullAnimatedCreampieCumItem(akActor, 2)
 			updatedTull = true
 		Else
 			If !isVaginal
@@ -267,7 +266,6 @@ Function Inflate()
 			EndIf
 			SetFloatValue(akActor, inflater.LAST_TIME_VAG, inflater.GameDaysPassed.GetValue())
 			SetFloatValue(akActor, inflater.CUM_VAGINAL, vagCum)
-			inflater.UpdateTullAnimatedCreampieCumItem(akActor, 1)
 			updatedTull = true
 		Else
 			If !isAnal
@@ -289,7 +287,6 @@ Function Inflate()
 		EndIf
 		SetFloatValue(akActor, inflater.LAST_TIME_ORAL, inflater.GameDaysPassed.GetValue())
 		SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
-		inflater.UpdateTullAnimatedCreampieCumItem(akActor, 3)
 		updatedTull = true
 	EndIf
 
