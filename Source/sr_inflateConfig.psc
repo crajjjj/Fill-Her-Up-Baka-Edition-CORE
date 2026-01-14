@@ -478,14 +478,14 @@ Event OnConfigInit()
 EndEvent
 
 Function PageReset()
-	pages = new String[7]
+	pages = new String[5]
 	pages[0] = "$FHU_SETTINGS"
 	pages[1] = "$FHU_EVENTS_HEADER"
 	pages[2] = "$FHU_ACTOR_LIST"
 	pages[3] = "$FHU_RACE_AMOUNT"
 	pages[4] = "$FHU_CREATURERACE_AMOUNT"
-	pages[5] = "$FHU_CUM_EFFECTS"
-	pages[6] = "$FHU_INTEGRATIONS"
+	;pages[5] = "$FHU_CUM_EFFECTS"
+	;pages[6] = "$FHU_INTEGRATIONS"
 	eventOIDs = new int[128]
     ToggleSlotID = new int[32]
     SlotValue = new int[32]
