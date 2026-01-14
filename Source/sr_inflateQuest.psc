@@ -170,6 +170,8 @@ String property CREATURERACE_CUM_EFFECTS = "sr.inflater.Creaturerace.cum.effects
 
 String Property START_INFLATION = "sr.inflater.start" autoreadonly hidden
 String Property START_ABSORPTION = "sr.inflater.absorb" autoreadonly hidden
+String Property TULL_UNEQUIP_LIST = "sr.inflater.tull.unequip.list" autoreadonly hidden
+String Property TULL_UNEQUIP_AT = "sr.inflater.tull.unequip.at" autoreadonly hidden
 
 int property VAGINAL		= 0x01 autoreadonly hidden
 int property ANAL		= 0x02 autoreadonly hidden
@@ -444,7 +446,6 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 					endif
 				endif
 			endwhile
-;			debug.notification(tid)
 		else
 			Actor[] injectorArray = new Actor[4]
 			int i = 0
@@ -467,6 +468,33 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 		endif
 	else
 		log("No vaginal or anal fail")
+	endif
+
+	if IsTullAnimatedCreampieReady()
+		GlobalVariable SLTTTMTiredTime = Game.GetFormFromFile(0x000804, "SLTooTiredToMove.esp") as GlobalVariable
+		if SLTTTMTiredTime
+			Utility.Wait(SLTTTMTiredTime.GetValue() + 2.0)
+		else
+			Utility.Wait(2.0)
+		endif
+		int i = actors.length
+		while i > 0
+			i -= 1
+			Actor a = actors[i]
+			if a && a.GetLeveledActorBase().GetSex() == 1
+				Armor vagItem1 = GetTullAnimatedCreampieForm(0x00000801) as Armor
+				Armor vagItem2 = GetTullAnimatedCreampieForm(0x00000807) as Armor
+				Armor analItem = GetTullAnimatedCreampieForm(0x00000809) as Armor
+				Armor oralItem = GetTullAnimatedCreampieForm(0x00000803) as Armor
+				if !((vagItem1 && a.IsEquipped(vagItem1)) || (vagItem2 && a.IsEquipped(vagItem2)) || (analItem && a.IsEquipped(analItem)) || (oralItem && a.IsEquipped(oralItem)))
+					if UpdateTullAnimatedCreampieCumItem(a, 1)
+					else 
+						UpdateTullAnimatedCreampieCumItem(a, 3)
+					endif
+				endif
+				
+			endif
+		endWhile
 	endif
 endevent
 
@@ -2180,6 +2208,9 @@ State MonitoringInflation
 									;endif
 									tid = QueueActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
 									queued += 1
+									UnequipTullAnimatedCreampieCumItem(a, 1)
+									UnsetFloatValue(a, TULL_UNEQUIP_AT)
+									FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
 								else
 									if sr_OnEventAbsorbSperm.getvalue() == 1
 										tid = QueueAbsorbActor(a, false, VAGINAL, Config.SpermRemovalAmountvag, defTime)
@@ -2200,6 +2231,9 @@ State MonitoringInflation
 								if sr_OnEventNoDeflation.getvalue() == 0
 									tid = QueueActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
 									queued += 1
+									UnequipTullAnimatedCreampieCumItem(a, 2)
+									UnsetFloatValue(a, TULL_UNEQUIP_AT)
+									FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
 								else
 									if sr_OnEventAbsorbSperm.getvalue() == 1
 										tid = QueueAbsorbActor(a, false, ANAL, Config.SpermRemovalAmountanal, defTime)
@@ -2213,6 +2247,9 @@ State MonitoringInflation
 							if sr_OnEventNoDeflation.getvalue() == 0
 								tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
 								queued += 1
+								UnequipTullAnimatedCreampieCumItem(a, 3)
+								UnsetFloatValue(a, TULL_UNEQUIP_AT)
+								FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
 							else
 								if sr_OnEventAbsorbSperm.getvalue() == 1 && sr_OnEventAbsorbSpermOral.getvalue() == 1
 									tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
@@ -2884,6 +2921,148 @@ float Function GetOralPercentage(Actor a)
 	return GetOralCum(a) / GetOralPoolSize(a)
 EndFunction
 
+String Property TULL_ANIMATED_CREAMP = "TullAnimatedCreampie.esp" autoreadonly hidden
+
+bool Function IsTullAnimatedCreampieReady()
+	if !config.TullAnimatedCreampieEnabled
+		return false
+	endif
+	return Game.GetModByName(TULL_ANIMATED_CREAMP) != 255
+EndFunction
+
+Form Function GetTullAnimatedCreampieForm(int formId)
+	Form f = Game.GetFormFromFile(formId, TULL_ANIMATED_CREAMP)
+	return f
+EndFunction
+
+Function EquipTullAnimatedCreampieItem(Actor akActor, int formId)
+	if !akActor
+		return 
+	endif
+	Armor a = GetTullAnimatedCreampieForm(formId) as Armor
+	if a && !akActor.IsEquipped(a)
+		akActor.AddItem(a, 1, true)
+		akActor.EquipItem(a, abSilent=true)
+	endif 
+EndFunction
+
+Function UnequipTullAnimatedCreampieItem(Actor akActor, int formId)
+	if !akActor
+		return
+	endif
+	Armor a = GetTullAnimatedCreampieForm(formId) as Armor
+	if a && akActor.IsEquipped(a)
+		akActor.UnequipItem(a, abSilent=true)
+		akActor.RemoveItem(a, 99, true)
+	endif
+EndFunction
+
+bool Function UpdateTullAnimatedCreampieCumItem(Actor akActor, int cumType)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return false
+	endif
+	float threshold = config.TullAnimatedCreampieThreshold / 100.0
+	if cumType == 1
+		if GetVaginalPercentage(akActor) >= threshold
+			EquipTullAnimatedCreampieItem(akActor, 0x00000807)
+			ScheduleTullAnimatedCreampieUnequip(akActor)
+			return true
+		else
+			UnequipTullAnimatedCreampieItem(akActor, 0x00000807)
+			return false
+		endif
+	elseif cumType == 3
+		if GetOralPercentage(akActor) >= threshold
+			EquipTullAnimatedCreampieItem(akActor, 0x00000803)
+			ScheduleTullAnimatedCreampieUnequip(akActor)
+			return true
+		else
+			UnequipTullAnimatedCreampieItem(akActor, 0x00000803)
+			return false
+		endif
+	endif
+	return false
+EndFunction
+
+Function UnequipTullAnimatedCreampieCumItem(Actor akActor, int cumType)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return
+	endif
+	if cumType == 1
+		UnequipTullAnimatedCreampieItem(akActor, 0x00000807)
+	elseif cumType == 2
+		UnequipTullAnimatedCreampieItem(akActor, 0x00000809)
+	elseif cumType == 3
+		UnequipTullAnimatedCreampieItem(akActor, 0x00000803)
+	endif
+EndFunction
+
+bool Function ShouldEquipTullAnimatedCreampie(Actor akActor, int cumType)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return false
+	endif
+	float threshold = config.TullAnimatedCreampieThreshold / 100.0
+	if cumType == 1
+		return GetVaginalPercentage(akActor) >= threshold
+	elseif cumType == 2
+		return GetAnalPercentage(akActor) >= threshold
+	elseif cumType == 3
+		return GetOralPercentage(akActor) >= threshold
+	endif
+	return false
+EndFunction
+
+Function ScheduleTullAnimatedCreampieUnequip(Actor akActor)
+	if !IsTullAnimatedCreampieReady() || !akActor
+		return
+	endif
+	float delay = config.TullAnimatedCreampieCleanDelay
+	SetFloatValue(akActor, TULL_UNEQUIP_AT, Utility.GetCurrentGameTime() + (delay / 86400.0))
+	FormListAdd(self, TULL_UNEQUIP_LIST, akActor, false)
+	RegisterForSingleUpdate(1.0)
+EndFunction
+
+Event OnUpdate()
+	int n = FormListCount(self, TULL_UNEQUIP_LIST)
+	if n <= 0
+		return
+	endif
+
+	float now = Utility.GetCurrentGameTime()
+	float nextWait = 0.0
+	bool hasPending = false
+
+	while n > 0
+		n -= 1
+		Actor a = FormListGet(self, TULL_UNEQUIP_LIST, n) as Actor
+		if !a
+			FormListRemoveAt(self, TULL_UNEQUIP_LIST, n)
+		else
+			float due = GetFloatValue(a, TULL_UNEQUIP_AT)
+			if due <= 0.0 || now >= due
+				UnequipTullAnimatedCreampieItem(a, 0x00000807)
+				UnequipTullAnimatedCreampieItem(a, 0x00000809)
+				UnequipTullAnimatedCreampieItem(a, 0x00000803)
+				UnsetFloatValue(a, TULL_UNEQUIP_AT)
+				FormListRemoveAt(self, TULL_UNEQUIP_LIST, n)
+			else
+				float remaining = (due - now) * 86400.0
+				if !hasPending || remaining < nextWait
+					nextWait = remaining
+					hasPending = true
+				endif
+			endif
+		endif
+	endWhile
+
+	if hasPending
+		if nextWait < 1.0
+			nextWait = 1.0
+		endif
+		RegisterForSingleUpdate(nextWait)
+	endif
+EndEvent
+
 
 float Function GetTotalCum(Actor a)
 	return GetAnalCum(a) + GetVaginalCum(a)
@@ -2950,7 +3129,7 @@ EndFunction
 bool Function IsFilledAndPluggedType(Actor akActor, int type)
 	int plugged = isPlugged(akActor)
 	If plugged > 0 && akActor.GetFactionRank(inflateFaction) > 0
-		return plugged == 3 == type || ( plugged == 1 == type && GetVaginalCum(akActor) > 0.0 ) || ( plugged == 2 == type && GetAnalCum(akActor) > 0.0 )
+		return (plugged == 3 && type == 3) || (plugged == 1 && type == 1 && GetVaginalCum(akActor) > 0.0) || (plugged == 2 && type == 2 && GetAnalCum(akActor) > 0.0)
 	EndIf
 	return false
 EndFunction

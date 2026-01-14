@@ -166,6 +166,7 @@ Function SpermOutStart()
 		
 			If err == 0
 			;	log("Pushing: " + type)
+				inflater.UnequipTullAnimatedCreampieCumItem(p, type)
 				doPush(type)
 			else
 				If err == 1

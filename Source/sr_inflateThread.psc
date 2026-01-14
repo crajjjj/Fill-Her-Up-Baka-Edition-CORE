@@ -19,6 +19,8 @@ bool running = false
 
 bool updateFHU = false
 int updateCumType = 0
+bool pendingTullUnequip = false
+float tullUnequipAt = 0.0
 
 Function SetUp(bool inflate, int poolMask, float amount, float time = 3.0, String callback = "", int DoAnimate = 0 )
 	inf = inflate
@@ -230,6 +232,7 @@ Function Inflate()
 	EndIf
 	float AnaltoOral = 0
 	float OralBursting = 0
+	bool updatedTull = false
 
 	float startVag = vagCum
 	float startAn = analCum
@@ -245,6 +248,7 @@ Function Inflate()
 			EndIf
 			SetFloatValue(akActor, inflater.LAST_TIME_ANAL, inflater.GameDaysPassed.GetValue())
 			SetFloatValue(akActor, inflater.CUM_ANAL, analCum)
+			updatedTull = true
 		Else
 			If !isVaginal
 				log("Anal sex blocked, done.")
@@ -262,6 +266,7 @@ Function Inflate()
 			EndIf
 			SetFloatValue(akActor, inflater.LAST_TIME_VAG, inflater.GameDaysPassed.GetValue())
 			SetFloatValue(akActor, inflater.CUM_VAGINAL, vagCum)
+			updatedTull = true
 		Else
 			If !isAnal
 				log("Vaginal sex blocked, done.")
@@ -282,7 +287,12 @@ Function Inflate()
 		EndIf
 		SetFloatValue(akActor, inflater.LAST_TIME_ORAL, inflater.GameDaysPassed.GetValue())
 		SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
+		updatedTull = true
 	EndIf
+
+	if updatedTull
+		ScheduleTullAnimatedCreampieUnequip()
+	endif
 
 	If belted > 1
 		log("Fully belted, done.")
@@ -394,6 +404,16 @@ Function RegisterFHUUpdate(int CumType)
 	RegisterForSingleUpdate(10.0)
 EndFunction
 
+Function ScheduleTullAnimatedCreampieUnequip()
+	if !inflater.IsTullAnimatedCreampieReady()
+		return
+	endif
+	pendingTullUnequip = true
+	float delay = config.TullAnimatedCreampieCleanDelay
+	tullUnequipAt = Utility.GetCurrentGameTime() + (delay / 86400.0)
+	RegisterForSingleUpdate(10.0)
+EndFunction
+
 Function Deflate()
 	Actor akActor = GetActorReference()
 	;log("Deflating")
@@ -435,6 +455,10 @@ Function Deflate()
 		Cumtype = 3
 		maxInflation = inflater.config.OralmaxInflation
 		log("deflateTarget Oral = "+oralCum+" - "+cumAmount)
+	endif
+
+	if Cumtype > 0
+		inflater.UnequipTullAnimatedCreampieCumItem(akActor, Cumtype)
 	endif
 	
 	if isVaginal || isAnal
@@ -661,6 +685,10 @@ Function Absorb()
 		maxInflation = inflater.config.OralmaxInflation
 	endif
 
+	if Cumtype > 0
+		inflater.UnequipTullAnimatedCreampieCumItem(akActor, Cumtype)
+	endif
+
 	if isVaginal || isAnal
 		If (isAnal && analCum - cumAmount > 0.0 && vagCum > 0.0) || (!isAnal && vagCum - cumAmount > 0.0 && analCum > 0.0) || (isAnal && analCum - cumAmount > 0.0 && inflater.sexlab.GetGender(akActor)==0)
 			maxInflation *= inflater.BURST_MULT
@@ -825,14 +853,46 @@ Event OnUpdate()
 	If !running
 		log("Thread timed out, clearing.")
 		ResetThread()
-	ElseIf updateFHU
+		return
+	EndIf
+
+	bool needsUpdate = false
+	float nextUpdate = 0.0
+
+	if updateFHU
 		if inflater.UpdateFHUmoan(GetReference(), updateCumType)
-			RegisterForSingleUpdate(10.0)
+			needsUpdate = true
+			nextUpdate = 10.0
 		Else
 			updateCumType = 0
 			updateFHU = false
 		EndIf
 	EndIf
+
+	if pendingTullUnequip
+		float remaining = (tullUnequipAt - Utility.GetCurrentGameTime()) * 86400.0
+		if remaining <= 0.0
+			Actor a = GetActorReference()
+			if a
+				inflater.UnequipTullAnimatedCreampieItem(a, 0x00000807)
+				inflater.UnequipTullAnimatedCreampieItem(a, 0x00000809)
+				inflater.UnequipTullAnimatedCreampieItem(a, 0x00000803)
+			endif
+			pendingTullUnequip = false
+		else
+			if remaining < 1.0
+				remaining = 1.0
+			endif
+			if !needsUpdate || remaining < nextUpdate
+				nextUpdate = remaining
+			endif
+			needsUpdate = true
+		endif
+	endif
+
+	if needsUpdate
+		RegisterForSingleUpdate(nextUpdate)
+	endif
 EndEvent
 
 Function ResetThread()
