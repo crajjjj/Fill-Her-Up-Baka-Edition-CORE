@@ -819,7 +819,8 @@ Event OnPageReset(String page)
 			AddHeaderOption("$FHU_CREATURERACE_AMOUNTS_LOCKED")
 			while ic < nc
 				Creatureraze = StorageUtil.FormListGet(self, CREATURERACE_LIST, ic) as Race
-				CreatureRaceOID[ic] = AddTextOption(MiscUtil.GetRaceEditorID(Creatureraze), StorageUtil.GetFloatValue(Creatureraze, inflater.CREATURERACE_CUM_AMOUNT, 0.75))
+				bool r = MiscUtil.GetRaceEditorID(Creatureraze) == sslCreatureAnimationSlots.GetRaceKey(Creatureraze)
+				CreatureRaceOID[ic] = AddTextOption(MiscUtil.GetRaceEditorID(Creatureraze) + ":" + sslCreatureAnimationSlots.GetRaceKey(Creatureraze) + "("+r+ ")", StorageUtil.GetFloatValue(Creatureraze, inflater.CREATURERACE_CUM_AMOUNT, 0.75))
 				ic += 1
 			endWhile
 		else	

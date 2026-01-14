@@ -763,7 +763,7 @@ int Function GetRaceIndex(string RaceName)
                 return 1
         elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
                 return 2
-        elseIf RaceName == "Canines" || RaceName == "Wolf" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
+        elseIf RaceName == "Canines" || RaceName == "Wolf" || RaceName == "Wolves" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
                 return 3
         elseIf RaceName == "Chaurus"
                 return 4
@@ -1124,59 +1124,59 @@ EndFunction
 ;9;FrostAtronach
 
 Function EquiprandomTongue(actor akActor, Bool BEquip)
-if BEquip
-	int Tongueri = Utility.RandomInt(1, 10)
-	if Tongueri == 1
-		akActor.addItem(sr_linga1armor, 1, true)
-		akActor.equipItem(sr_linga1armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga1armor)
-	elseif Tongueri == 2
-		akActor.addItem(sr_linga2armor, 1, true)
-		akActor.equipItem(sr_linga2armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga2armor)
-	elseif Tongueri == 3
-		akActor.addItem(sr_linga3armor, 1, true)
-		akActor.equipItem(sr_linga3armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga3armor)
-	elseif Tongueri == 4
-		akActor.addItem(sr_linga4armor, 1, true)
-		akActor.equipItem(sr_linga4armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga4armor)
-	elseif Tongueri == 5
-		akActor.addItem(sr_linga5armor, 1, true)
-		akActor.equipItem(sr_linga5armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga5armor)
-	elseif Tongueri == 6
-		akActor.addItem(sr_linga6armor, 1, true)
-		akActor.equipItem(sr_linga6armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga6armor)
-	elseif Tongueri == 7
-		akActor.addItem(sr_linga7armor, 1, true)
-		akActor.equipItem(sr_linga7armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga7armor)
-	elseif Tongueri == 8
-		akActor.addItem(sr_linga8armor, 1, true)
-		akActor.equipItem(sr_linga8armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga8armor)
-	elseif Tongueri == 9
-		akActor.addItem(sr_linga9armor, 1, true)
-		akActor.equipItem(sr_linga9armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga9armor)
-	elseif Tongueri == 10
-		akActor.addItem(sr_linga10armor, 1, true)
-		akActor.equipItem(sr_linga10armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga10armor)
+	if BEquip
+		int Tongueri = Utility.RandomInt(1, 10)
+		if Tongueri == 1
+			akActor.addItem(sr_linga1armor, 1, true)
+			akActor.equipItem(sr_linga1armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga1armor)
+		elseif Tongueri == 2
+			akActor.addItem(sr_linga2armor, 1, true)
+			akActor.equipItem(sr_linga2armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga2armor)
+		elseif Tongueri == 3
+			akActor.addItem(sr_linga3armor, 1, true)
+			akActor.equipItem(sr_linga3armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga3armor)
+		elseif Tongueri == 4
+			akActor.addItem(sr_linga4armor, 1, true)
+			akActor.equipItem(sr_linga4armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga4armor)
+		elseif Tongueri == 5
+			akActor.addItem(sr_linga5armor, 1, true)
+			akActor.equipItem(sr_linga5armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga5armor)
+		elseif Tongueri == 6
+			akActor.addItem(sr_linga6armor, 1, true)
+			akActor.equipItem(sr_linga6armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga6armor)
+		elseif Tongueri == 7
+			akActor.addItem(sr_linga7armor, 1, true)
+			akActor.equipItem(sr_linga7armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga7armor)
+		elseif Tongueri == 8
+			akActor.addItem(sr_linga8armor, 1, true)
+			akActor.equipItem(sr_linga8armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga8armor)
+		elseif Tongueri == 9
+			akActor.addItem(sr_linga9armor, 1, true)
+			akActor.equipItem(sr_linga9armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga9armor)
+		elseif Tongueri == 10
+			akActor.addItem(sr_linga10armor, 1, true)
+			akActor.equipItem(sr_linga10armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga10armor)
+		endif
+	else
+		int i = FormListCount(akActor, "sr.inflater.equipped_tongue")
+		while(i > 0)
+			i -= 1
+			Armor aTongue = FormListGet(akActor, "sr.inflater.equipped_tongue", i) as Armor
+			akActor.unequipItem(aTongue, abSilent=true)
+			akActor.removeItem(aTongue, 99, true)
+		endwhile
+		FormListClear(akActor, "sr.inflater.equipped_tongue")
 	endif
-else
-	int i = FormListCount(akActor, "sr.inflater.equipped_tongue")
-	while(i > 0)
-		i -= 1
-		Armor aTongue = FormListGet(akActor, "sr.inflater.equipped_tongue", i) as Armor
-		akActor.unequipItem(aTongue, abSilent=true)
-		akActor.removeItem(aTongue, 99, true)
-	endwhile
-	FormListClear(akActor, "sr.inflater.equipped_tongue")
-endif
 EndFunction
 
 Function EquipLeak(Actor akActor, Armor leak)
@@ -2111,7 +2111,7 @@ State MonitoringInflation
 				RegisterForSingleUpdateGameTime(0.5)
 				return
 			EndIf
-			SendModEvent("dhlp-Suspend")
+			;SendModEvent("dhlp-Suspend")
 			float startTime = Utility.GetCurrentGameTime()
 			While n > 0
 				
@@ -2249,7 +2249,7 @@ State MonitoringInflation
 				endif
 					Utility.Wait(10.0) ; Wait for all queued threads to finish
 			EndWhile
-			SendModEvent("dhlp-Resume")
+		;	SendModEvent("dhlp-Resume")
 			float duration = (Utility.GetCurrentGameTime() - startTime) * 24
 			float nextUpdate = 1.0 - duration
 			If nextUpdate < 0.1
@@ -2741,22 +2741,110 @@ EndFunction
 ; Injectors Helpers
 ; -------
 
-Function Injector_AddToActor(Actor target, int pool, int amount, Race sourceRace = None, Actor sourceActor = None)
-	string race_id = MiscUtil.GetRaceEditorID(sourceRace)
-
-	int racesList = StringListCount(target, "sr.injector.v3.race_injectors_list")
-	While i > 0
-		i -= 1
-
-	EndWhile
-EndFunction
-
-Function Injector_RemoveFromActor(Actor target, int pool, int amount, int spermType = None)
-EndFunction
+;Function Injector_AddToActor(Actor target, int pool, float amount, Race sourceRace = None, Actor sourceActor = None)
+;	If !sourceRace && sourceActor
+;		sourceRace = sourceActor.GetLeveledActorBase().GetRace()
+;	EndIf
+;	
+;	If sourceRace
+;		string raceId = MiscUtil.GetRaceEditorID(sourceRace)
+;		If raceId
+;			FormListAdd(target, "sr.injector.v3.race_injectors_list_" + pool, sourceRace, false)
+;			string raceKey = "sr.injector.v3.race_injectors_" + pool + "_" + raceId
+;			Log("Injector_AddToActor target" + target +"; ")
+;			AdjustFloatValue(target, raceKey, amount)
+;		Else
+;			Log("Unknown RaceEditorID for " + sourceRace)
+;		EndIf
+;	EndIf
+;
+;	If sourceActor && pool == VAGINAL
+;		string actorKey = "sr.injector.v3.actor_injectors_" + pool
+;		FormListAdd(target, actorKey, sourceActor, false)
+;	EndIf
+;EndFunction
+;
+;Function Injector_AdjustAmountForActor(Actor target, int pool, float value, int spermType = -1)
+;	float[] amountsPerSpermType = Injector_GetAmountPerSpermType(target, pool)
+;EndFunction
+;
+;Form[] Function Injector_GetRacesBySpermType(Actor target, int pool, int spermType)
+;	int racesListCount = FormListCount(target, "sr.injector.v3.race_injectors_list_" + pool)
+;
+;	If racesListCount == 0
+;		return None
+;	EndIf
+;
+;	Form[] racesArray = Utility.CreateFormArray(racesListCount)
+;
+;	int racesId = 0
+;	int cnt = 0
+;
+;	While racesId < racesListCount
+;		Race lRace = StorageUtil.FormListGet(target, "sr.injector.v3.race_injectors_list_" + pool, racesId) as Race
+;		If GetSpermTypeByRace(lRace) == spermType
+;			racesArray[cnt] = lRace
+;			cnt += 1
+;		EndIf
+;		racesId += 1
+;	EndWhile
+;
+;	If cnt == 0
+;		return None
+;	EndIf
+;
+;	return Utility.ResizeFormArray(racesArray, cnt)
+;EndFunction
+;
+;Float[] Function Injector_GetAmountPerSpermType(Actor target, int pool)
+;	int racesListCount = FormListCount(target, "sr.injector.v3.race_injectors_list_" + pool)
+;
+;	Float[] amounts = Utility.CreateFloatArray(10, 0.0)
+;
+;	int spermTypeId = 0
+;	int racesId = 0
+;
+;	While racesId < racesListCount
+;		Race lRace = StorageUtil.FormListGet(target, "sr.injector.v3.race_injectors_list_" + pool, racesId) as Race
+;		string raceKey = "sr.injector.v3.race_injectors_" + pool + "_" + MiscUtil.GetRaceEditorID(lRace)
+;		amounts[GetSpermTypeByRace(lRace)] += GetFloatValue(target, raceKey, 0.0)
+;		racesId += 1
+;	EndWhile
+;
+;	return amounts
+;EndFunction
 
 ; -------
 ; Helpers
 ; -------
+
+;int Function GetSpermTypeByRace(Race sourceRace)
+;	if sourceRace.HasKeyword(ActorTypeNPC)
+;        return 0
+;    endif
+;
+;	int spermtype = 1;beast
+;
+;	if sourceRace == sr_CreatureRaceList.getat(13)
+;		spermtype = 2;dragur
+;	elseif sourceRace == sr_CreatureRaceList.getat(40) || sourceRace == sr_CreatureRaceList.getat(41) || sourceRace == sr_CreatureRaceList.getat(42)
+;		spermtype = 3;spider
+;	elseif sourceRace == sr_CreatureRaceList.getat(4) || sourceRace == sr_CreatureRaceList.getat(5) || sourceRace == sr_CreatureRaceList.getat(6)
+;		spermtype = 4;Chaurus
+;	elseif sourceRace == sr_CreatureRaceList.getat(43)
+;		spermtype = 5;Spriggan
+;	elseif sourceRace == sr_CreatureRaceList.getat(39)
+;		spermtype = 6;StoneAtronach
+;	elseif sourceRace == sr_CreatureRaceList.getat(0)
+;		spermtype = 7;ashHopper
+;	elseif sourceRace == sr_CreatureRaceList.getat(19)
+;		spermtype = 8;FlameAtronach
+;	elseif sourceRace == sr_CreatureRaceList.getat(21)
+;		spermtype = 9;FrostAtronach
+;	endif
+;
+;	return spermtype
+;EndFunction
 
 int function GetAvailableExpelPool(Actor a)
 	return GetintValue(a, EXPEL_SWITCH)
