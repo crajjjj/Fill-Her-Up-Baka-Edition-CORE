@@ -5,7 +5,7 @@ Quest Property srinflateQuest Auto
 Quest Property srinflateConfig Auto
 int property currentversion = 1 auto
 Event OnPlayerLoadGame()
-	;
+	inflater.RestoreActors()
 EndEvent
 
 Event OnCellLoad()
@@ -13,11 +13,7 @@ Event OnCellLoad()
 EndEvent
 
 Function ResetQuests()
-	srinflateQuest.stop()
-	srinflateConfig.stop()
-
-	srinflateQuest.start()
-	srinflateConfig.start()
+	; obsolete
 EndFunction
 
 int function VersionCheck()

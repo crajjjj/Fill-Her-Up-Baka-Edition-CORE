@@ -449,7 +449,10 @@ Function doPush(int type)
 	endif
 	p.RemoveFromFaction(inflater.inflaterAnimatingFaction)
 	inflater.EncumberActor(p) ; Has a 2s wait in it, do it after returning controls to keep it responsive
-	int cumcompare = Math.Ceiling(diff)
+	int cumcompare = 0
+	If diff > 0
+		cumcompare = diff as Int
+	EndIf
 	
 	if sr_Cumvariationingredients.getvalue() == 1 && cumcompare > 0
 		int spermtype = GetIntValue(p, inflater.ANIMATING_SPERMTYPE, -1)

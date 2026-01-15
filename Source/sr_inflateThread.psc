@@ -63,12 +63,12 @@ Event StartInflation()
 	Actor t = GetActorReference()
 	if !t
 		log("Can't process, Actor Reference is None.", 1)
-		clear()
+		ResetThread()
 		return
 	endIf
 	If t.IsInFaction(inflater.inflaterAnimatingFaction)
 		log("Can't process, she is already animating.", 1)
-		clear()
+		ResetThread()
 		return
 	endIf
 	t.AddToFaction(inflater.inflaterAnimatingFaction)
@@ -79,7 +79,7 @@ Event StartInflation()
 		Deflate()
 	EndIf
 	t.RemoveFromFaction(inflater.inflaterAnimatingFaction)
-	clear()
+	ResetThread()
 EndEvent
 
 Function SetUpAbsorb(bool inflate, int poolMask, float amount, float time = 6.0, String callback = "", int DoAnimate = 0 )
@@ -123,7 +123,7 @@ Event StartAbsorption()
 	Actor t = GetActorReference()
 	If t.IsInFaction(inflater.inflaterAnimatingFaction)
 		log("Can't process, she is already animating.", 1)
-		clear()
+		ResetThread()
 		return
 	endIf
 	t.AddToFaction(inflater.inflaterAnimatingFaction)
@@ -134,7 +134,7 @@ Event StartAbsorption()
 		Absorb()
 	EndIf
 	t.RemoveFromFaction(inflater.inflaterAnimatingFaction)
-	clear()
+	ResetThread()
 EndEvent
 
 Function doInflation(Actor p, bool isVaginalOrAnal, float currentInf, float startVag, float startAn, float startOral)
@@ -852,7 +852,7 @@ EndFunction
 Event OnUpdate()
 	If !running
 		log("Thread timed out, clearing.")
-		clear()
+		ResetThread()
 		return
 	EndIf
 
@@ -894,6 +894,14 @@ Event OnUpdate()
 		RegisterForSingleUpdate(nextUpdate)
 	endif
 EndEvent
+
+Function ResetThread()
+	UnregisterForUpdate()
+	running = false
+	updateFHU = false
+	updateCumType = 0
+	clear()
+EndFunction
 
 Function log(String msg, int lvl = 0)
 	msg = GetActorReference().GetLeveledActorBase().GetName() + ": " + msg

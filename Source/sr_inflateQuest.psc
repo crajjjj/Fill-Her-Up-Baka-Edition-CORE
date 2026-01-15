@@ -122,7 +122,7 @@ sr_inflateThread[] Property threads auto
 ;Bool TongueOut
 
 GlobalVariable Property sr_CumMultiplier Auto
-GlobalVariable Property sr_SLIF Auto
+GlobalVariable Property sr_SLIF Auto ;deprecated
 float Property cumMult hidden
 	float Function Get()
 		return sr_CumMultiplier.GetValue()
@@ -336,11 +336,11 @@ Function RubStomach(actor akactor)
 EndFunction
 
 float Function GetVersion()
-	return 2.00
+	return 2.03
 EndFunction
 
 String Function GetVersionString()
-	return "2.00"
+	return "2.03"
 EndFunction
 
 Event OnInit()
@@ -366,16 +366,16 @@ Function VersionUpdate()
 EndFunction
 
 Function maintenance()
-	log("maintenance()")
+	String previousState = GetState()
+	GoToState("maintenance")
 
 	RegisterForModEvent("dhlp-Suspend", "OnDhlpSuspend" )
 	RegisterForModEvent("dhlp-Resume", "OnDhlpResume" )
+
 	if config.enabled
-		;debug.notification("FHU Maintenance")
 		RegisterForModEvent("HookOrgasmStart", "Orgasm")
 		RegisterForModEvent("HookAnimationEnd", "FHUSexlabEnd")
 		RegisterForModEvent("SexLabOrgasmSeparate", "OrgasmSeparate")
-		RestoreActors()
 	else
 		UnregisterForModEvent("HookOrgasmStart")
 		UnregisterForModEvent("HookAnimationEnd")
@@ -386,6 +386,12 @@ Function maintenance()
 	(sr_inflateExternalEventManager as sr_inflateExternalEventController).RegisterModEvent()
 	defAlias.Maintenance()
 	bDeflateAnimation = false
+
+	If previousState != "maintenance"
+		GoToState(previousState)
+	Else
+		GoToState("")
+	EndIf
 EndFunction
 
 ;dhlp event handlers
@@ -785,7 +791,7 @@ int Function GetRaceIndex(string RaceName)
                 return 1
         elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
                 return 2
-        elseIf RaceName == "Canines" || RaceName == "Wolf" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
+        elseIf RaceName == "Canines" || RaceName == "Wolf" || RaceName == "Wolves" ; https://www.loverslab.com/topic/156185-fill-her-up-baka-edition/page/57/#findComment-4238590
                 return 3
         elseIf RaceName == "Chaurus"
                 return 4
@@ -1146,59 +1152,59 @@ EndFunction
 ;9;FrostAtronach
 
 Function EquiprandomTongue(actor akActor, Bool BEquip)
-if BEquip
-	int Tongueri = Utility.RandomInt(1, 10)
-	if Tongueri == 1
-		akActor.addItem(sr_linga1armor, 1, true)
-		akActor.equipItem(sr_linga1armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga1armor)
-	elseif Tongueri == 2
-		akActor.addItem(sr_linga2armor, 1, true)
-		akActor.equipItem(sr_linga2armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga2armor)
-	elseif Tongueri == 3
-		akActor.addItem(sr_linga3armor, 1, true)
-		akActor.equipItem(sr_linga3armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga3armor)
-	elseif Tongueri == 4
-		akActor.addItem(sr_linga4armor, 1, true)
-		akActor.equipItem(sr_linga4armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga4armor)
-	elseif Tongueri == 5
-		akActor.addItem(sr_linga5armor, 1, true)
-		akActor.equipItem(sr_linga5armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga5armor)
-	elseif Tongueri == 6
-		akActor.addItem(sr_linga6armor, 1, true)
-		akActor.equipItem(sr_linga6armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga6armor)
-	elseif Tongueri == 7
-		akActor.addItem(sr_linga7armor, 1, true)
-		akActor.equipItem(sr_linga7armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga7armor)
-	elseif Tongueri == 8
-		akActor.addItem(sr_linga8armor, 1, true)
-		akActor.equipItem(sr_linga8armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga8armor)
-	elseif Tongueri == 9
-		akActor.addItem(sr_linga9armor, 1, true)
-		akActor.equipItem(sr_linga9armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga9armor)
-	elseif Tongueri == 10
-		akActor.addItem(sr_linga10armor, 1, true)
-		akActor.equipItem(sr_linga10armor, abSilent=true)
-		FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga10armor)
+	if BEquip
+		int Tongueri = Utility.RandomInt(1, 10)
+		if Tongueri == 1
+			akActor.addItem(sr_linga1armor, 1, true)
+			akActor.equipItem(sr_linga1armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga1armor)
+		elseif Tongueri == 2
+			akActor.addItem(sr_linga2armor, 1, true)
+			akActor.equipItem(sr_linga2armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga2armor)
+		elseif Tongueri == 3
+			akActor.addItem(sr_linga3armor, 1, true)
+			akActor.equipItem(sr_linga3armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga3armor)
+		elseif Tongueri == 4
+			akActor.addItem(sr_linga4armor, 1, true)
+			akActor.equipItem(sr_linga4armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga4armor)
+		elseif Tongueri == 5
+			akActor.addItem(sr_linga5armor, 1, true)
+			akActor.equipItem(sr_linga5armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga5armor)
+		elseif Tongueri == 6
+			akActor.addItem(sr_linga6armor, 1, true)
+			akActor.equipItem(sr_linga6armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga6armor)
+		elseif Tongueri == 7
+			akActor.addItem(sr_linga7armor, 1, true)
+			akActor.equipItem(sr_linga7armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga7armor)
+		elseif Tongueri == 8
+			akActor.addItem(sr_linga8armor, 1, true)
+			akActor.equipItem(sr_linga8armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga8armor)
+		elseif Tongueri == 9
+			akActor.addItem(sr_linga9armor, 1, true)
+			akActor.equipItem(sr_linga9armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga9armor)
+		elseif Tongueri == 10
+			akActor.addItem(sr_linga10armor, 1, true)
+			akActor.equipItem(sr_linga10armor, abSilent=true)
+			FormListAdd(akActor, "sr.inflater.equipped_tongue", sr_linga10armor)
+		endif
+	else
+		int i = FormListCount(akActor, "sr.inflater.equipped_tongue")
+		while(i > 0)
+			i -= 1
+			Armor aTongue = FormListGet(akActor, "sr.inflater.equipped_tongue", i) as Armor
+			akActor.unequipItem(aTongue, abSilent=true)
+			akActor.removeItem(aTongue, 99, true)
+		endwhile
+		FormListClear(akActor, "sr.inflater.equipped_tongue")
 	endif
-else
-	int i = FormListCount(akActor, "sr.inflater.equipped_tongue")
-	while(i > 0)
-		i -= 1
-		Armor aTongue = FormListGet(akActor, "sr.inflater.equipped_tongue", i) as Armor
-		akActor.unequipItem(aTongue, abSilent=true)
-		akActor.removeItem(aTongue, 99, true)
-	endwhile
-	FormListClear(akActor, "sr.inflater.equipped_tongue")
-endif
 EndFunction
 
 Function EquipLeak(Actor akActor, Armor leak)
@@ -1314,14 +1320,14 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 		return
 	EndIf
 
-	log("StartLeakage for " + akActor.GetLeveledActorBase().GetName() + "; animate:" + animate + "; CumType: " + CumType + "; spermtype: " + spermtype)
-
 	bool isStripArmorExpected = false
 	Armor leak1ForEquip = None
 	Armor leak2ForEquip = None
 	int animnum = 0
 	int spermtype = GetSpermLastActor(akActor, CumType)
 	SetIntValue(akActor, ANIMATING_SPERMTYPE, spermtype)
+
+	log("StartLeakage for " + akActor.GetLeveledActorBase().GetName() + "; animate:" + animate + "; CumType: " + CumType + "; spermtype: " + spermtype)
 
 	If animate == 2
 		; Burst deflate 
@@ -1853,7 +1859,12 @@ Function RestoreActors()
 	int n = FormListCount(self, INFLATED_ACTORS) 
 	while n > 0
 		n -= 1
-		Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
+		Form f = FormListGet(self, INFLATED_ACTORS, n)
+		Actor a = f as Actor
+		If a == None
+			ResetActorState(f)
+			FormListRemove(self, INFLATED_ACTORS, f, true)
+		EndIf
 		log("Restoring inflation for " + a.GetLeveledActorBase().GetName() + "...")
 		If config.bellyScale
 			if config.Bodymorph
@@ -2040,6 +2051,37 @@ int i
 	endif
 EndFunction
 
+State maintenance
+	Event OnBeginState()
+		log("Starting maintenance")
+	EndEvent
+
+	Function ResetActors()
+		;
+	EndFunction
+	
+	Function ResetActor(Form f)
+		;
+	EndFunction
+
+	Function maintenance()
+		;
+	EndFunction
+
+	Event OnUpdateGameTime()
+		;
+	EndEvent
+
+	Function RestoreActors()
+		;
+	EndFunction
+	
+	Event OnEndState()
+		log("Stopping maintenance")
+		UnregisterForUpdateGameTime()
+	EndEvent
+EndState
+
 State MonitoringInflation
 	Event OnBeginState()
 		log("Starting inflation monitor")
@@ -2097,7 +2139,7 @@ State MonitoringInflation
 				RegisterForSingleUpdateGameTime(0.5)
 				return
 			EndIf
-			SendModEvent("dhlp-Suspend")
+			;SendModEvent("dhlp-Suspend")
 			float startTime = Utility.GetCurrentGameTime()
 			While n > 0
 				
@@ -2244,7 +2286,7 @@ State MonitoringInflation
 				endif
 					Utility.Wait(10.0) ; Wait for all queued threads to finish
 			EndWhile
-			SendModEvent("dhlp-Resume")
+		;	SendModEvent("dhlp-Resume")
 			float duration = (Utility.GetCurrentGameTime() - startTime) * 24
 			float nextUpdate = 1.0 - duration
 			If nextUpdate < 0.1
@@ -2281,35 +2323,45 @@ int Function GetOralDeflateChance(Actor akActor)
 	return chance
 EndFunction
 
-Function ResetActors(bool force = false)
-        GoToState("")
-        int n = FormListCount(self, INFLATED_ACTORS)
-		bool resetPlayerState = true
-        while n > 0
-			n -= 1
-			Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
-			ResetActorState(a)
-			if a == player
-				resetPlayerState = false
-			EndIf
-        EndWhile
-        FormListClear(self, INFLATED_ACTORS)
+Function ResetActors()
+        
+	String previousState = GetState()
+	GoToState("maintenance")
 
-        ; Make sure player is always reset
-		log("Resetting Player...")
-		If resetPlayerState
-			ResetActorState(player)
+	int n = FormListCount(self, INFLATED_ACTORS)
+	bool resetPlayerState = true
+	while n > 0
+		n -= 1
+		Form f = FormListGet(self, INFLATED_ACTORS, n)
+		ResetActorState(f)
+		if f == player
+			resetPlayerState = false
 		EndIf
-        SendPlayerCumUpdate(0.0, true)
-        SendPlayerCumUpdate(0.0, false)
-        sr_InjectorFormlist.revert()
+	EndWhile
+	FormListClear(self, INFLATED_ACTORS)
 
-        notify("$FHU_ACTORS_RESET")
+	; Make sure player is always reset
+	log("Resetting Player...")
+	If resetPlayerState
+		ResetActorState(player)
+	EndIf
+	SendPlayerCumUpdate(0.0, true)
+	SendPlayerCumUpdate(0.0, false)
+	sr_InjectorFormlist.revert()
+
+	notify("$FHU_ACTORS_RESET")
+
+	GoToState("")
 EndFunction
 
-Function ResetActorState(Actor a)
-        log("Resetting " + a.GetLeveledActorBase().GetName() + "...")
-        if config.bellyScale
+Function ResetActorState(Form f)
+		Actor a = f as Actor
+		String name = "None"
+		If(a)
+			name = a.GetLeveledActorBase().GetName()
+		EndIf
+        log("Resetting " + name + ": " + f + "...")
+        if a && config.bellyScale
 			if config.Bodymorph
 				;SetBellyMorphValue(a, 0.0, "PregnancyBelly")
 				SetBellyMorphValue(a, 0.0, InflateMorph)
@@ -2326,26 +2378,28 @@ Function ResetActorState(Actor a)
 				RemoveNodeScale(a, BELLY_NODE)
 			Endif
         EndIf
-        FormListClear(a, "sr.inflater.injector")
-        FormListClear(a, "sr.inflater.analinjector")
+        FormListClear(f, "sr.inflater.injector")
+        FormListClear(f, "sr.inflater.analinjector")
 
-        UnsetFloatValue(a, INFLATION_AMOUNT)
-        UnsetFloatValue(a, CUM_ANAL)
-        UnsetFloatValue(a, CUM_VAGINAL)
-        UnsetFloatValue(a, CUM_ORAL)
-        UnsetFloatValue(a, LAST_TIME_ANAL)
-        UnsetFloatValue(a, LAST_TIME_VAG)
-        UnsetFloatValue(a, LAST_TIME_ORAL)
-;        UnsetFormValue(a, CHEST_ARMOR) ; obsolete
-        a.RemoveSpell(sr_inflateBurstSpell)
-        UnencumberActor(a)
-        RemoveFaction(a)
+        UnsetFloatValue(f, INFLATION_AMOUNT)
+        UnsetFloatValue(f, CUM_ANAL)
+        UnsetFloatValue(f, CUM_VAGINAL)
+        UnsetFloatValue(f, CUM_ORAL)
+        UnsetFloatValue(f, LAST_TIME_ANAL)
+        UnsetFloatValue(f, LAST_TIME_VAG)
+        UnsetFloatValue(f, LAST_TIME_ORAL)
+;        UnsetFormValue(f, CHEST_ARMOR) ; obsolete
+		If(a)
+			a.RemoveSpell(sr_inflateBurstSpell)
+			UnencumberActor(a)
+			RemoveFaction(a)
+		EndIf
 EndFunction
 
-Function ResetActor(Actor a)
-        ResetActorState(a)
-        FormListRemove(self, INFLATED_ACTORS, a, true)
-        If a == player
+Function ResetActor(Form f)
+        ResetActorState(f)
+        FormListRemove(self, INFLATED_ACTORS, f, true)
+        If f == player
 			SendPlayerCumUpdate(0.0, true)
 			SendPlayerCumUpdate(0.0, false)
 			sr_InjectorFormlist.revert()
@@ -3225,7 +3279,7 @@ Function SetBellyMorphValue(Actor akActor, float value, string MorphName)
 	endif
 	
 	If value != 0.0
-		if sr_SLIF.getvalue() == 1
+		if config.FHUSLIF
 			if MorphName == InflateMorph && config.FHUMorphSLIF
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
 			elseif MorphName == InflateMorph2 && config.FHUMorphSLIF2
@@ -3241,7 +3295,7 @@ Function SetBellyMorphValue(Actor akActor, float value, string MorphName)
 			NiOverride.SetBodyMorph(akActor, MorphName, FHU_KEY, value/10)
 		endif
 	Else
-		if sr_SLIF.getvalue() == 1
+		if config.FHUSLIF
 			if MorphName == InflateMorph && config.FHUMorphSLIF
 				SLIF_Morph.morph(akActor, "Fill Her Up", morphName, value/10, FHU_KEY)
 			elseif MorphName == InflateMorph2 && config.FHUMorphSLIF2
