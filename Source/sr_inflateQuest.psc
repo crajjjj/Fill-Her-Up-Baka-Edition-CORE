@@ -648,7 +648,7 @@ int Function GetCreatureRaceint(Actor Target)
 		return 1
 	elseIf RaceName == "Boars" || RaceName == "BoarsAny" || RaceName == "BoarsMounted"
 		return 2
-	elseIf RaceName == "Canines" || RaceName == "Wolf"
+	elseIf RaceName == "Canines" || RaceName == "Wolf" || RaceName == "Wolves"
 		return 3
 	elseIf RaceName == "Chaurus"
 		return 4
