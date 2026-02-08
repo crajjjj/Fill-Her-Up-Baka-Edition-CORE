@@ -1,0 +1,76 @@
+<?xml version='1.0'?>
+<PapyrusProject xmlns="PapyrusProject.xsd" 
+    Flags="TESV_Papyrus_Flags.flg" 
+    Game="sse"
+    Output="Scripts" 
+    Optimize="false" 
+    Release="false" 
+    Zip="true"
+    Package="false"
+    Final="false">
+    <Variables>
+        <!-- Set the name of your mod: -->
+        <Variable Name="ModName" Value="FHU baka 2.0.3 hentairim patch" />
+        <!-- <Variable Name="ModName" Value="FHU baka 1.96 hentairim patch" /> -->
+        <!-- The folder where you store all of your mods -->
+        <Variable Name="ModsFolder" Value="C:\Playground\Skyrim\mods" />
+        <!-- Optional folder with additional source code for imports -->
+        <Variable Name="ImportsFolder" Value=".\Source" />
+    </Variables>
+    <Imports>
+        <Import>.\Source</Import>
+        <Import>.\dependencies\FNIS Behavior SE 7.6\Data\source\scripts</Import>
+        <Import>.\dependencies\FNIS Sexy Move SE 7.2\Data\Source\Scripts</Import>
+        <Import>.\dependencies\PapyrusUtil\Source\Scripts</Import>
+        <Import>.\dependencies\SexLab Separate Orgasm\Scripts\Source</Import>
+        <Import>.\dependencies\SLAXSE2022\scripts\Source</Import>
+        <Import>.\dependencies\MfgFix NG\source\scripts</Import>
+        <Import>.\dependencies\Sexlab\scripts\Source</Import>
+        <Import>.\dependencies\Apropos2\Scripts\Source</Import>
+        <Import>.\dependencies\SlaveTats-1.3.0-beta-2 SE\Source\Scripts</Import>
+        <Import>.\dependencies\Devious Devices SE 5.1\00 Core\scripts\Source</Import>
+        <Import>.\dependencies\ConsoleUtil</Import>
+        <Import>.\dependencies\XP32 Maximum Skeleton Special Extended 4.67\Character Creation\MCM\assets\scripts\source</Import>
+        <Import>.\dependencies\ZaZ Animation Pack</Import>
+        <Import>.\dependencies\iwantWidgets\Source\Scripts</Import>
+        <Import>.\dependencies\iwantstatusbars\Source\Scripts</Import>
+        <Import>.\dependencies\SkyUI_5.1_SDK\Scripts\Source</Import>
+        <Import>.\dependencies\skyui-master\dist\Data\Scripts\Source</Import>
+        <Import>.\dependencies\Papyrus Extender\source\scripts</Import>
+        <Import>.\dependencies\JContainers SE\Data\scripts\source</Import>
+        <Import>.\dependencies\racemenu\scripts\source</Import>
+        <Import>.\dependencies\MfgFix NG\source\scripts</Import>
+        <Import>.\dependencies\SLIF</Import>
+        <Import>.\dependencies\SLTooTiredToMove\Source\Scripts</Import>
+        <Import>C:\SteamLibrary\steamapps\common\Skyrim Special Edition\Data\Source\Scripts</Import>
+    </Imports>
+    <Folders>
+        <!-- Relative path to folder containing .psc Papyrus source code files for this project -->
+        <Folder>./Source</Folder>
+    </Folders>
+    <!-- The following section is for .bsa archives. You can enable it by setting Package="true" in the PapyrusProject -->
+    <Packages Output=".">
+        <Package Name="@ModName" RootDir=".">
+            <Match In="Scripts">*.pex</Match>
+            <!-- <Match In="interface\translations">*.txt</Match> -->
+        </Package>
+        <!-- If you have any texture files, uncomment the following to create a Textures .bsa archive with texture files -->
+        <!-- <Package Name="@ModName - Textures" RootDir=".">
+            <Include>*.dds</Include>
+        </Package> -->
+    </Packages>
+    <!-- The following section is for .zip archive. You can enable it by setting Zip="true" in the PapyrusProject -->
+    <ZipFiles Output="Build">
+        <ZipFile Name="@ModName" RootDir="." Compression="deflate">
+            <!-- <Include>Conditional Expressions.esp</Include> -->
+            <!-- <Include NoRecurse="true">*.bsa</Include> -->
+            <Match In="Source">*.psc</Match>
+            <Match In="Scripts">*.pex</Match>
+            <!--<Match In="SKSE\Plugins">*.dll</Match>-->
+            <Match In="Interface">*</Match>
+            <!-- <Match In="Sound">*</Match> -->
+            <!-- <Match In="SKSE\Plugins">*.dll</Match> -->
+            <!-- <Match In="SKSE\Plugins">*</Match> -->
+        </ZipFile>
+    </ZipFiles>
+</PapyrusProject>

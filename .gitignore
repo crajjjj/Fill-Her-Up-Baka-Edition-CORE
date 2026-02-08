@@ -536,7 +536,6 @@ build/
 /vcpkg_installed
 xmake.lua
 xmake-requires.lock
-skyrimse.ppj
 SkyrimSE.code-workspace
 .vscode
 
@@ -545,4 +544,3 @@ SkyrimSE.code-workspace
 /PAPYRUS
 /Build.ps1
 /include.txt
-*.pex
