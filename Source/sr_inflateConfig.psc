@@ -22,6 +22,11 @@ float property SpermRemovalAmountOralDefault = 0.4 auto hidden
 float property digestionRatio = 0.5 auto hidden ; fraction of digested oral cum that reaches the anal pool (rest is absorbed)
 float property digestionRatioDefault = 0.5 autoreadonly hidden
 
+; FHU's own "allow female/futa cum" switch (off by default). SexLab p+ keeps the
+; AllowFFCum property but hides its MCM toggle, so turn this on to let female/futa
+; partners inflate the receiver.
+bool property allowFFCum = false auto hidden
+
 GlobalVariable Property sr_Cumvariation Auto
 GlobalVariable Property sr_Cumvariationingredients Auto
 Globalvariable Property sr_followerCommentChance Auto
@@ -268,6 +273,7 @@ int removespermamountanalOID
 int removespermamountoralOID
 
 int digestionRatioOID
+int allowFFCumOID
 
 GlobalVariable Property sr_TongueEffect Auto
 GlobalVariable Property sr_OnEventSpermPlayer Auto
@@ -422,6 +428,7 @@ Function SetDefaults()
 	SpermRemovalAmountAnal = SpermRemovalAmountAnalDefault
 	SpermRemovalAmountOral = SpermRemovalAmountOralDefault
 	digestionRatio = digestionRatioDefault
+	allowFFCum = false
 
 	if SLIF_Installed
 		FHUSLIF = true
@@ -698,6 +705,7 @@ Event OnPageReset(String page)
 		eventSendeventCriterionOID = AddSliderOption("$FHU_SENDEVENT_CRITERION", SendeventCriterion, "{0}%")
 		
 		autodeflationOID = AddToggleOption("$FHU_AUTO_DEFLATE", sr_OnEventNoDeflation.getvalue())
+		allowFFCumOID = AddToggleOption("$FHU_ALLOW_FF_CUM", allowFFCum)
 		absorbspermOID = AddToggleOption("$FHU_ABSORB_SPERM", sr_OnEventAbsorbSperm.getvalue())
 		removespermamountvagOID = AddSliderOption("$FHU_REMOVESPERMVAG_AMOUNT", SpermRemovalAmountVag, "{1}")
 		removespermamountanalOID = AddSliderOption("$FHU_REMOVESPERMANAL_AMOUNT", SpermRemovalAmountAnal, "{1}")
@@ -1521,6 +1529,9 @@ State events
 				sr_OnEventNoDeflation.setvalue(0)
 			endif
 			SetToggleOptionValue(autodeflationOID, sr_OnEventNoDeflation.getvalue())
+		ElseIf opt == allowFFCumOID
+			allowFFCum = !allowFFCum
+			SetToggleOptionValue(allowFFCumOID, allowFFCum)
 		ElseIf opt == absorbspermOID
 			if sr_OnEventAbsorbSperm.getvalue() == 0
 				sr_OnEventAbsorbSperm.setvalue(1)
@@ -1644,6 +1655,8 @@ State events
 			SetInfoText("$FHU_FertilityInfo")
 		ElseIf opt == autodeflationOID
 			SetInfoText("$FHU_AUTO_DEFLATE_HELP")
+		ElseIf opt == allowFFCumOID
+			SetInfoText("$FHU_ALLOW_FF_CUM_HELP")
 		ElseIf opt == absorbspermOID
 			SetInfoText("$FHU_ABSORB_SPERM_HELP")
 		ElseIf opt == absorbspermoralOID
@@ -1869,6 +1882,9 @@ Event OnOptionDefault(int opt)
 	ElseIf opt == autodeflationOID
 		sr_OnEventNoDeflation.setvalue(0)
 		SetToggleOptionValue(autodeflationOID,sr_OnEventNoDeflation.getvalue())
+	ElseIf opt == allowFFCumOID
+		allowFFCum = false
+		SetToggleOptionValue(allowFFCumOID, allowFFCum)
 	ElseIf opt == absorbspermOID
 		sr_OnEventAbsorbSperm.setvalue(0)
 		SetToggleOptionValue(absorbspermOID,sr_OnEventAbsorbSperm.getvalue())
@@ -2315,6 +2331,7 @@ bool Function SaveUserConfig()
 	JsonUtil.SetIntValue(userSettingsFile, "sr_OnEventAbsorbSpermOral", sr_OnEventAbsorbSpermOral.getvalue() as int)
 	JsonUtil.SetFloatValue(userSettingsFile, "SpermRemovalAmountOral", SpermRemovalAmountOral)
 	JsonUtil.SetFloatValue(userSettingsFile, "digestionRatio", digestionRatio)
+	JsonUtil.SetIntValue(userSettingsFile, "allowFFCum", allowFFCum as int)
 	JsonUtil.SetIntValue(userSettingsFile, "sr_TongueEffect", sr_TongueEffect.getvalue() as int)
 
 	JsonUtil.SetIntValue(userSettingsFile, "sr_OnEventSpermPlayer", sr_OnEventSpermPlayer.getvalue() as int)
@@ -2434,6 +2451,7 @@ bool Function LoadUserConfig()
 	sr_OnEventAbsorbSpermOral.SetValue((JsonUtil.GetIntValue(userSettingsFile, "sr_OnEventAbsorbSpermOral", sr_OnEventAbsorbSpermOral.getvalue() as int) as bool) as int)
 	SpermRemovalAmountOral = JsonUtil.GetFloatValue(userSettingsFile, "SpermRemovalAmountOral", SpermRemovalAmountOral)
 	digestionRatio = JsonUtil.GetFloatValue(userSettingsFile, "digestionRatio", digestionRatio)
+	allowFFCum = JsonUtil.GetIntValue(userSettingsFile, "allowFFCum", allowFFCum as int) as bool
 	sr_TongueEffect.SetValue((JsonUtil.GetIntValue(userSettingsFile, "sr_TongueEffect", sr_TongueEffect.getvalue() as int) as bool) as int)
 
 	sr_OnEventSpermPlayer.SetValue((JsonUtil.GetIntValue(userSettingsFile, "sr_OnEventSpermPlayer", sr_OnEventSpermPlayer.getvalue() as int) as bool) as int)

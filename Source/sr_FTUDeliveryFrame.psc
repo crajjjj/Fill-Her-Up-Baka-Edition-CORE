@@ -158,7 +158,7 @@ Event PurityMonitor(int threadID, bool hasPlayer)
 		
 		while i > 0
 			i -= 1
-			if actors[i] != pl && ( allowed.Find(actors[i].GetLeveledActorBase().GetRace()) == -1 || ( aa1 && actors[i] != aa1 ) ) && ( SexLab.GetGender(actors[i]) != 1 || sexlab.config.AllowFFCum )
+			if actors[i] != pl && ( allowed.Find(actors[i].GetLeveledActorBase().GetRace()) == -1 || ( aa1 && actors[i] != aa1 ) ) && ( SexLab.GetGender(actors[i]) != 1 || inflater.IsFFCumAllowed() )
 				sr_Contaminated.SetValueInt(1)
 				If cb != ""
 					int eid = ModEvent.Create(cb)

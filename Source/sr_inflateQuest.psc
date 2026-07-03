@@ -565,7 +565,7 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
     endif
 
 	If inflateTrigger
-		If (!sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
+		If (!IsFFCumAllowed() && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
 			return
 		EndIf
 		
@@ -634,7 +634,7 @@ Event Orgasm(int thread, bool hasPlayer)
 	Actor[] actors = sexlab.HookActors(thread)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
 	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
-		If ( !sexlab.config.allowFFCum && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
+		If ( !IsFFCumAllowed() && sexlab.MaleCount(actors) < 1 && sexlab.CreatureCount(actors) < 1)
 			return 
 		EndIf
 		
@@ -803,9 +803,9 @@ float Function GetCumAmountForActor(Actor a, Actor[] all)
 	while i > 0
 		i -= 1
 		current = all[i]
-		If current != a && current.haskeyword(ActortypeNPC) && ( sexlab.GetGender(current) != 1 || sexlab.config.AllowFFCum )
+		If current != a && current.haskeyword(ActortypeNPC) && ( sexlab.GetGender(current) != 1 || IsFFCumAllowed() )
 			tot += (GetFloatValue(current.GetLeveledActorBase().GetRace(), RACE_CUM_AMOUNT, 0.75) * cumMult)
-		Elseif current != a && !current.haskeyword(ActortypeNPC) && ( sexlab.GetGender(current) != 1 || sexlab.config.AllowFFCum )
+		Elseif current != a && !current.haskeyword(ActortypeNPC) && ( sexlab.GetGender(current) != 1 || IsFFCumAllowed() )
 			tot += VerifyRace(current)
 		EndIf
 	endWhile
@@ -3150,6 +3150,12 @@ float Function GetTotalCum(Actor a)
 	; targets those pools). The burst *trigger* separately accounts for oral; oral
 	; itself drains on its own timer, so it is not included here.
 	return GetAnalCum(a) + GetVaginalCum(a)
+EndFunction
+
+; Whether female/female (and futa) partners count as cum sources. SexLab p+ ships
+; the AllowFFCum property but hides its MCM toggle, so honor FHU's own option too.
+bool Function IsFFCumAllowed()
+	return sexlab.config.AllowFFCum || config.allowFFCum
 EndFunction
 
 float Function GetInflation(Actor a)
