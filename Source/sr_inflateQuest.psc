@@ -477,7 +477,9 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 				EndIf
 				i += 1
 			endwhile
-			Debug.Notification(victim.GetLeveledActorBase().GetName() + " (NPC) took sperm from " + Male.GetLeveledActorBase().GetName())
+			If Male
+				Debug.Notification(victim.GetLeveledActorBase().GetName() + " (NPC) took sperm from " + Male.GetLeveledActorBase().GetName())
+			EndIf
 		endif
 	else
 		log("No vaginal or anal fail")
@@ -2923,6 +2925,9 @@ Function HandleOralOverflow(Actor a)
 	SetFloatValue(a, CUM_ANAL, analCum)
 	SetFloatValue(a, INFLATION_AMOUNT, analCum + vagCum)
 	SetFloatValue(a, LAST_TIME_ANAL, GameDaysPassed.GetValue())
+	If a == player
+		SendPlayerCumUpdate(analCum, true) ; keep the player's anal cum HUD in sync
+	EndIf
 	ApplyBellyMorphs(a)
 	UpdateFaction(a)
 	EncumberActor(a)
@@ -2967,7 +2972,14 @@ Function DigestOral(Actor a)
 		analCum += toAnal
 		SetFloatValue(a, CUM_ANAL, analCum)
 		SetFloatValue(a, INFLATION_AMOUNT, analCum + vagCum)
-		SetFloatValue(a, LAST_TIME_ANAL, GameDaysPassed.GetValue())
+		; only start the anal deflation timer if it isn't already running - digestion
+		; ticks repeatedly, and refreshing it each tick would starve auto-deflation
+		If GetFloatValue(a, LAST_TIME_ANAL) <= 0.0
+			SetFloatValue(a, LAST_TIME_ANAL, GameDaysPassed.GetValue())
+		EndIf
+		If a == player
+			SendPlayerCumUpdate(analCum, true) ; keep the player's anal cum HUD in sync
+		EndIf
 	EndIf
 
 	; oral only loses what actually left (absorbed + transferred); the transit part backs up

@@ -50,9 +50,12 @@ Event OnUpdateGameTime()
 
 		RegisterForSingleUpdateGameTime(0.5)
 	Else
-		float maxInflation = inflater.config.maxInflation * inflater.BURST_MULT
+		; She is free now, so release the burst: deflate the vaginal/anal overfill back
+		; down to the NORMAL pool max. (Using the *BURST_MULT cap here would never fire,
+		; since Inflate() already clamps vag+anal to exactly that cap.)
+		float maxInflation = inflater.config.maxInflation
 		float deflateAmount = (inflater.GetTotalCum(t)) - maxInflation
-		
+
 		If deflateAmount > 0.0
 			inflater.log("Deflating burst from " + t.GetLeveledActorBase().GetName())
 			int poolmask = 0
@@ -68,9 +71,9 @@ Event OnUpdateGameTime()
 			EndIf
 			Dispel()
 		Else
-			; combined belly is within the burst zone (below the overflow cap) - nothing
-			; to deflate, the burst penalty just ends. Normal case, so log rather than warn.
-			inflater.log("Burst effect ending, total cum below overflow cap for "+t.GetLeveledActorBase().GetName()+" (" + inflater.GetTotalCum(t) + "/" + maxInflation + ")" )
+			; vaginal+anal already at/below the normal cap - nothing to release (e.g. an
+			; oral-driven burst; oral drains on its own timer). The penalty just ends.
+			inflater.log("Burst effect ending, vag+anal at/below cap for "+t.GetLeveledActorBase().GetName()+" (" + inflater.GetTotalCum(t) + "/" + maxInflation + ")" )
 			Dispel()
 		EndIf
 	EndIf
