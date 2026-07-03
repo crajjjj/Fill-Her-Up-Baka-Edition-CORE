@@ -10,7 +10,7 @@
     Final="false">
     <Variables>
         <!-- Set the name of your mod: -->
-        <Variable Name="ModName" Value="FHU baka 2.0.3 remaster" />
+        <Variable Name="ModName" Value="FHU baka 2.0.3 remaster patch" />
         <!-- <Variable Name="ModName" Value="FHU baka 1.96 hentairim patch" /> -->
         <!-- The folder where you store all of your mods -->
         <Variable Name="ModsFolder" Value="C:\Playground\Skyrim\mods" />
@@ -41,7 +41,6 @@
         <Import>.\dependencies\racemenu\scripts\source</Import>
         <Import>.\dependencies\MfgFix NG\source\scripts</Import>
         <Import>.\dependencies\SLIF</Import>
-        <Import>.\dependencies\SLTooTiredToMove\Source\Scripts</Import>
         <Import>C:\SteamLibrary\steamapps\common\Skyrim Special Edition\Data\Source\Scripts</Import>
     </Imports>
     <Folders>

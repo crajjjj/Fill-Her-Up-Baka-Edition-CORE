@@ -479,12 +479,7 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 	endif
 
 	if IsTullAnimatedCreampieReady()
-		GlobalVariable SLTTTMTiredTime = Game.GetFormFromFile(0x000804, "SLTooTiredToMove.esp") as GlobalVariable
-		if SLTTTMTiredTime
-			Utility.Wait(SLTTTMTiredTime.GetValue() + 2.0)
-		else
-			Utility.Wait(2.0)
-		endif
+		Utility.Wait(2.0)
 		int i = actors.length
 		while i > 0
 			i -= 1
@@ -507,8 +502,18 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 endevent
 
 Event OrgasmSeparate(Form ActorRef, Int Thread)
+	; SeparateOrgasms is the single switch for which orgasm system is live (on p+ it is
+	; iClimaxType==SLSO; on classic/SLSO it is the SexLab bool). When it is off, the
+	; legacy HookOrgasmStart path handles the scene, so ignore stray separate-orgasm
+	; events here to avoid double-counting (and the console spam some setups produce).
+	If !sexlab.config.SeparateOrgasms
+		return
+	EndIf
 	actor akActor = ActorRef as actor
-	
+	If !akActor
+		return
+	EndIf
+
 	Actor[] actors = sexlab.HookActors(thread)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
 	SslThreadController threadContr = SexLab.GetController(thread)
@@ -522,7 +527,7 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
     String penisActionLabel = sr_HentairimUtils.PenisActionLabel(anim, Stage, pos)
     String endingLabel = sr_HentairimUtils.EndingLabel(anim, Stage, pos)
     ;log(">>Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel  )
-   	
+
 	Bool inflateTrigger = false
 	Bool legacyCondition = anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
 	Bool isCummedInside = false
@@ -533,13 +538,13 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
     Bool isOralInside= true
 
     if isAnimationHentairimTaggedStrings(penetrationLabel, oralLabel, stimulationLabel, endingLabel, penisActionLabel)
-		logAndPrint(">>Actor:" + akActor.GetLeveledActorBase().GetName() + ":p[" + pos + "],s["+ stage + "]. Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel)
-    	isVaginalInside = IsGivingVaginalPenetration(penisActionLabel) 
-    	isAnalInside =  IsGivingAnalPenetration(penisActionLabel) 
+		log(">>Actor:" + akActor.GetLeveledActorBase().GetName() + ":p[" + pos + "],s["+ stage + "]. Penetration:" + penetrationLabel + ".Oral:" + oralLabel + ".Stimul:" + stimulationLabel + ".Penis:" + penisActionLabel + ".Ending:" + endingLabel)
+    	isVaginalInside = IsGivingVaginalPenetration(penisActionLabel)
+    	isAnalInside =  IsGivingAnalPenetration(penisActionLabel)
     	isOralInside =  IsGettingSuckedoff(penisActionLabel)
 		inflateTrigger = legacyCondition && (isVaginalInside || isAnalInside || isOralInside )
     Else
-		logAndPrint(">>Actor:" + akActor.GetLeveledActorBase().GetName() + ":p[" + pos + "],s["+ stage + "]. No hentairim stage tags detected. Fallback to regular tags")
+		log(">>Actor:" + akActor.GetLeveledActorBase().GetName() + ":p[" + pos + "],s["+ stage + "]. No hentairim stage tags detected. Fallback to regular tags")
 		inflateTrigger = legacyCondition
     endif
 
@@ -550,15 +555,15 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 		
 		int currentPool = 0
 		If anim.hasTag("Vaginal") && isVaginalInside
-			logAndPrint(">>(SLSO) Vaginal penetration detected.")
+			log(">>(SLSO) Vaginal penetration detected.")
 			currentPool = Math.LogicalOr(currentPool, VAGINAL)
 		EndIf
 		If anim.hasTag("Anal") && isAnalInside
-			logAndPrint(">>(SLSO) Anal penetration detected")
+			log(">>(SLSO) Anal penetration detected")
 			currentPool = Math.LogicalOr(currentPool, ANAL)
 		EndIf
 		If (anim.hasTag("Oral") || anim.hasTag("Blowjob")) && isOralInside
-			logAndPrint(">>(SLSO) Oral penetration detected")
+			log(">>(SLSO) Oral penetration detected")
 			currentPool = Math.LogicalOr(currentPool, ORAL)
 			;Debug.notification("Oral " + currentPool as int)
 		EndIf
@@ -604,6 +609,12 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 EndEvent
 
 Event Orgasm(int thread, bool hasPlayer)
+	; When separate orgasms are the active system, OrgasmSeparate handles each orgasm.
+	; The legacy combined hook still fires in p+ SCENE/LEGACY climax modes (and via SLSO's
+	; "always orgasm" options), so ignore it here to avoid inflating twice.
+	If sexlab.config.SeparateOrgasms
+		return
+	EndIf
 	Actor[] actors = sexlab.HookActors(thread)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
 	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
