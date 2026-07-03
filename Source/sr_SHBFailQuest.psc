@@ -6,6 +6,10 @@ Quest Property SHB auto
 bool property done = false auto hidden
 
 Event OnStoryChangeLocation(ObjectReference akActor, Location akOldLocation, Location akNewLocation)
+	If done
+		; fail sequence already running/finished - don't re-fire on a second location change
+		return
+	EndIf
 	If inflater.IsPlugged(inflater.player) < 1 || inflater.IsPlugged(inflater.player) == 2
 		done = true
 		ForceDeflate()

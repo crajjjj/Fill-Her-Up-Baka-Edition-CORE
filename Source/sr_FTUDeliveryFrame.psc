@@ -270,6 +270,7 @@ Function RemoveUniform()
 	Utility.Wait(1.5)
 	inflater.player.RemoveItem(QSTCollar)
 	inflater.player.RemoveItem(QSTOpenBelt)
+	inflater.player.RemoveItem(QSTFullBelt)
 EndFunction
 
 Function ManipulateDevice(actor akActor, armor device, bool equipOrUnequip, bool skipEvents = false, bool skipMutex = false)

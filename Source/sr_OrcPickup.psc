@@ -396,20 +396,24 @@ Function StartTransfer(Actor c)
 	String cb = "OPU-VagDone"
 	String cbf = "TransferPartTwo"
 	int pool = inflater.VAGINAL
+	float poolAmount = plVag
+	float poolTime = vagTime
 	If plVag <= 0.0 || plAn <= 0.0
 		cb = "OPU-AnDone"
 		cbf = "TransferDone"
 		if plVag <= 0.0
 			pool = inflater.ANAL
+			poolAmount = plAn
+			poolTime = anTime
 			inflater.log("OPU transfer: only anal")
 		Else
 			inflater.log("OPU transfer: only vag")
 		EndIf
 	EndIf
 ;	inflater.StripActor(courier)
-	
+
 	RegisterForModEvent(cb, cbf)
-	inflater.QueueActor(pl, false, pool, plVag, vagTime, callback = cb, animate = -1)
+	inflater.QueueActor(pl, false, pool, poolAmount, poolTime, callback = cb, animate = -1)
 	inflater.QueueActor(courier, true, inflater.VAGINAL, (inflater.config.maxInflation - StorageUtil.GetFloatValue(courier, inflater.ORIGINAL_SCALE, 1.0)), (totalTime + 1))
 	
 	inflater.InflateQueued()

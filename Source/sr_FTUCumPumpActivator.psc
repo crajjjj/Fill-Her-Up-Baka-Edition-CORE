@@ -99,6 +99,9 @@ Function ProcessPatient()
 				Else
 					ProcessPatient2()
 				EndIf
+			Else
+				; already at target fill - nothing to pump, continue the sequence so controls get re-enabled
+				ProcessPatient2()
 			EndIf
 		ElseIf vagTo == -1
 			If time > 0
@@ -107,6 +110,9 @@ Function ProcessPatient()
 				Else
 					ProcessPatient2()
 				EndIf
+			Else
+				; already empty - nothing to drain, continue the sequence so controls get re-enabled
+				ProcessPatient2()
 			EndIf
 		EndIf
 		inflater.InflateQueued()
@@ -137,6 +143,9 @@ Function ProcessPatient2()
 				Else
 					ProcessPatient3()
 				EndIf
+			Else
+				; already at target fill - continue the sequence so controls get re-enabled
+				ProcessPatient3()
 			EndIf
 		ElseIf analTo == -1
 			If time > 0
@@ -145,8 +154,11 @@ Function ProcessPatient2()
 				Else
 					ProcessPatient3()
 				EndIf
+			Else
+				; already empty - continue the sequence so controls get re-enabled
+				ProcessPatient3()
 			EndIf
-		EndIf	
+		EndIf
 		inflater.InflateQueued()
 	Else
 		ProcessPatient3()

@@ -30,12 +30,21 @@ EndFunction
 ; Interface functions end
 ; ------------------------------------------------------
 
+Event OnInit()
+	; fires on a new game / fresh install where OnPlayerLoadGame never runs this session
+	Initialize()
+EndEvent
+
 Event OnPlayerLoadGame()
+	Initialize()
+EndEvent
+
+Function Initialize()
 	RegisterForModEvent("fhu.EventRegister", "RegisterSelf")
 	If chance < 0
 		chance = chanceDefault
 	EndIf
-EndEvent
+EndFunction
 
 Event RegisterSelf(string modEventName, string strArg, float numArg, Form sender)
 	If !manager.RegisterEvent(self)

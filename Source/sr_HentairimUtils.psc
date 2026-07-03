@@ -112,7 +112,7 @@ string Function PenetrationLabel(sslBaseAnimation anim , int stage , Int ActorPo
 	elseif anim.HasTag(stage+ActorPosition + "SDP")
 		return "SDP"
 	elseif anim.HasTag(stage+ActorPosition + "FDP")
-		return "SDP"
+		return "FDP"
 	else
 		return "LDI" ;Default lead in if no stimulating actions
 	endif
@@ -156,7 +156,7 @@ string Function PenisActionLabel(sslBaseAnimation anim , int stage , Int ActorPo
 		return "FMF"
 	elseif anim.HasTag(stage+ActorPosition + "SFJ")
 		reTURN "SFJ"
-	elseif anim.HasTag(stage+ActorPosition + "SFJ")
+	elseif anim.HasTag(stage+ActorPosition + "FFJ")
 		returN "FFJ"
 	else
 		reTURN "LDI" ;default lead in if no stimulating actions

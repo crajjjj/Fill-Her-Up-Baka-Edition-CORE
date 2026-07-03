@@ -30,12 +30,15 @@ Event OnUpdateGameTime()
 			t.ModActorValue("SpeedMult", -5.0)
 		EndIf
 		float currentHP = t.GetActorValue("Health")
-		float maxHP = currentHP / t.GetActorValuePercentage("Health")
-		float toDMG = maxHP * 0.13
-		If currentHP - toDMG < 10
-			toDMG = currentHP - 10
+		float hpPct = t.GetActorValuePercentage("Health")
+		If hpPct > 0.0 ; avoid divide-by-zero -> NaN damage when the actor is already downed
+			float maxHP = currentHP / hpPct
+			float toDMG = maxHP * 0.13
+			If currentHP - toDMG < 10
+				toDMG = currentHP - 10
+			EndIf
+			t.DamageActorValue("Health", toDMG)
 		EndIf
-		t.DamageActorValue("Health", toDMG)
 		if t == inflater.Player 
 			If Utility.RandomInt(0, 99) < 15
 				inflater.notify("$FHU_BURST_TICK")

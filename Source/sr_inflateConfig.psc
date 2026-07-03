@@ -17,6 +17,11 @@ float property SpermRemovalAmountAnalDefault = 0.6 auto hidden
 float property SpermRemovalAmountOral auto
 float property SpermRemovalAmountOralDefault = 0.4 auto hidden
 
+; Digestion sim: swallowed (oral) cum gradually moves into the anal pool over time.
+; Gated by the existing "Digest Sperm" toggle (sr_OnEventAbsorbSpermOral).
+float property digestionRatio = 0.5 auto hidden ; fraction of digested oral cum that reaches the anal pool (rest is absorbed)
+float property digestionRatioDefault = 0.5 autoreadonly hidden
+
 GlobalVariable Property sr_Cumvariation Auto
 GlobalVariable Property sr_Cumvariationingredients Auto
 Globalvariable Property sr_followerCommentChance Auto
@@ -262,6 +267,8 @@ int removespermamountvagOID
 int removespermamountanalOID
 int removespermamountoralOID
 
+int digestionRatioOID
+
 GlobalVariable Property sr_TongueEffect Auto
 GlobalVariable Property sr_OnEventSpermPlayer Auto
 GlobalVariable Property sr_OnEventSpermNPC Auto
@@ -414,7 +421,8 @@ Function SetDefaults()
 	SpermRemovalAmountVag = SpermRemovalAmountVagDefault
 	SpermRemovalAmountAnal = SpermRemovalAmountAnalDefault
 	SpermRemovalAmountOral = SpermRemovalAmountOralDefault
-	
+	digestionRatio = digestionRatioDefault
+
 	if SLIF_Installed
 		FHUSLIF = true
 	else
@@ -528,7 +536,7 @@ Function resetConfig(bool restartQuest = false, bool resetCumAmounts = false)
 			inflater.maintenance()
 		EndIf
 
-		raceOID = new int[63] ; 128 items per config page if I'm not mistaken, would leave 64 per side and -1 for header
+		raceOID = new int[128] ; sized to the MCM page capacity so a full RACE_LIST (capped at 100) never overflows
 		CreatureRaceOID = new int[48]
 
 		If resetCumAmounts
@@ -694,8 +702,13 @@ Event OnPageReset(String page)
 		removespermamountvagOID = AddSliderOption("$FHU_REMOVESPERMVAG_AMOUNT", SpermRemovalAmountVag, "{1}")
 		removespermamountanalOID = AddSliderOption("$FHU_REMOVESPERMANAL_AMOUNT", SpermRemovalAmountAnal, "{1}")
 		absorbspermoralOID = AddToggleOption("$FHU_ABSORB_SPERMORAL", sr_OnEventAbsorbSpermOral.getvalue())
+		If sr_OnEventAbsorbSpermOral.getvalue() == 1
+			digestionRatioOID = AddSliderOption("$FHU_DIGESTION_RATIO", digestionRatio * 100.0, "{0}%")
+		Else
+			digestionRatioOID = AddSliderOption("$FHU_DIGESTION_RATIO", digestionRatio * 100.0, "{0}%", OPTION_FLAG_DISABLED)
+		EndIf
 		removespermamountoralOID = AddSliderOption("$FHU_REMOVESPERMORAL_AMOUNT", SpermRemovalAmountOral, "{1}")
-		
+
 		TongueOID = AddToggleOption("$FHU_Tongue_EFFECT", sr_TongueEffect.getvalue())
 		
 		AddHeaderOption("$FHU_Compatibility")
@@ -769,8 +782,8 @@ Event OnPageReset(String page)
 
 		int iOID = 0
 		int selected_actor_id = -1
-		Actor_OIDs = new Int[50]
-		Actor_OIDs_map = new Form[50]
+		Actor_OIDs = new Int[128]
+		Actor_OIDs_map = new Form[128]
 		String mark = "   "
 
 		If (currentActorinfo == inflater.player)
@@ -1131,9 +1144,9 @@ State settings
 			Else
 				SetTextOptionValue(LoadConfigOID, "...")
 				If LoadUserConfig()
-					SetTextOptionValue(SaveConfigOID, "$FHU_DONE")
+					SetTextOptionValue(LoadConfigOID, "$FHU_DONE")
 				Else
-					SetTextOptionValue(SaveConfigOID, "$FHU_ERR")
+					SetTextOptionValue(LoadConfigOID, "$FHU_ERR")
 				EndIf
 			EndIf
 			LoadConfigCONFIRM = !LoadConfigCONFIRM
@@ -1480,6 +1493,11 @@ State events
 			SetSliderDialogRange(0.1, 10.0)
 			SetSliderDialogInterval(0.1)
 			SetSliderDialogDefaultValue(SpermRemovalAmountOralDefault)
+		ElseIf opt == digestionRatioOID
+			SetSliderDialogStartValue(digestionRatio * 100.0)
+			SetSliderDialogRange(0, 100)
+			SetSliderDialogInterval(5)
+			SetSliderDialogDefaultValue(digestionRatioDefault * 100.0)
 		Else
 			int i = 0
 			while i < 128 && eventManager.events[i] != none
@@ -1517,6 +1535,12 @@ State events
 				sr_OnEventAbsorbSpermOral.setvalue(0)
 			endif
 			SetToggleOptionValue(absorbspermoralOID, sr_OnEventAbsorbSpermOral.getvalue())
+			; the digestion transfer ratio only applies while Digest Sperm is on
+			If sr_OnEventAbsorbSpermOral.getvalue() == 1
+				SetOptionFlags(digestionRatioOID, OPTION_FLAG_NONE)
+			Else
+				SetOptionFlags(digestionRatioOID, OPTION_FLAG_DISABLED)
+			EndIf
 		ElseIf opt == TongueOID
 			if sr_TongueEffect.getvalue() == 0
 				sr_TongueEffect.setvalue(1)
@@ -1582,7 +1606,10 @@ State events
 			SetSliderOptionValue(opt, val, "{1}")
 		ElseIf opt == removespermamountoralOID
 			SpermRemovalAmountOral = val
-			SetSliderOptionValue(opt, val, "{1}")		
+			SetSliderOptionValue(opt, val, "{1}")
+		ElseIf opt == digestionRatioOID
+			digestionRatio = val / 100.0
+			SetSliderOptionValue(opt, val, "{0}%")
 		Else
 			int i = 0
 			while i < 128 && eventManager.events[i] != none
@@ -1621,6 +1648,8 @@ State events
 			SetInfoText("$FHU_ABSORB_SPERM_HELP")
 		ElseIf opt == absorbspermoralOID
 			SetInfoText("$FHU_ABSORB_SPERMORAL_HELP")
+		ElseIf opt == digestionRatioOID
+			SetInfoText("$FHU_DIGESTION_RATIO_HELP")
 		ElseIf opt == TongueOID
 			SetInfoText("$FHU_Tongue_EFFECT_HELP")
 		ElseIf opt == OnEventSpermPlayerOID
@@ -2285,6 +2314,7 @@ bool Function SaveUserConfig()
 	JsonUtil.SetFloatValue(userSettingsFile, "SpermRemovalAmountAnal", SpermRemovalAmountAnal)
 	JsonUtil.SetIntValue(userSettingsFile, "sr_OnEventAbsorbSpermOral", sr_OnEventAbsorbSpermOral.getvalue() as int)
 	JsonUtil.SetFloatValue(userSettingsFile, "SpermRemovalAmountOral", SpermRemovalAmountOral)
+	JsonUtil.SetFloatValue(userSettingsFile, "digestionRatio", digestionRatio)
 	JsonUtil.SetIntValue(userSettingsFile, "sr_TongueEffect", sr_TongueEffect.getvalue() as int)
 
 	JsonUtil.SetIntValue(userSettingsFile, "sr_OnEventSpermPlayer", sr_OnEventSpermPlayer.getvalue() as int)
@@ -2403,6 +2433,7 @@ bool Function LoadUserConfig()
 	SpermRemovalAmountAnal = JsonUtil.GetFloatValue(userSettingsFile, "SpermRemovalAmountAnal", SpermRemovalAmountAnal)
 	sr_OnEventAbsorbSpermOral.SetValue((JsonUtil.GetIntValue(userSettingsFile, "sr_OnEventAbsorbSpermOral", sr_OnEventAbsorbSpermOral.getvalue() as int) as bool) as int)
 	SpermRemovalAmountOral = JsonUtil.GetFloatValue(userSettingsFile, "SpermRemovalAmountOral", SpermRemovalAmountOral)
+	digestionRatio = JsonUtil.GetFloatValue(userSettingsFile, "digestionRatio", digestionRatio)
 	sr_TongueEffect.SetValue((JsonUtil.GetIntValue(userSettingsFile, "sr_TongueEffect", sr_TongueEffect.getvalue() as int) as bool) as int)
 
 	sr_OnEventSpermPlayer.SetValue((JsonUtil.GetIntValue(userSettingsFile, "sr_OnEventSpermPlayer", sr_OnEventSpermPlayer.getvalue() as int) as bool) as int)

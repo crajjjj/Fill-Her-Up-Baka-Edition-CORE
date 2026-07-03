@@ -73,8 +73,8 @@ bool Function IsStackEmpty()
 EndFunction
 
 Function Push(sr_InfEventBase evnt)
-	stack[top] = evnt
-	if top < 127
+	if top < 128 ; stack is sized 128 - only write when there is a free slot
+		stack[top] = evnt
 		top += 1
 	Else
 		inflater.error("Event stack overflow!")

@@ -121,6 +121,11 @@ Event StartAbsorption()
 	running = true
 	UnregisterForUpdate()
 	Actor t = GetActorReference()
+	if !t
+		log("Can't process, Actor Reference is None.", 1)
+		ResetThread()
+		return
+	endIf
 	If t.IsInFaction(inflater.inflaterAnimatingFaction)
 		log("Can't process, she is already animating.", 1)
 		ResetThread()

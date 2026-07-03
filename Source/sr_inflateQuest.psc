@@ -229,7 +229,7 @@ Idle[] BaboAnimsAnusEnd
 
 ;int animnum
 ;int MoanType
-bool dhlpSuspend
+bool dhlpSuspend ; true while a mod has requested dhlp-Suspend. Bool (not a counter) so any resume self-heals - a counter could lock forever on an unmatched suspend
 bool initialized = false
 
 Race Property ChaurusRace Auto
@@ -394,7 +394,8 @@ Function maintenance()
 	EndIf
 EndFunction
 
-;dhlp event handlers
+;dhlp event handlers - pause our background auto-deflation while another mod
+;has requested a suspend. We only listen; we never emit dhlp events ourselves.
 Event OnDhlpSuspend( string eventName, string strArg, float numArg, Form sender )
 	dhlpSuspend = True
 EndEvent
@@ -410,8 +411,15 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 	Actor[] actors = sexlab.HookActors(tid)
 	sslBaseAnimation anim = sexlab.HookAnimation(tid)
 	
+	If actors.length == 0
+		log("Fill her up sex end: no actors, aborting")
+		return
+	EndIf
 	Actor Victim = actors[0]
-	actor Male = actors[1]
+	actor Male = none
+	If actors.length > 1
+		Male = actors[1]
+	EndIf
 	log("Fill her up sex end")
 	int iinjector = 0
 	String injectorstring = ""
@@ -886,6 +894,10 @@ int Function GetRaceIndex(string RaceName)
 EndFunction
 
 int Function GetCreatureRaceint(Actor Target)
+        ;a stale/deleted injector form can cast to None - treat as "not a known creature"
+        if Target == None
+                return -1
+        endif
         ;humans don't have a RaceName string so it has to be checked first
         if Target.HasKeyword(ActorTypeNPC)
                 return -1
@@ -1864,7 +1876,8 @@ Function RestoreActors()
 		If a == None
 			ResetActorState(f)
 			FormListRemove(self, INFLATED_ACTORS, f, true)
-		EndIf
+			; stale/deleted entry cleaned up above - skip the rest so we don't deref None
+		Else
 		log("Restoring inflation for " + a.GetLeveledActorBase().GetName() + "...")
 		If config.bellyScale
 			if config.Bodymorph
@@ -1899,6 +1912,7 @@ Function RestoreActors()
 		UpdateFaction(a)
 		UpdateOralFaction(a)
 		EncumberActor(a)
+		EndIf
 	EndWhile
 EndFunction
 
@@ -2135,7 +2149,7 @@ State MonitoringInflation
 	Event OnUpdateGameTime()
 		int n = FormListCount(self, INFLATED_ACTORS) 
 		if n > 0
-			If dhlpSuspend
+			If dhlpSuspend ; another mod requested a suspend - defer auto-deflation
 				RegisterForSingleUpdateGameTime(0.5)
 				return
 			EndIf
@@ -2244,17 +2258,18 @@ State MonitoringInflation
 						EndIf
 						
 						if deflateOral && Utility.RandomInt(0, 99) < GetOralDeflateChance(a)
-							if sr_OnEventNoDeflation.getvalue() == 0
+							if sr_OnEventAbsorbSpermOral.getvalue() == 1
+								; "Digest Sperm" on - swallowed cum digests and transits to the anal pool over time
+								DigestOral(a)
+								UnequipTullAnimatedCreampieCumItem(a, 3)
+								UnsetFloatValue(a, TULL_UNEQUIP_AT)
+								FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
+							elseif sr_OnEventNoDeflation.getvalue() == 0
 								tid = QueueActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
 								queued += 1
 								UnequipTullAnimatedCreampieCumItem(a, 3)
 								UnsetFloatValue(a, TULL_UNEQUIP_AT)
 								FormListRemove(self, TULL_UNEQUIP_LIST, a, true)
-							else
-								if sr_OnEventAbsorbSperm.getvalue() == 1 && sr_OnEventAbsorbSpermOral.getvalue() == 1
-									tid = QueueAbsorbActor(a, false, ORAL, Config.SpermRemovalAmountoral, defTime)
-									queued += 1
-								endif
 							endif
 						endif
 						
@@ -2479,7 +2494,10 @@ Function PlayerInflationDone(Form a, float startVag, float startAn, float startO
 		If currentActors[n] != none && currentActors[n] != player && currentActors[n].haskeyword(ActorTypeNPC)
 			ApplyCumEffect(currentActors[n].GetLeveledActorBase().GetRace(), currentType, startVag, startAn, startOr)
 		Elseif currentActors[n] != none && currentActors[n] != player && !currentActors[n].haskeyword(ActorTypeNPC)
-			ApplyCreatureCumEffect(sr_CreatureRaceList.getat(GetCreatureRaceint(currentActors[n])) as race, currentType, startVag, startAn, startOr)
+			int craceIdx = GetCreatureRaceint(currentActors[n])
+			If craceIdx >= 0
+				ApplyCreatureCumEffect(sr_CreatureRaceList.getat(craceIdx) as race, currentType, startVag, startAn, startOr)
+			EndIf
 		EndIf
 
 	EndWhile
@@ -2488,7 +2506,11 @@ Function PlayerInflationDone(Form a, float startVag, float startAn, float startO
 EndFunction
 
 Function ApplyCreatureCumEffect(Race rce, int pool, float startVag, float startAn, float startOr)
-	if pool <= 0 
+	if rce == None
+		warn("Tried to apply creature cum effect with no race (unlisted creature).")
+		return
+	EndIf
+	if pool <= 0
 		warn("Tried to apply cum effect without a pool.")
 		return
 	EndIf
@@ -2814,6 +2836,97 @@ EndFunction
 
 float Function GetOralPercentage(Actor a)
 	return GetOralCum(a) / GetOralPoolSize(a)
+EndFunction
+
+; Refresh an actor's belly morphs / node scale from their currently stored pools.
+; Mirrors the morph block in RestoreActors so pool changes made outside the
+; inflate/deflate threads (e.g. digestion) still update the visible belly.
+Function ApplyBellyMorphs(Actor a)
+	If !config.bellyScale
+		return
+	EndIf
+	if config.Bodymorph
+		if InflateMorph2 != ""
+			SetBellyMorphValue(a, GetInflation(a), InflateMorph2)
+		endIf
+		if InflateMorph3 != ""
+			SetBellyMorphValue(a, GetInflation(a), InflateMorph3)
+		endif
+		if InflateMorph4 != ""
+			If InflateMorph == InflateMorph4
+				SetBellyMorphValue(a, GetInflation(a) + GetOralCum(a), InflateMorph)
+			Else
+				SetBellyMorphValue(a, GetInflation(a), InflateMorph)
+				SetBellyMorphValue(a, GetOralCum(a), InflateMorph4)
+			EndIf
+		Else
+			SetBellyMorphValue(a, GetInflation(a), InflateMorph)
+		endif
+	Else
+		SetNodeScale(a, BELLY_NODE, GetInflation(a) + GetOralCum(a))
+	Endif
+EndFunction
+
+; Digestion sim: move a portion of an actor's swallowed (oral) cum into the anal
+; pool over time. Gated by the "Digest Sperm" toggle in the passive game-time tick.
+;
+; Anal-full handling: the transit portion is limited by the remaining anal pool
+; capacity. If the gut is full it backs up - only the absorbed share leaves the
+; oral pool and the transit part waits in the mouth until anal space frees up. With
+; ratio at 100% and a full anal pool, oral digestion stalls entirely until then.
+Function DigestOral(Actor a)
+	float oralCum = GetFloatValue(a, CUM_ORAL)
+	If oralCum <= 0.0
+		return
+	EndIf
+
+	; amount processed this tick - same rate as the normal oral drain
+	float digestAmount = config.SpermRemovalAmountOral
+	If digestAmount > oralCum
+		digestAmount = oralCum
+	EndIf
+
+	; split into the part that transits to the gut (anal) and the part absorbed by the body
+	float toAnal = digestAmount * config.digestionRatio
+	float absorbed = digestAmount - toAnal
+
+	; the transit part is capped by the remaining anal pool room (backpressure)
+	float analCum = GetFloatValue(a, CUM_ANAL)
+	float vagCum = GetFloatValue(a, CUM_VAGINAL)
+	float room = GetPoolSize(a) - analCum - vagCum
+	If room < 0.0
+		room = 0.0
+	EndIf
+	If toAnal > room
+		toAnal = room
+	EndIf
+
+	; commit the anal gain
+	If toAnal > 0.0
+		analCum += toAnal
+		SetFloatValue(a, CUM_ANAL, analCum)
+		SetFloatValue(a, INFLATION_AMOUNT, analCum + vagCum)
+		SetFloatValue(a, LAST_TIME_ANAL, GameDaysPassed.GetValue())
+	EndIf
+
+	; oral only loses what actually left (absorbed + transferred); the transit part backs up
+	float oralRemoved = absorbed + toAnal
+	If oralRemoved > 0.0
+		float newOral = oralCum - oralRemoved
+		If newOral < 0.1
+			newOral = 0.0
+			UnsetFloatValue(a, LAST_TIME_ORAL)
+			UnsetFloatValue(a, CUM_ORAL)
+		Else
+			SetFloatValue(a, CUM_ORAL, newOral)
+		EndIf
+	EndIf
+
+	ApplyBellyMorphs(a)
+	UpdateFaction(a)
+	UpdateOralFaction(a)
+	EncumberActor(a)
+	log("Digestion: " + a.GetLeveledActorBase().GetName() + " oral -" + oralRemoved + " (anal +" + toAnal + ", absorbed " + absorbed + ")")
 EndFunction
 
 String Property TULL_ANIMATED_CREAMP = "TullAnimatedCreampie.esp" autoreadonly hidden
