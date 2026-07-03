@@ -213,10 +213,10 @@ Function Inflate()
 ;	endif
 	float maxInflation = inflater.GetPoolSize(akActor)	
 
-	If ( (vagCum > 0.0 || inflater.sexlab.GetGender(akActor) == 0) && (analCum > 0.0 || isAnal) ) || ( isVaginal && analCum > 0.0 ) || ( isAnal && isVaginal )
-		; Allow a bit extra inflation with both holes filled
-		maxInflation *= inflater.BURST_MULT
-	EndIf
+	; Allow a bit extra inflation - the BURST_MULT overflow (burst) zone above the
+	; normal pool max. Applied to any fill so a single hole can also be pushed past
+	; 100% and burst, not only double-fill scenes.
+	maxInflation *= inflater.BURST_MULT
 	
 	float OralcumAmount = 0
 	if(isOral)
@@ -287,8 +287,10 @@ Function Inflate()
 		EndIf
 		oralCum += AnaltoOral
 		If oralCum > inflater.GetOralPoolSize(akActor)
-			OralBursting = oralCum - inflater.GetOralPoolSize(akActor); OralBursting Not Ready WIP
+			OralBursting = oralCum - inflater.GetOralPoolSize(akActor)
 			oralCum = inflater.GetOralPoolSize(akActor)
+			; the mouth can't take the overflow - queue it for resolution at scene end
+			SetFloatValue(akActor, inflater.ORAL_OVERFLOW, GetFloatValue(akActor, inflater.ORAL_OVERFLOW) + OralBursting)
 		EndIf
 		SetFloatValue(akActor, inflater.LAST_TIME_ORAL, inflater.GameDaysPassed.GetValue())
 		SetFloatValue(akActor, inflater.CUM_ORAL, oralCum)
@@ -305,13 +307,14 @@ Function Inflate()
 	EndIf
 			
 	float inflationTarget = vagCum + analCum
-	bool bursting = false
-	If inflationTarget > maxInflation;Needs some improvement. It is only activated by Dragons.
-		If maxInflation > inflater.config.maxInflation
-			bursting = true 
-		EndIf
-		inflationTarget = maxInflation 
+	If inflationTarget > maxInflation
+		inflationTarget = maxInflation
 	EndIf
+	; Burst on the COMBINED belly (vaginal + anal + oral) exceeding the normal pool
+	; max - any mix of pools that overstuffs the visible belly triggers it, not just
+	; vaginal+anal. (The old check compared vag+anal against the already-clamped cap,
+	; so it never fired at all.)
+	bool bursting = (inflationTarget + oralCum) > inflater.config.maxInflation
 	
 	float inflationOralAmount = oralCum - startOral
 	float inflationAmount = inflationTarget - currentInflation
@@ -467,9 +470,7 @@ Function Deflate()
 	endif
 	
 	if isVaginal || isAnal
-		If (isAnal && analCum - cumAmount > 0.0 && vagCum > 0.0) || (!isAnal && vagCum - cumAmount > 0.0 && analCum > 0.0) || (isAnal && analCum - cumAmount > 0.0 && inflater.sexlab.GetGender(akActor)==0)
-			maxInflation *= inflater.BURST_MULT
-		EndIf
+		maxInflation *= inflater.BURST_MULT ; match the inflate cap (burst overflow zone) for any fill
 	EndIf
 
 	float deflateTarget = totalInf - cumAmount
@@ -477,7 +478,7 @@ Function Deflate()
 	if deflateTarget < 0.0
 		deflateTarget = 0.0
 	endif
-	
+
 	If totalInf > maxInflation && deflateTarget < maxInflation
 		log("Combined total higher than max and target lower than max! total: "+totalInf+", target: "+deflateTarget+", max: "+maxInflation, 1)
 ;		deflateTarget = totalInf - cumAmount;Duplicate
@@ -695,9 +696,7 @@ Function Absorb()
 	endif
 
 	if isVaginal || isAnal
-		If (isAnal && analCum - cumAmount > 0.0 && vagCum > 0.0) || (!isAnal && vagCum - cumAmount > 0.0 && analCum > 0.0) || (isAnal && analCum - cumAmount > 0.0 && inflater.sexlab.GetGender(akActor)==0)
-			maxInflation *= inflater.BURST_MULT
-		EndIf
+		maxInflation *= inflater.BURST_MULT ; match the inflate cap (burst overflow zone) for any fill
 	endif
 
 	float deflateTarget = totalInf - cumAmount

@@ -150,13 +150,15 @@ Function display(String msg)
 		endWhile
 		split[n] = stringutil.Substring(msg, startIdx, 0)
 	endIf
-	n = parts
-	while n > 0
-		n -= 1
-		debug.Notification(split[n])
-		if self.printConsole
-			miscutil.printConsole("[FillHerUp] " + split[n])
+	n = 0
+	while n < parts
+		if split[n] != "" ; parts is a ceiling estimate - skip any empty trailing chunks
+			debug.Notification(split[n])
+			if self.printConsole
+				miscutil.printConsole("[FillHerUp] " + split[n])
+			endIf
 		endIf
+		n += 1
 	endWhile
 EndFunction
 

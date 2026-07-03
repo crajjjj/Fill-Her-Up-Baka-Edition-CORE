@@ -67,10 +67,12 @@ Event OnUpdateGameTime()
 				inflater.Notify("$FHU_BURST_END")
 			EndIf
 			Dispel()
-		Else 
-			inflater.warn("Burst effect OnUpdate with total cum less than max inflation on actor "+t.GetLeveledActorBase().GetName()+"! (" + inflater.GetTotalCum(t) + "/" + maxInflation + ")" )
+		Else
+			; combined belly is within the burst zone (below the overflow cap) - nothing
+			; to deflate, the burst penalty just ends. Normal case, so log rather than warn.
+			inflater.log("Burst effect ending, total cum below overflow cap for "+t.GetLeveledActorBase().GetName()+" (" + inflater.GetTotalCum(t) + "/" + maxInflation + ")" )
 			Dispel()
-		EndIf		
+		EndIf
 	EndIf
 EndEvent
 

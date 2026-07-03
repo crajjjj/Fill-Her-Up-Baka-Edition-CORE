@@ -149,6 +149,11 @@ String Property CUM_VAGINAL = "sr.inflater.cum.vaginal" autoreadonly hidden
 String Property CUM_ANAL = "sr.inflater.cum.anal" autoreadonly hidden
 String Property CUM_ORAL = "sr.inflater.cum.oral" autoreadonly hidden
 
+; oral cum that overflowed the oral pool this scene and could not be swallowed -
+; resolved at scene end (FHUSexlabEnd): shown via the Tull overlay if installed,
+; otherwise pushed down into the anal pool.
+String Property ORAL_OVERFLOW = "sr.inflater.oraloverflow" autoreadonly hidden
+
 String Property CUM_LUMP_VAGINAL = "sr.inflater.lump.vaginal" autoreadonly hidden
 
 String Property InflateMorph = "PregnancyBelly" Auto
@@ -499,6 +504,15 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 			endif
 		endWhile
 	endif
+
+	; resolve any oral cum that overflowed the oral pool during this scene
+	int ov = actors.length
+	while ov > 0
+		ov -= 1
+		If actors[ov]
+			HandleOralOverflow(actors[ov])
+		EndIf
+	endwhile
 endevent
 
 Event OrgasmSeparate(Form ActorRef, Int Thread)
@@ -2414,6 +2428,7 @@ Function ResetActorState(Form f)
         UnsetFloatValue(f, LAST_TIME_ANAL)
         UnsetFloatValue(f, LAST_TIME_VAG)
         UnsetFloatValue(f, LAST_TIME_ORAL)
+        UnsetFloatValue(f, ORAL_OVERFLOW)
 ;        UnsetFormValue(f, CHEST_ARMOR) ; obsolete
 		If(a)
 			a.RemoveSpell(sr_inflateBurstSpell)
@@ -2878,6 +2893,41 @@ Function ApplyBellyMorphs(Actor a)
 	Endif
 EndFunction
 
+; Resolve oral cum that overflowed the oral pool this scene (queued in ORAL_OVERFLOW).
+; The overflow is pushed down into the anal pool (up to that pool's remaining room);
+; with TullAnimatedCreampie installed it also shows the oral overlay spilling out.
+Function HandleOralOverflow(Actor a)
+	float amount = GetFloatValue(a, ORAL_OVERFLOW)
+	If amount <= 0.0
+		return
+	EndIf
+	UnsetFloatValue(a, ORAL_OVERFLOW)
+
+	If IsTullAnimatedCreampieReady()
+		UpdateTullAnimatedCreampieCumItem(a, 3) ; show it spilling out over her
+	EndIf
+
+	; redirect the overflow down into the anal pool, up to its room. Use the same
+	; capacity Inflate() fills to (config.maxInflation * BURST_MULT) so recoverable
+	; overflow isn't discarded.
+	float analCum = GetFloatValue(a, CUM_ANAL)
+	float vagCum = GetFloatValue(a, CUM_VAGINAL)
+	float room = (GetPoolSize(a) * BURST_MULT) - analCum - vagCum
+	If room <= 0.0
+		return ; both holes already full - nowhere for it to go
+	EndIf
+	If amount > room
+		amount = room
+	EndIf
+	analCum += amount
+	SetFloatValue(a, CUM_ANAL, analCum)
+	SetFloatValue(a, INFLATION_AMOUNT, analCum + vagCum)
+	SetFloatValue(a, LAST_TIME_ANAL, GameDaysPassed.GetValue())
+	ApplyBellyMorphs(a)
+	UpdateFaction(a)
+	EncumberActor(a)
+EndFunction
+
 ; Digestion sim: move a portion of an actor's swallowed (oral) cum into the anal
 ; pool over time. Gated by the "Digest Sperm" toggle in the passive game-time tick.
 ;
@@ -3084,6 +3134,9 @@ EndEvent
 
 
 float Function GetTotalCum(Actor a)
+	; vaginal + anal only - this is what the burst effect can actually deflate (it
+	; targets those pools). The burst *trigger* separately accounts for oral; oral
+	; itself drains on its own timer, so it is not included here.
 	return GetAnalCum(a) + GetVaginalCum(a)
 EndFunction
 
