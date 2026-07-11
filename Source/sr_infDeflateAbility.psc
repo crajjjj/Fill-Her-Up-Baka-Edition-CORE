@@ -513,6 +513,7 @@ Function doPush(int type)
 			inflater.RemoveFaction(p)
 			if OralCum <= 0.0
 				StorageUtil.FormListRemove(inflater, inflater.INFLATED_ACTORS, p, true)
+				inflater.RemoveAllLeakItems(p) ; last visit for this actor - sweep any orphaned overlay before they leave the list
 				inflater.UnencumberActor(p)
 				inflater.sr_plugged.setValueInt(0)
 			endif

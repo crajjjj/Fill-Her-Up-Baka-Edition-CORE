@@ -19,8 +19,6 @@ bool running = false
 
 bool updateFHU = false
 int updateCumType = 0
-bool pendingTullUnequip = false
-float tullUnequipAt = 0.0
 
 Function SetUp(bool inflate, int poolMask, float amount, float time = 3.0, String callback = "", int DoAnimate = 0 )
 	inf = inflate
@@ -413,13 +411,11 @@ Function RegisterFHUUpdate(int CumType)
 EndFunction
 
 Function ScheduleTullAnimatedCreampieUnequip()
-	if !inflater.IsTullAnimatedCreampieReady()
-		return
-	endif
-	pendingTullUnequip = true
-	float delay = config.TullAnimatedCreampieCleanDelay
-	tullUnequipAt = Utility.GetCurrentGameTime() + (delay / 86400.0)
-	RegisterForSingleUpdate(10.0)
+	; Delegate to the quest-side scheduler. Scheduling on this thread never
+	; worked: ResetThread() runs right after the task and kills the pending
+	; update (UnregisterForUpdate) and the actor reference (clear), so the
+	; unequip could never fire and the overlay stayed on forever.
+	inflater.ScheduleTullAnimatedCreampieUnequip(GetActorReference())
 EndFunction
 
 Function Deflate()
@@ -616,6 +612,7 @@ Function Deflate()
 	
 	if analCum <= 0.0 && vagCum <= 0.0 && OralCum <= 0.0
 		FormListRemove(inflater, inflater.INFLATED_ACTORS, akActor, true)
+		inflater.RemoveAllLeakItems(akActor) ; last visit for this actor - sweep any orphaned overlay before they leave the list
 		inflater.RemoveFaction(akActor)
 		inflater.UnencumberActor(akActor)
 		if akActor == inflater.player
@@ -822,6 +819,7 @@ Function Absorb()
 
 	if analCum == 0.0 && vagCum == 0.0 && OralCum == 0.0
 		FormListRemove(inflater, inflater.INFLATED_ACTORS, akActor, true)
+		inflater.RemoveAllLeakItems(akActor) ; last visit for this actor - sweep any orphaned overlay before they leave the list
 		inflater.RemoveFaction(akActor)
 		inflater.UnencumberActor(akActor)
 		if akActor == inflater.player
@@ -860,43 +858,14 @@ Event OnUpdate()
 		return
 	EndIf
 
-	bool needsUpdate = false
-	float nextUpdate = 0.0
-
 	if updateFHU
 		if inflater.UpdateFHUmoan(GetReference(), updateCumType)
-			needsUpdate = true
-			nextUpdate = 10.0
+			RegisterForSingleUpdate(10.0)
 		Else
 			updateCumType = 0
 			updateFHU = false
 		EndIf
 	EndIf
-
-	if pendingTullUnequip
-		float remaining = (tullUnequipAt - Utility.GetCurrentGameTime()) * 86400.0
-		if remaining <= 0.0
-			Actor a = GetActorReference()
-			if a
-				inflater.UnequipTullAnimatedCreampieItem(a, 0x00000807)
-				inflater.UnequipTullAnimatedCreampieItem(a, 0x00000809)
-				inflater.UnequipTullAnimatedCreampieItem(a, 0x00000803)
-			endif
-			pendingTullUnequip = false
-		else
-			if remaining < 1.0
-				remaining = 1.0
-			endif
-			if !needsUpdate || remaining < nextUpdate
-				nextUpdate = remaining
-			endif
-			needsUpdate = true
-		endif
-	endif
-
-	if needsUpdate
-		RegisterForSingleUpdate(nextUpdate)
-	endif
 EndEvent
 
 Function ResetThread()
