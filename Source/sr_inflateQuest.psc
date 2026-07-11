@@ -1368,6 +1368,11 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 
 	log("StartLeakage for " + akActor.GetLeveledActorBase().GetName() + "; animate:" + animate + "; CumType: " + CumType + "; spermtype: " + spermtype)
 
+	; sweep overlays orphaned by a prior interrupted cycle - must run BEFORE the
+	; equip branches below (the burst path equips its leak inside the branch, and
+	; sweeping later would strip it again)
+	RemoveAllLeakItems(akActor, false)
+
 	If animate == 2
 		; Burst deflate 
 	;	log("	burst deflate")
@@ -1612,9 +1617,6 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 	SetIntValue(akActor, ANIMATE_NUM, animnum)
 	StartLeakageEmotionAndTongue(akActor, CumType)
 
-	; unequip leftovers from a prior interrupted cycle - clearing the tracking
-	; lists while the items are still worn orphans them equipped forever
-	RemoveLeak(akActor)
 	If leak1ForEquip
 		EquipLeak(akActor, leak1ForEquip)
 	EndIf
@@ -1642,6 +1644,10 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 	;	EndWhile
 	;EndIf
 
+	; sweep overlays orphaned by a prior interrupted cycle - must run before this
+	; cycle equips its own tongue/eggs below
+	RemoveAllLeakItems(akActor, false)
+
 	if CumType == 1
 		TryPlayIdle(akactor, BaboSpermExpel)
 	elseif CumType == 2
@@ -1662,10 +1668,6 @@ Function DeflateFailMotion(actor akactor, int CumType, bool btongue = true, int 
 		btongueout = true
 	endif
 	MouthOpen(akActor, 0);checks tongue
-
-	; unequip leftovers from a prior interrupted cycle - clearing the tracking
-	; lists while the items are still worn orphans them equipped forever
-	RemoveLeak(akActor)
 
 	;if spermtype == 1;BeastCum WIP
 		;if sr_Cumvariation.getvalue() == 1
@@ -2778,10 +2780,12 @@ Function RemoveLeakItem(Actor target, Armor leak)
 	EndIf
 EndFunction
 
-Function RemoveAllLeakItems(Actor target)
+Function RemoveAllLeakItems(Actor target, bool includeTull = true)
 	; Failsafe cleanup that does not depend on the "sr.inflater.equipped_leak"
 	; tracking list - a leak overlay orphaned by an interrupted cycle can only
-	; be found by checking every known leak item directly.
+	; be found by checking every known leak item directly. includeTull=false
+	; leaves the Tull creampie overlays alone (they have their own timed
+	; lifecycle and per-type unequips).
 	RemoveLeak(target)
 	RemoveLeakItem(target, sr_VagLeak)
 	RemoveLeakItem(target, sr_vagLeakBeast)
@@ -2815,15 +2819,17 @@ Function RemoveAllLeakItems(Actor target)
 	RemoveLeakItem(target, sr_linga9armor)
 	RemoveLeakItem(target, sr_linga10armor)
 	FormListClear(target, "sr.inflater.equipped_tongue")
-	; Tull animated creampie overlays, bypassing the config-enabled gate so
-	; they still come off after the user disables the feature
-	If Game.GetModByName(TULL_ANIMATED_CREAMP) != 255
-		UnequipTullAnimatedCreampieItem(target, 0x00000807)
-		UnequipTullAnimatedCreampieItem(target, 0x00000809)
-		UnequipTullAnimatedCreampieItem(target, 0x00000803)
+	If includeTull
+		; Tull animated creampie overlays, bypassing the config-enabled gate so
+		; they still come off after the user disables the feature
+		If Game.GetModByName(TULL_ANIMATED_CREAMP) != 255
+			UnequipTullAnimatedCreampieItem(target, 0x00000807)
+			UnequipTullAnimatedCreampieItem(target, 0x00000809)
+			UnequipTullAnimatedCreampieItem(target, 0x00000803)
+		EndIf
+		UnsetFloatValue(target, TULL_UNEQUIP_AT)
+		FormListRemove(self, TULL_UNEQUIP_LIST, target, true)
 	EndIf
-	UnsetFloatValue(target, TULL_UNEQUIP_AT)
-	FormListRemove(self, TULL_UNEQUIP_LIST, target, true)
 EndFunction
 
 Function StopExpelSpell(Actor a)
