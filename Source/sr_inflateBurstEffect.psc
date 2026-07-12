@@ -64,8 +64,19 @@ Event OnUpdateGameTime()
 
 		If deflateAmount > 0.0
 			inflater.log("Deflating burst from " + t.GetLeveledActorBase().GetName())
+			; release from a pool that actually has cum - the old pick could choose
+			; an empty vagina (e.g. anal-plugged with an anal-only fill), draining
+			; nothing and equipping the wrong drip overlay. The burst is an
+			; emergency valve: it vents the full pool even past a plug when the
+			; other hole is empty.
+			float vagCum = inflater.GetVaginalCum(t)
+			float analCum = inflater.GetAnalCum(t)
 			int poolmask = 0
-			If inflater.isPlugged(t) < 2 && inflater.GetMostRecentInflationType(t) == 2
+			If vagCum <= 0.0 && analCum > 0.0
+				poolmask = inflater.ANAL
+			ElseIf analCum <= 0.0
+				poolmask = inflater.VAGINAL
+			ElseIf inflater.isPlugged(t) < 2 && inflater.GetMostRecentInflationType(t) == 2
 				poolmask = inflater.ANAL
 			else
 				poolmask = inflater.VAGINAL
