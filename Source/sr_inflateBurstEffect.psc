@@ -64,7 +64,13 @@ Event OnUpdateGameTime()
 			else
 				poolmask = inflater.VAGINAL
 			EndIf
-			inflater.QueueActor(t, false, poolmask, deflateAmount, utility.RandomFloat(4.0, 8.0), animate = 2)
+			int anim = 2
+			If inflater.sr_OnEventNoDeflation.getvalue() == 1
+				; auto-deflation is off: the player opted out of drain interruptions,
+				; so release without the forced idle - just leak (overlay + drain)
+				anim = -1
+			EndIf
+			inflater.QueueActor(t, false, poolmask, deflateAmount, utility.RandomFloat(4.0, 8.0), animate = anim)
 			inflater.InflateQueued()
 			if t == inflater.Player
 				inflater.Notify("$FHU_BURST_END")

@@ -1340,9 +1340,21 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 	EndIf
 	
 	if animate < 0
+		; silent leak: no idle, no control theater - but still visibly drip.
+		; sweep orphans first (this branch returns before the main sweep below,
+		; and the sweep must precede our own tongue/overlay equips)
+		RemoveAllLeakItems(akActor, false)
 		StartLeakageSoundEffect(akActor, CumType)
 		StartLeakageEmotionAndTongue(akActor, CumType)
+		if CumType == 1
+			EquipLeak(akActor, sr_VagLeak)
+		elseif CumType == 2
+			EquipLeak(akActor, sr_AnalLeak)
+		elseif CumType == 3
+			EquipLeak(akActor, sr_OralLeak)
+		endif
 		StartLeakageAddCum(akActor, CumType)
+		StartLeakageApplyPuddle(akActor, CumType)
 		SetIntValue(akActor, ANIMATING, 0)
 		SetIntValue(akActor, ANIMATING_SPERMTYPE, GetSpermLastActor(akActor, CumType))
 		return
@@ -1869,7 +1881,9 @@ Function StopLeakage(Actor akActor, int cumType)
 		UnsetIntValue(akActor, ANIMATING)
 		UnsetIntValue(akActor, ANIMATE_NUM)
 	Else
-		RemoveLeak(akActor) ; self-heal: an interrupted cycle can leave a leak overlay worn with no cleanup pass coming
+		; silent cycles (anim 0) and interrupted ones end here: remove the leak
+		; overlay and restore any gear its slot displaced (EquipArmor->RemoveLeak)
+		UnstripActor(akActor)
 		If anim < 0
 			return
 		EndIf
