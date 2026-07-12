@@ -2862,7 +2862,7 @@ Function RemoveAllLeakItems(Actor target, bool includeTull = true)
 EndFunction
 
 Function StopExpelSpell(Actor a)
-	if a.HasMagicEffect(sr_ExpelCumMGEF)
+	if sr_ExpelCumMGEF && a.HasMagicEffect(sr_ExpelCumMGEF) ; guard: property is None on saves that predate its assignment
 		a.RemoveSpell(sr_expelcumspell)
 	endif
 EndFunction
