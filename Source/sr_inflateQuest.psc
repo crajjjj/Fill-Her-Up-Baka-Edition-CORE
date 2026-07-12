@@ -498,7 +498,8 @@ event FHUSexlabEnd(int tid, bool HasPlayer)
 				Armor oralItem = GetTullAnimatedCreampieForm(0x00000803) as Armor
 				if !((vagItem1 && a.IsEquipped(vagItem1)) || (vagItem2 && a.IsEquipped(vagItem2)) || (analItem && a.IsEquipped(analItem)) || (oralItem && a.IsEquipped(oralItem)))
 					if UpdateTullAnimatedCreampieCumItem(a, 1)
-					else 
+					elseif UpdateTullAnimatedCreampieCumItem(a, 2)
+					else
 						UpdateTullAnimatedCreampieCumItem(a, 3)
 					endif
 				endif
@@ -2456,8 +2457,7 @@ Function ResetActorState(Form f)
         UnsetIntValue(f, ANIMATE_NUM)
 ;        UnsetFormValue(f, CHEST_ARMOR) ; obsolete
 		If(a)
-			EquipArmor(a) ; restore anything a leak cycle stripped and remove tracked leak items
-			RemoveAllLeakItems(a) ; failsafe for leak overlays orphaned outside the tracking list
+			RemoveAllLeakItems(a) ; restores displaced gear, then sweeps overlays orphaned outside the tracking list
 			EquiprandomTongue(a, false)
 			a.RemoveSpell(sr_inflateBurstSpell)
 			UnencumberActor(a)
@@ -2800,7 +2800,9 @@ Function RemoveAllLeakItems(Actor target, bool includeTull = true)
 	; be found by checking every known leak item directly. includeTull=false
 	; leaves the Tull creampie overlays alone (they have their own timed
 	; lifecycle and per-type unequips).
-	RemoveLeak(target)
+	; restore gear a prior cycle displaced; EquipArmor equips over the worn
+	; overlay (no naked frame) and ends with RemoveLeak for the tracked items
+	EquipArmor(target)
 	RemoveLeakItem(target, sr_VagLeak)
 	RemoveLeakItem(target, sr_vagLeakBeast)
 	RemoveLeakItem(target, sr_vagLeakRotten)
@@ -3137,6 +3139,15 @@ bool Function UpdateTullAnimatedCreampieCumItem(Actor akActor, int cumType)
 			UnequipTullAnimatedCreampieItem(akActor, 0x00000807)
 			return false
 		endif
+	elseif cumType == 2
+		if GetAnalPercentage(akActor) >= threshold
+			EquipTullAnimatedCreampieItem(akActor, 0x00000809)
+			ScheduleTullAnimatedCreampieUnequip(akActor)
+			return true
+		else
+			UnequipTullAnimatedCreampieItem(akActor, 0x00000809)
+			return false
+		endif
 	elseif cumType == 3
 		if GetOralPercentage(akActor) >= threshold
 			EquipTullAnimatedCreampieItem(akActor, 0x00000803)
@@ -3178,12 +3189,23 @@ bool Function ShouldEquipTullAnimatedCreampie(Actor akActor, int cumType)
 	return false
 EndFunction
 
+float Function GetTimeScale()
+	GlobalVariable ts = Game.GetForm(0x0000003A) as GlobalVariable ; Skyrim.esm TimeScale
+	If ts && ts.GetValue() > 0.0
+		return ts.GetValue()
+	EndIf
+	return 20.0 ; vanilla default; also guards a frozen or unresolvable timescale
+EndFunction
+
 Function ScheduleTullAnimatedCreampieUnequip(Actor akActor)
 	if !IsTullAnimatedCreampieReady() || !akActor
 		return
 	endif
+	; delay is REAL seconds (MCM slider); the deadline is stored in game time so it
+	; survives save/load (real time restarts every session), hence the timescale
+	; conversion here and back again in OnUpdate
 	float delay = config.TullAnimatedCreampieCleanDelay
-	SetFloatValue(akActor, TULL_UNEQUIP_AT, Utility.GetCurrentGameTime() + (delay / 86400.0))
+	SetFloatValue(akActor, TULL_UNEQUIP_AT, Utility.GetCurrentGameTime() + ((delay * GetTimeScale()) / 86400.0))
 	FormListAdd(self, TULL_UNEQUIP_LIST, akActor, false)
 	RegisterForSingleUpdate(1.0)
 EndFunction
@@ -3212,7 +3234,7 @@ Event OnUpdate()
 				UnsetFloatValue(a, TULL_UNEQUIP_AT)
 				FormListRemoveAt(self, TULL_UNEQUIP_LIST, n)
 			else
-				float remaining = (due - now) * 86400.0
+				float remaining = ((due - now) * 86400.0) / GetTimeScale() ; game-time delta back to real seconds
 				if !hasPending || remaining < nextWait
 					nextWait = remaining
 					hasPending = true
