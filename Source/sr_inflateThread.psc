@@ -572,6 +572,13 @@ Function Deflate()
 
 	inflater.StopLeakage(akActor, Cumtype)
 
+	If animate == 2 || animate == -2
+		; burst release just ended - show the Tull creampie overlay on the
+		; released hole for the MCM clean-delay (no-op without Tull enabled;
+		; the remaining fill is at the normal cap so the threshold passes)
+		inflater.UpdateTullAnimatedCreampieCumItem(akActor, Cumtype)
+	EndIf
+
 	log("Cum amounts after deflation, v: "+ vagCum +", a: "+ analCum +", t: "+ (analCum+vagCum) + ", o: " + oralCum)
 	
 	if Cumtype < 3

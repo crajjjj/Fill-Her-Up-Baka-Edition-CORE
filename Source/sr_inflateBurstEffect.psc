@@ -23,6 +23,12 @@ EndEvent
 
 Event OnUpdateGameTime()
 	inflater.log("OnUpdateGameTime() burst effect for " + t.GetLeveledActorBase().GetName())
+	If !t.Is3DLoaded()
+		; actor isn't loaded - defer the whole tick (no penalty damage, no
+		; release) until the player is around to see it
+		RegisterForSingleUpdateGameTime(0.5)
+		return
+	EndIf
 	If inflater.isAnimating(t) || t.IsInCombat() || inflater.isPlugged(t) == 3
 		inflater.log(t.GetLeveledActorBase().GetName() + " stays bursting.")
 		If totalMultChange > -40.0
@@ -67,8 +73,10 @@ Event OnUpdateGameTime()
 			int anim = 2
 			If inflater.sr_OnEventNoDeflation.getvalue() == 1
 				; auto-deflation is off: the player opted out of drain interruptions,
-				; so release without the forced idle - just leak (overlay + drain)
-				anim = -1
+				; so release without the forced idle - just leak (overlay + drain).
+				; -2 = silent like -1, but marks this as a burst release so the
+				; thread shows the Tull creampie overlay when the drain ends
+				anim = -2
 			EndIf
 			inflater.QueueActor(t, false, poolmask, deflateAmount, utility.RandomFloat(4.0, 8.0), animate = anim)
 			inflater.InflateQueued()

@@ -177,6 +177,8 @@ String Property START_INFLATION = "sr.inflater.start" autoreadonly hidden
 String Property START_ABSORPTION = "sr.inflater.absorb" autoreadonly hidden
 String Property TULL_UNEQUIP_LIST = "sr.inflater.tull.unequip.list" autoreadonly hidden
 String Property TULL_UNEQUIP_AT = "sr.inflater.tull.unequip.at" autoreadonly hidden
+String Property LEAK_UNEQUIP_LIST = "sr.inflater.leak.unequip.list" autoreadonly hidden
+String Property LEAK_UNEQUIP_AT = "sr.inflater.leak.unequip.at" autoreadonly hidden
 
 int property VAGINAL		= 0x01 autoreadonly hidden
 int property ANAL		= 0x02 autoreadonly hidden
@@ -1356,6 +1358,9 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 		endif
 		StartLeakageAddCum(akActor, CumType)
 		StartLeakageApplyPuddle(akActor, CumType)
+		; let the drip linger after the drain (removed on the clean-delay timer,
+		; or by the next cycle/full drain/reset) so the leak is actually visible
+		ScheduleLeakUnequip(akActor)
 		SetIntValue(akActor, ANIMATING, 0)
 		SetIntValue(akActor, ANIMATING_SPERMTYPE, GetSpermLastActor(akActor, CumType))
 		return
@@ -1882,9 +1887,14 @@ Function StopLeakage(Actor akActor, int cumType)
 		UnsetIntValue(akActor, ANIMATING)
 		UnsetIntValue(akActor, ANIMATE_NUM)
 	Else
-		; silent cycles (anim 0) and interrupted ones end here: remove the leak
-		; overlay and restore any gear its slot displaced (EquipArmor->RemoveLeak)
-		UnstripActor(akActor)
+		If GetFloatValue(akActor, LEAK_UNEQUIP_AT) > 0.0
+			; silent leak: the drip lingers - the scheduled unequip in OnUpdate
+			; restores gear and removes it when the clean delay elapses
+		Else
+			; interrupted cycles end here: remove the leak overlay and restore
+			; any gear its slot displaced (EquipArmor->RemoveLeak)
+			UnstripActor(akActor)
+		EndIf
 		If anim < 0
 			return
 		EndIf
@@ -2211,7 +2221,7 @@ State MonitoringInflation
 					n -= 1
 					Actor a = FormListGet(self, INFLATED_ACTORS, n) as Actor
 					;int blockedtype = GetAvailableExpelPool(a)
-					if a && !a.IsDead() && !a.IsInCombat() && !a.IsInFaction(slAnimatingFaction) ; && a.GetCurrentScene() == none - we need it? moved to `isAnimating` function
+					if a && a.Is3DLoaded() && !a.IsDead() && !a.IsInCombat() && !a.IsInFaction(slAnimatingFaction) ; && a.GetCurrentScene() == none - we need it? moved to `isAnimating` function
 						float lastVagTime = GetFloatValue(a, LAST_TIME_VAG) 
 						float lastAnalTime = GetFloatValue(a, LAST_TIME_ANAL)
 						float lastoralTime = GetFloatValue(a, LAST_TIME_ORAL)
@@ -2835,6 +2845,9 @@ Function RemoveAllLeakItems(Actor target, bool includeTull = true)
 	RemoveLeakItem(target, sr_linga9armor)
 	RemoveLeakItem(target, sr_linga10armor)
 	FormListClear(target, "sr.inflater.equipped_tongue")
+	; cancel any pending silent-drip removal - the overlay it targets is gone now
+	UnsetFloatValue(target, LEAK_UNEQUIP_AT)
+	FormListRemove(self, LEAK_UNEQUIP_LIST, target, true)
 	If includeTull
 		; Tull animated creampie overlays, bypassing the config-enabled gate so
 		; they still come off after the user disables the feature
@@ -3210,9 +3223,22 @@ Function ScheduleTullAnimatedCreampieUnequip(Actor akActor)
 	RegisterForSingleUpdate(1.0)
 EndFunction
 
+Function ScheduleLeakUnequip(Actor akActor)
+	; timed removal for the silent-leak drip overlay; same clock semantics as
+	; the Tull scheduler above (real-seconds delay stored as game time)
+	if !akActor
+		return
+	endif
+	float delay = config.TullAnimatedCreampieCleanDelay
+	SetFloatValue(akActor, LEAK_UNEQUIP_AT, Utility.GetCurrentGameTime() + ((delay * GetTimeScale()) / 86400.0))
+	FormListAdd(self, LEAK_UNEQUIP_LIST, akActor, false)
+	RegisterForSingleUpdate(1.0)
+EndFunction
+
 Event OnUpdate()
 	int n = FormListCount(self, TULL_UNEQUIP_LIST)
-	if n <= 0
+	int m = FormListCount(self, LEAK_UNEQUIP_LIST)
+	if n <= 0 && m <= 0
 		return
 	endif
 
@@ -3235,6 +3261,35 @@ Event OnUpdate()
 				FormListRemoveAt(self, TULL_UNEQUIP_LIST, n)
 			else
 				float remaining = ((due - now) * 86400.0) / GetTimeScale() ; game-time delta back to real seconds
+				if !hasPending || remaining < nextWait
+					nextWait = remaining
+					hasPending = true
+				endif
+			endif
+		endif
+	endWhile
+
+	while m > 0
+		m -= 1
+		Actor a = FormListGet(self, LEAK_UNEQUIP_LIST, m) as Actor
+		if !a
+			FormListRemoveAt(self, LEAK_UNEQUIP_LIST, m)
+		else
+			float due = GetFloatValue(a, LEAK_UNEQUIP_AT)
+			if due <= 0.0 || now >= due
+				if a.IsInFaction(inflaterAnimatingFaction)
+					; a new cycle is running - it manages the overlays now; check back shortly
+					if !hasPending || nextWait > 2.0
+						nextWait = 2.0
+						hasPending = true
+					endif
+				else
+					UnstripActor(a) ; restore displaced gear and remove the lingering drip
+					UnsetFloatValue(a, LEAK_UNEQUIP_AT)
+					FormListRemoveAt(self, LEAK_UNEQUIP_LIST, m)
+				endif
+			else
+				float remaining = ((due - now) * 86400.0) / GetTimeScale()
 				if !hasPending || remaining < nextWait
 					nextWait = remaining
 					hasPending = true
