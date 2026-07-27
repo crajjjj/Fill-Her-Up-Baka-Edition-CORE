@@ -756,17 +756,17 @@ if sr_MoanSound.getvalue() == 1
 	else
 		if CumType == 1;Vaginal
 			if type == 1
-				if !sr_IntAudioUtil.TrySFX("FHU_DeflateVaginalMild", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateVaginalMild")
 					sr_FHUCumDeflationVaginalMildMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Vaginal 1 " + aksource)
 			elseif type == 2
-				if !sr_IntAudioUtil.TrySFX("FHU_DeflateVaginalHard", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateVaginalHard")
 					sr_FHUCumDeflationVaginalHardMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Vaginal 2 " + aksource)
 			else
-				if !sr_IntAudioUtil.TrySFX("FHU_CumDenial", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_CumDenial")
 					sr_FHUMoanDenialMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Vaginal 3 " + aksource)
@@ -775,17 +775,17 @@ if sr_MoanSound.getvalue() == 1
 		elseif CumType == 2
 			;sr_FHUMoanHardMarker.play(aksource);No longer used. Save it for another update. Burst effect maybe
 			if type == 1
-				if !sr_IntAudioUtil.TrySFX("FHU_DeflateAnalMild", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateAnalMild")
 					sr_FHUCumDeflationAnalMildMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Anal 1 " + aksource)
 			elseif type == 2
-				if !sr_IntAudioUtil.TrySFX("FHU_DeflateAnalHard", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateAnalHard")
 					sr_FHUCumDeflationAnalHardMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Anal 2 " + aksource)
 			else
-				if !sr_IntAudioUtil.TrySFX("FHU_CumDenial", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_CumDenial")
 					sr_FHUMoanDenialMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Anal 3 " + aksource)
@@ -793,17 +793,17 @@ if sr_MoanSound.getvalue() == 1
 		elseif CumType == 3
 			;sr_FHUMoanOralMarker.play(aksource)
 			if type == 1
-				if !sr_IntAudioUtil.TrySFX("FHU_DeflateOral", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateOral")
 					sr_FHUCumDeflationOralMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Oral 1 " + aksource)
 			elseif type == 2
-				if !sr_IntAudioUtil.TrySFX("FHU_DeflateOral", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateOral")
 					sr_FHUCumDeflationOralMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Oral 2 " + aksource)
 			else
-				if !sr_IntAudioUtil.TrySFX("FHU_DeflateOralFail", aksource as Actor)
+				if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateOralFail")
 					sr_FHUCumDeflationOralFailMarker.play(aksource)
 				endif
 				log("FHUmoanSoundEffect Oral 3 " + aksource)
@@ -817,12 +817,13 @@ Function FHUmoanSoundAfterEffect(ObjectReference aksource, int type, int CumType
 if sr_MoanSound.getvalue() == 1
 	if sr_SexlabMoanSound.getvalue() == 1
 		if CumType == 3
-			; post-swallow gasps; SexLab voices had nothing fitting, AudioUtil packs do (no-op without the DLL)
-			sr_IntAudioUtil.TryVoice(aksource as actor, "AfterSwallowGasps")
+			; voiced reaction after oral deflation; PlayVoice falls back to the
+			; FHU_DeflateOralAfter sfx pool if no pack ships the category (no-op without the DLL)
+			sr_IntAudioUtil.TryVoice(aksource as actor, "FHU_DeflateOralAfter")
 		endif
 	else
 		if CumType == 3
-			if !sr_IntAudioUtil.TrySFX("FHU_DeflateOralAfter", aksource as Actor)
+			if !sr_IntAudioUtil.TryVoice(aksource as Actor, "FHU_DeflateOralAfter")
 				sr_FHUCumDeflationOralAfterMarker.play(aksource)
 			endif
 		endif

@@ -55,11 +55,14 @@ Bool Function TrySFX(String SfxName, Actor akFollow) Global
 	Return AudioUtil.PlaySFX(SfxName, akFollow) > 0
 EndFunction
 
-; Named category through the actor's voice pack (aliases/fallbacks resolve in
-; the DLL). Returns true if something played.
+; FHU's own voice content (the FHU_* deflation lines). Plays the named category
+; through the actor's voice pack in FHU's dedicated "fhu" volume group (its level
+; set by [groups] fhu in FHU_sounds.toml), separate from the pc/partner voice
+; groups so FHU audio has its own level. aliases/fallbacks resolve in the DLL.
+; Returns true if something played.
 Bool Function TryVoice(Actor akActor, String Category) Global
 	If !akActor || !GetIsInstalled()
 		Return false
 	EndIf
-	Return AudioUtil.PlayVoice(akActor, Category, 1.0, VoiceGroup(akActor), MoanChannel(akActor), true) > 0
+	Return AudioUtil.PlayVoice(akActor, Category, 1.0, "fhu", MoanChannel(akActor), true) > 0
 EndFunction

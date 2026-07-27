@@ -1,23 +1,38 @@
 # Fill Her Up Baka Edition additive overlay for AudioUtil (https://crajjjj.github.io/AudioUtil/).
 #
 # Registers FHU's stock loose sound pools (Sound\fx\FillHerUp\) as named [sfx]
-# entries so they resolve through AudioUtil: FHU scripts play the FHU_* names
-# below via PlaySFX (fallback: the legacy Sound-marker forms when the DLL is
-# absent), other mods may do the same, and everything is testable from the
-# console (au sfx FHU_CumDenial).
+# entries so they resolve through AudioUtil. FHU's deflation lines are VOICE
+# content: FHU scripts play the FHU_* names below via PlayVoice
+# (sr_IntAudioUtil.TryVoice), so they route through the actor's voice pack and a
+# pack can re-record them. The [sfx] entries here are the last-resort fallback
+# PlayVoice lands on when no pack ships the category (legacy Sound-marker forms
+# fall back beyond that, when the DLL is absent). Other mods may play these by
+# name too, and everything is testable from the console (au sfx FHU_CumDenial).
 # [sfx] keys are last-writer-wins across config\*.toml files, so a voice pack or
 # a user overlay can retarget any single entry without touching this file. Packs
 # that just re-record the wavs keep working with no toml at all - same folders,
 # higher file priority.
 #
-# This file is content-only (additive). Engine globals live in the installed
-# BASE AudioUtil.toml (SLO VE's or another preset); nothing here overrides them.
+# This file is additive only: the [sfx] pools and the [groups] fhu volume below.
+# It sets no base-only globals ([general]/[lipsync]/[gag] toggles) - those live
+# in the installed BASE AudioUtil.toml (SLO VE's or another preset).
 # Key/name matching is case- and space-insensitive. Reload in-game: au reload.
 
+[groups]
+# FHU's deflation voice lines play in their own "fhu" volume group (passed on the
+# PlayVoice call in sr_IntAudioUtil.TryVoice), separate from the shared pc/partner
+# voice groups - so FHU audio has its own level the voice-pack's voice slider does
+# not touch. No MCM: edit this 0.0-1.0 value and `au reload`. [groups] is additive,
+# so this merges onto the base without overriding it.
+fhu = 1.0
+
 [sfx]
-# Pools FHU itself plays through AudioUtil (sr_IntAudioUtil.TrySFX; fallback:
-# the legacy Sound markers). These land in the standard "sfx" group, so the
-# voice-pack mod's SFX volume slider applies. Moan+squelch deflation audio:
+# FHU's deflation lines are VOICE content played via PlayVoice
+# (sr_IntAudioUtil.TryVoice; fallback: the legacy Sound markers). Routing through
+# PlayVoice means the actor's voice pack and the [groups] fhu volume above apply,
+# and a pack can re-record any line. These [sfx] entries are the last-resort fallback
+# PlayVoice lands on when no pack ships the category (and the target for
+# console/other-mod PlaySFX by name). Moan+squelch deflation audio:
 FHU_DeflateVaginalMild = 'Sound\fx\FillHerUp\VaginalCumDeflate\Mild'
 FHU_DeflateVaginalHard = 'Sound\fx\FillHerUp\VaginalCumDeflate\Hard'
 FHU_DeflateAnalMild = 'Sound\fx\FillHerUp\AnalCumDeflate\Mild'
