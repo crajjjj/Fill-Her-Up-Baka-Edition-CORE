@@ -128,9 +128,6 @@ int resetOID
 bool resettingquest = false
 int resetquestOID
 
-int gamepadOID
-bool property bgamepad auto hidden
-
 bool property enabled = true auto hidden
 int enabledOID
 
@@ -476,10 +473,6 @@ Function RegisterKeys()
 	EndIf
 EndFunction
 
-Function CheckGamePad()
-	bgamepad = Game.UsingGamepad()
-EndFunction
-
 ;https://forums.nexusmods.com/index.php?/topic/4795300-starting-quests-from-mcm-quest-script-best-method/
 Function closeMCM()
 	ApplyConfig()
@@ -687,7 +680,6 @@ Event OnPageReset(String page)
 		addRaceKeyOID = AddKeyMapOption("$FHU_ADD_RACE", addRaceKey, OPTION_FLAG_WITH_UNMAP)
 		consolePrintOID = AddToggleOption("$FHU_CONSOLE_PRINT", consolePrint)
 		loggingOID = AddToggleOption("$FHU_LOGGING", logging)
-		gamepadOID = AddToggleOption("$FHU_GAMEPAD", bgamepad)
 
 		AddEmptyOption()
 		resetOID = AddTextOption("$FHU_RESET_ACTORS", "$FHU_RESET")
@@ -1304,9 +1296,6 @@ State settings
 		ElseIf opt == consolePrintOID
 			consolePrint = !consolePrint
 			SetToggleOptionValue(consolePrintOID, consolePrint)
-		ElseIf opt == gamepadOID
-			bgamepad = !bgamepad
-			SetToggleOptionValue(gamepadOID, bgamepad)
 		Endif
 	EndEvent
 
@@ -2316,7 +2305,6 @@ bool Function SaveUserConfig()
 	JsonUtil.SetIntValue(userSettingsFile, "addRaceKey", addRaceKey)
 	JsonUtil.SetIntValue(userSettingsFile, "consolePrint", consolePrint as int)
 	JsonUtil.SetIntValue(userSettingsFile, "logging", logging as int)
-	JsonUtil.SetIntValue(userSettingsFile, "bgamepad", bgamepad as int)
 
 	;Events
 	JsonUtil.SetIntValue(userSettingsFile, "events", events as int)
@@ -2436,7 +2424,6 @@ bool Function LoadUserConfig()
 	addRaceKey = JsonUtil.GetIntValue(userSettingsFile, "addRaceKey", addRaceKey)
 	consolePrint = JsonUtil.GetIntValue(userSettingsFile, "consolePrint", consolePrint as int) as bool
 	logging = JsonUtil.GetIntValue(userSettingsFile, "logging", logging as int) as bool
-	bgamepad = JsonUtil.GetIntValue(userSettingsFile, "bgamepad", bgamepad as int) as bool
 
 	;Events
 	events = JsonUtil.GetIntValue(userSettingsFile, "events", events as int) as bool

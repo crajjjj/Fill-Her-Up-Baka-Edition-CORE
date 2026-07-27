@@ -40,7 +40,6 @@ Function Maintenance()
 	If config.defKey >= 0
 		RegisterForKey(config.defKey)
 	EndIf
-	config.CheckGamePad()
 EndFunction
 
 Event OnPlayerLoadGame()
