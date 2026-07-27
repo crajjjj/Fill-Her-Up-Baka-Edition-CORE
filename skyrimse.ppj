@@ -30,6 +30,7 @@
         <Import>.\dependencies\SlaveTats-1.3.0-beta-2 SE\Source\Scripts</Import>
         <Import>.\dependencies\Devious Devices SE 5.1\00 Core\scripts\Source</Import>
         <Import>.\dependencies\ConsoleUtil</Import>
+        <Import>.\dependencies\AudioUtil\Scripts\Source</Import>
         <Import>.\dependencies\XP32 Maximum Skeleton Special Extended 4.67\Character Creation\MCM\assets\scripts\source</Import>
         <Import>.\dependencies\ZaZ Animation Pack</Import>
         <Import>.\dependencies\iwantWidgets\Source\Scripts</Import>
@@ -67,6 +68,7 @@
             <Match In="Scripts">*.pex</Match>
             <!--<Match In="SKSE\Plugins">*.dll</Match>-->
             <Match In="Interface">*</Match>
+            <Match In="SKSE\Plugins\AudioUtil\config">*.toml</Match>
             <!-- <Match In="Sound">*</Match> -->
             <!-- <Match In="SKSE\Plugins">*.dll</Match> -->
             <!-- <Match In="SKSE\Plugins">*</Match> -->

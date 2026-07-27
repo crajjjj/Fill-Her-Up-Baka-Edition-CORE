@@ -756,38 +756,56 @@ if sr_MoanSound.getvalue() == 1
 	else
 		if CumType == 1;Vaginal
 			if type == 1
-				sr_FHUCumDeflationVaginalMildMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_DeflateVaginalMild", aksource as Actor)
+					sr_FHUCumDeflationVaginalMildMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Vaginal 1 " + aksource)
 			elseif type == 2
-				sr_FHUCumDeflationVaginalHardMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_DeflateVaginalHard", aksource as Actor)
+					sr_FHUCumDeflationVaginalHardMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Vaginal 2 " + aksource)
 			else
-				sr_FHUMoanDenialMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_CumDenial", aksource as Actor)
+					sr_FHUMoanDenialMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Vaginal 3 " + aksource)
 			endif
 			;sr_FHUMoanMildMarker.play(aksource);No longer used. Save it for another update. Burst effect maybe
 		elseif CumType == 2
 			;sr_FHUMoanHardMarker.play(aksource);No longer used. Save it for another update. Burst effect maybe
 			if type == 1
-				sr_FHUCumDeflationAnalMildMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_DeflateAnalMild", aksource as Actor)
+					sr_FHUCumDeflationAnalMildMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Anal 1 " + aksource)
 			elseif type == 2
-				sr_FHUCumDeflationAnalHardMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_DeflateAnalHard", aksource as Actor)
+					sr_FHUCumDeflationAnalHardMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Anal 2 " + aksource)
 			else
-				sr_FHUMoanDenialMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_CumDenial", aksource as Actor)
+					sr_FHUMoanDenialMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Anal 3 " + aksource)
 			endif
 		elseif CumType == 3
 			;sr_FHUMoanOralMarker.play(aksource)
 			if type == 1
-				sr_FHUCumDeflationOralMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_DeflateOral", aksource as Actor)
+					sr_FHUCumDeflationOralMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Oral 1 " + aksource)
 			elseif type == 2
-				sr_FHUCumDeflationOralMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_DeflateOral", aksource as Actor)
+					sr_FHUCumDeflationOralMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Oral 2 " + aksource)
 			else
-				sr_FHUCumDeflationOralFailMarker.play(aksource)
+				if !sr_IntAudioUtil.TrySFX("FHU_DeflateOralFail", aksource as Actor)
+					sr_FHUCumDeflationOralFailMarker.play(aksource)
+				endif
 				log("FHUmoanSoundEffect Oral 3 " + aksource)
 			endif
 		endif
@@ -798,10 +816,15 @@ EndFunction
 Function FHUmoanSoundAfterEffect(ObjectReference aksource, int type, int CumType);No loop
 if sr_MoanSound.getvalue() == 1
 	if sr_SexlabMoanSound.getvalue() == 1
-		;Nothing
+		if CumType == 3
+			; post-swallow gasps; SexLab voices had nothing fitting, AudioUtil packs do (no-op without the DLL)
+			sr_IntAudioUtil.TryVoice(aksource as actor, "AfterSwallowGasps")
+		endif
 	else
 		if CumType == 3
-			sr_FHUCumDeflationOralAfterMarker.play(aksource)
+			if !sr_IntAudioUtil.TrySFX("FHU_DeflateOralAfter", aksource as Actor)
+				sr_FHUCumDeflationOralAfterMarker.play(aksource)
+			endif
 		endif
 	endif
 endif
@@ -811,6 +834,9 @@ MfgConsoleFuncExt.ResetMfg(aksource as Actor)
 EndFunction
 
 Function UseSexlabVoice(actor ActorRef, int Strength, bool isvictim)
+	if sr_IntAudioUtil.TryMoan(ActorRef, Strength)
+		return ; played through the actor's AudioUtil voice pack (gag-muffled when gagged)
+	endif
 	sslBaseVoice voice = SexLab.GetVoice(ActorRef)
 	voice.PlayMoan(ActorRef, Strength, isvictim, true)
 EndFunction
@@ -1446,11 +1472,13 @@ Function StartLeakage(Actor akActor, int CumType, int animate)
 		SetIntValue(akActor, ANIMATING, 1)
 		if akActor == player
 			Game.ForceThirdPerson()
-			if config.bgamepad
-				Input.TapKey(Input.GetMappedKey("Forward", 0x02)); Need Test WIP
-			else
+			If !Game.UsingGamepad()
+				; nudge the player into a step so the full-body deflate idle takes over
+				; cleanly. Skip on gamepad: GetMappedKey("Forward") returns a keyboard
+				; scancode, and a controller's "Forward" is the analog stick (no scancode
+				; to tap), so the old tap misfired for gamepad users.
 				Input.TapKey(Input.GetMappedKey("Forward"))
-			endif
+			EndIf
 			Game.DisablePlayerControls()
 		Else
 			ActorUtil.AddPackageOverride(akActor, stayStillPackage, 100, 1)
@@ -2934,8 +2962,11 @@ EndFunction
 
 
 Function Moan(Actor akActor)
-	sslBaseVoice voice = sexlab.GetVoice(akActor)
 	int fullness = ( GetInflationPercentage(akActor) + 0.5 ) as int
+	if sr_IntAudioUtil.TryMoan(akActor, fullness)
+		return
+	endif
+	sslBaseVoice voice = sexlab.GetVoice(akActor)
 	bool isVictim = fullness > 50 && fullness <= 75 ; to play the medium sound
 	voice.PlayMoan(akActor, fullness, isVictim)
 EndFunction

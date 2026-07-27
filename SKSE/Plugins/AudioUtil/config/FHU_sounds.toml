@@ -1,0 +1,39 @@
+# Fill Her Up Baka Edition additive overlay for AudioUtil (https://crajjjj.github.io/AudioUtil/).
+#
+# Registers FHU's stock loose sound pools (Sound\fx\FillHerUp\) as named [sfx]
+# entries so they resolve through AudioUtil: FHU scripts play the FHU_* names
+# below via PlaySFX (fallback: the legacy Sound-marker forms when the DLL is
+# absent), other mods may do the same, and everything is testable from the
+# console (au sfx FHU_CumDenial).
+# [sfx] keys are last-writer-wins across config\*.toml files, so a voice pack or
+# a user overlay can retarget any single entry without touching this file. Packs
+# that just re-record the wavs keep working with no toml at all - same folders,
+# higher file priority.
+#
+# This file is content-only (additive). Engine globals live in the installed
+# BASE AudioUtil.toml (SLO VE's or another preset); nothing here overrides them.
+# Key/name matching is case- and space-insensitive. Reload in-game: au reload.
+
+[sfx]
+# Pools FHU itself plays through AudioUtil (sr_IntAudioUtil.TrySFX; fallback:
+# the legacy Sound markers). These land in the standard "sfx" group, so the
+# voice-pack mod's SFX volume slider applies. Moan+squelch deflation audio:
+FHU_DeflateVaginalMild = 'Sound\fx\FillHerUp\VaginalCumDeflate\Mild'
+FHU_DeflateVaginalHard = 'Sound\fx\FillHerUp\VaginalCumDeflate\Hard'
+FHU_DeflateAnalMild = 'Sound\fx\FillHerUp\AnalCumDeflate\Mild'
+FHU_DeflateAnalHard = 'Sound\fx\FillHerUp\AnalCumDeflate\Hard'
+FHU_DeflateOral = 'Sound\fx\FillHerUp\OralCumDeflate'          # swallowing it down
+FHU_DeflateOralFail = 'Sound\fx\FillHerUp\OralCumDeflationFail' # gag/choke on the swallow
+FHU_DeflateOralAfter = 'Sound\fx\FillHerUp\OralCumDeflateAfter' # after-gulp gasps
+FHU_CumDenial = 'Sound\fx\FillHerUp\CumDenial'                  # wants to expel but can't (plug/belt)
+
+# Stock pools registered for completeness - played via legacy Sound forms today
+# (sr_FHUMoanMildMarker/sr_FHUMoanHardMarker are reserved for a future burst
+# effect), resolvable by name for console tests and other consumer mods.
+FHU_MoanMild = 'Sound\fx\FillHerUp\CumDeflationMild'
+FHU_MoanHard = 'Sound\fx\FillHerUp\CumDeflationHard'
+
+# No [gag] entries on purpose: FHU's sr_linga* tongue overlays are an ahegao
+# visual, not a mouth-occupying gag - registering them would muffle the actor's
+# voice lines from every AudioUtil consumer (SLO VE scene dialogue included)
+# for as long as the tongue is worn.
