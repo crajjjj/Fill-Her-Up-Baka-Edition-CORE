@@ -627,13 +627,29 @@ Event OrgasmSeparate(Form ActorRef, Int Thread)
 	EndIf
 EndEvent
 
+bool Function SeparateOrgasmEventsAvailable()
+	; Only SLSO's patched actor alias (classic SexLab) or SexLab p+ actually emit
+	; the "SexLabOrgasmSeparate" mod event. Base SexLab's own "Separate Orgasms"
+	; MCM toggle sends per-actor "SexLabOrgasm" instead - nothing sends
+	; ...Separate there, so deferring to it would make FHU deaf to orgasms.
+	If Game.GetModByName("SLSO.esp") != 255
+		return true
+	EndIf
+	return SKSE.GetPluginVersion("SexLabUtil") > 0 ; p+ ships this SKSE plugin; legacy SexLab does not
+EndFunction
+
 Event Orgasm(int thread, bool hasPlayer)
-	; When separate orgasms are the active system, OrgasmSeparate handles each orgasm.
-	; The legacy combined hook still fires in p+ SCENE/LEGACY climax modes (and via SLSO's
-	; "always orgasm" options), so ignore it here to avoid inflating twice.
-	If sexlab.config.SeparateOrgasms
+	; When separate orgasms are the active system AND something can actually emit
+	; SexLabOrgasmSeparate (SLSO or p+), OrgasmSeparate handles each orgasm - the
+	; legacy combined hook still fires in p+ SCENE/LEGACY climax modes (and via
+	; SLSO's "always orgasm" options), so ignore it here to avoid inflating twice.
+	; With base SexLab's own "Separate Orgasms" toggle this hook is the ONLY
+	; signal we get, so it must be handled here.
+	If sexlab.config.SeparateOrgasms && SeparateOrgasmEventsAvailable()
+		log("Orgasm hook for thread " + thread + ": deferred to separate-orgasm events.")
 		return
 	EndIf
+	log("Orgasm hook for thread " + thread + ": handling on the legacy path.")
 	Actor[] actors = sexlab.HookActors(thread)
 	sslBaseAnimation anim = sexlab.HookAnimation(thread)
 	If anim.hasTag("Vaginal") || anim.hasTag("Oral") || anim.hasTag("Anal") || anim.hasTag("Blowjob")
