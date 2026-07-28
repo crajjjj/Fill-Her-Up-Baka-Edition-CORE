@@ -1,38 +1,37 @@
 # Fill Her Up Baka Edition additive overlay for AudioUtil (https://crajjjj.github.io/AudioUtil/).
 #
-# Registers FHU's stock loose sound pools (Sound\fx\FillHerUp\) as named [sfx]
-# entries so they resolve through AudioUtil. FHU's deflation lines are VOICE
-# content: FHU scripts play the FHU_* names below via PlayVoice
-# (sr_IntAudioUtil.TryVoice), so they route through the actor's voice pack and a
-# pack can re-record them. The [sfx] entries here are the last-resort fallback
-# PlayVoice lands on when no pack ships the category (legacy Sound-marker forms
-# fall back beyond that, when the DLL is absent). Other mods may play these by
-# name too, and everything is testable from the console (au sfx FHU_CumDenial).
-# [sfx] keys are last-writer-wins across config\*.toml files, so a voice pack or
-# a user overlay can retarget any single entry without touching this file. Packs
-# that just re-record the wavs keep working with no toml at all - same folders,
-# higher file priority.
+# FHU's deflation/denial lines are VOICE content, so they live in a voice slot
+# (FHU1 below), not the [sfx] table. Playback (sr_IntAudioUtil.TryVoice) is
+# two-step: PlayVoice on the actor first - so a voice pack that ships an FHU_*
+# category plays it in the actor's own voice, and a gagged actor gets her
+# muffled gag slot - then PlayVoiceFromSlot("FHU1", ...) for FHU's stock line
+# when no pack ships the category. Legacy Sound-marker forms remain the
+# fallback when the DLL is absent. Voice packs that just re-record the wavs
+# keep working with no toml at all - same folders, higher file priority.
 #
-# This file is additive only: the [sfx] pools and the [groups] fhu volume below.
+# This file is additive only: the FHU1 slot and the [groups] fhu volume below.
 # It sets no base-only globals ([general]/[lipsync]/[gag] toggles) - those live
 # in the installed BASE AudioUtil.toml (SLO VE's or another preset).
 # Key/name matching is case- and space-insensitive. Reload in-game: au reload.
 
 [groups]
-# FHU's deflation voice lines play in their own "fhu" volume group (passed on the
-# PlayVoice call in sr_IntAudioUtil.TryVoice), separate from the shared pc/partner
-# voice groups - so FHU audio has its own level the voice-pack's voice slider does
-# not touch. No MCM: edit this 0.0-1.0 value and `au reload`. [groups] is additive,
-# so this merges onto the base without overriding it.
+# FHU's lines play in their own "fhu" volume group (passed on both TryVoice
+# calls in sr_IntAudioUtil), separate from the shared pc/partner voice groups -
+# so FHU audio has its own level the voice-pack's voice slider does not touch.
+# No MCM: edit this 0.0-1.0 value and `au reload`. [groups] is additive, so
+# this merges onto the base without overriding it.
 fhu = 1.0
 
-[sfx]
-# FHU's deflation lines are VOICE content played via PlayVoice
-# (sr_IntAudioUtil.TryVoice; fallback: the legacy Sound markers). Routing through
-# PlayVoice means the actor's voice pack and the [groups] fhu volume above apply,
-# and a pack can re-record any line. These [sfx] entries are the last-resort fallback
-# PlayVoice lands on when no pack ships the category (and the target for
-# console/other-mod PlaySFX by name). Moan+squelch deflation audio:
+# FHU-bundled voice lines, reached via PlayVoiceFromSlot("FHU1", ...) - never
+# resolved from an actor (sex "all" keeps it out of the blind default-by-sex
+# fallback). Category names match what TryVoice requests from the actor's pack
+# first, so a pack overrides a line by shipping a folder of the same name.
+# Moan+squelch deflation audio:
+[[slot]]
+id = "FHU1"
+sex = "all"
+script_only = true   # played directly via PlayVoiceFromSlot; suppresses the wiring-audit orphan warning
+[slot.categories]
 FHU_DeflateVaginalMild = 'Sound\fx\FillHerUp\VaginalCumDeflate\Mild'
 FHU_DeflateVaginalHard = 'Sound\fx\FillHerUp\VaginalCumDeflate\Hard'
 FHU_DeflateAnalMild = 'Sound\fx\FillHerUp\AnalCumDeflate\Mild'
@@ -41,10 +40,9 @@ FHU_DeflateOral = 'Sound\fx\FillHerUp\OralCumDeflate'          # swallowing it d
 FHU_DeflateOralFail = 'Sound\fx\FillHerUp\OralCumDeflationFail' # gag/choke on the swallow
 FHU_DeflateOralAfter = 'Sound\fx\FillHerUp\OralCumDeflateAfter' # after-gulp gasps
 FHU_CumDenial = 'Sound\fx\FillHerUp\CumDenial'                  # wants to expel but can't (plug/belt)
-
 # Stock pools registered for completeness - played via legacy Sound forms today
 # (sr_FHUMoanMildMarker/sr_FHUMoanHardMarker are reserved for a future burst
-# effect), resolvable by name for console tests and other consumer mods.
+# effect), resolvable by name for audits and other consumer mods.
 FHU_MoanMild = 'Sound\fx\FillHerUp\CumDeflationMild'
 FHU_MoanHard = 'Sound\fx\FillHerUp\CumDeflationHard'
 

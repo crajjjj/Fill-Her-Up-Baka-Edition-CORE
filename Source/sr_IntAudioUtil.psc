@@ -55,14 +55,18 @@ Bool Function TrySFX(String SfxName, Actor akFollow) Global
 	Return AudioUtil.PlaySFX(SfxName, akFollow) > 0
 EndFunction
 
-; FHU's own voice content (the FHU_* deflation lines). Plays the named category
-; through the actor's voice pack in FHU's dedicated "fhu" volume group (its level
-; set by [groups] fhu in FHU_sounds.toml), separate from the pc/partner voice
-; groups so FHU audio has its own level. aliases/fallbacks resolve in the DLL.
-; Returns true if something played.
+; FHU's own voice content (the FHU_* deflation lines), in FHU's dedicated "fhu"
+; volume group ([groups] fhu in FHU_sounds.toml). Two-step: the actor's own
+; voice pack first - a pack that ships the FHU_* category plays it in her voice,
+; and a gagged actor resolves her muffled gag slot - then FHU's bundled FHU1
+; voice slot for the stock line when no pack ships the category.
+; Returns true if something played; false = caller plays its legacy Sound marker.
 Bool Function TryVoice(Actor akActor, String Category) Global
 	If !akActor || !GetIsInstalled()
 		Return false
 	EndIf
-	Return AudioUtil.PlayVoice(akActor, Category, 1.0, "fhu", MoanChannel(akActor), true) > 0
+	If AudioUtil.PlayVoice(akActor, Category, 1.0, "fhu", MoanChannel(akActor), true) > 0
+		Return true
+	EndIf
+	Return AudioUtil.PlayVoiceFromSlot("FHU1", Category, akActor, 1.0, "fhu", MoanChannel(akActor), true) > 0
 EndFunction
