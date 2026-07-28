@@ -36,9 +36,9 @@ FHU_DeflateVaginalMild = 'Sound\fx\FillHerUp\VaginalCumDeflate\Mild'
 FHU_DeflateVaginalHard = 'Sound\fx\FillHerUp\VaginalCumDeflate\Hard'
 FHU_DeflateAnalMild = 'Sound\fx\FillHerUp\AnalCumDeflate\Mild'
 FHU_DeflateAnalHard = 'Sound\fx\FillHerUp\AnalCumDeflate\Hard'
-FHU_DeflateOral = 'Sound\fx\FillHerUp\OralCumDeflate'          # swallowing it down
-FHU_DeflateOralFail = 'Sound\fx\FillHerUp\OralCumDeflationFail' # gag/choke on the swallow
-FHU_DeflateOralAfter = 'Sound\fx\FillHerUp\OralCumDeflateAfter' # after-gulp gasps
+FHU_DeflateOral = 'Sound\fx\FillHerUp\OralCumDeflate'          # expelling it back out of the mouth
+FHU_DeflateOralFail = 'Sound\fx\FillHerUp\OralCumDeflationFail' # gag/choke - the expulsion fails
+FHU_DeflateOralAfter = 'Sound\fx\FillHerUp\OralCumDeflateAfter' # gasps after the expulsion
 FHU_CumDenial = 'Sound\fx\FillHerUp\CumDenial'                  # wants to expel but can't (plug/belt)
 # Stock pools registered for completeness - played via legacy Sound forms today
 # (sr_FHUMoanMildMarker/sr_FHUMoanHardMarker are reserved for a future burst
