@@ -10,8 +10,8 @@
     Final="false">
     <Variables>
         <!-- Set the name of your mod: -->
-        <Variable Name="ModName" Value="FHU baka 2.0.3 patch" />
-        <!-- <Variable Name="ModName" Value="FHU baka 1.96 hentairim patch" /> -->
+        <Variable Name="ModName" Value="FHU crajjj edition 1.0.0" />
+        <!-- <Variable Name="ModName" Value="FHU baka 2.0.3 patch" /> -->
         <!-- The folder where you store all of your mods -->
         <Variable Name="ModsFolder" Value="C:\Playground\Skyrim\mods" />
         <!-- Optional folder with additional source code for imports -->
@@ -60,18 +60,18 @@
         </Package> -->
     </Packages>
     <!-- The following section is for .zip archive. You can enable it by setting Zip="true" in the PapyrusProject -->
+    <!-- Full standalone install (FHU crajjj edition): the complete CORE module, not a script-only patch. -->
     <ZipFiles Output="Build">
         <ZipFile Name="@ModName" RootDir="." Compression="deflate">
-            <!-- <Include>Conditional Expressions.esp</Include> -->
-            <!-- <Include NoRecurse="true">*.bsa</Include> -->
-            <Match In="Source">*.psc</Match>
+            <Include NoRecurse="true">sr_FillHerUp.esp</Include>
+            <Include NoRecurse="true">readme.txt</Include>
             <Match In="Scripts">*.pex</Match>
-            <!--<Match In="SKSE\Plugins">*.dll</Match>-->
+            <Match In="Source">*.psc</Match>
             <Match In="Interface">*</Match>
+            <Match In="Sound">*</Match>
+            <Match In="textures">*</Match>
+            <Match In="SEQ">*</Match>
             <Match In="SKSE\Plugins\AudioUtil\config">*.toml</Match>
-            <!-- <Match In="Sound">*</Match> -->
-            <!-- <Match In="SKSE\Plugins">*.dll</Match> -->
-            <!-- <Match In="SKSE\Plugins">*</Match> -->
         </ZipFile>
     </ZipFiles>
 </PapyrusProject>
